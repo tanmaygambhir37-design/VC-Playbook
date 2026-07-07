@@ -5,9 +5,9 @@ APP_NAME = "VC-Lab"
 SUBTITLE = "Interactive Venture Capital Due Diligence Platform"
 TAGLINE = "Building at the intersection of Finance, Strategy & AI."
 
-GITHUB_URL = "https://github.com/tanmaygambhir/VC-Lab"
-LINKEDIN_URL = "https://www.linkedin.com/in/tanmaygambhir/"
-SUBSTACK_URL = "https://tanmaygambhir.substack.com/"
+GITHUB_URL = "https://github.com/tanmaygambhir37-design/VC-Lab"
+LINKEDIN_URL = "https://www.linkedin.com/in/tanmay-g-5432ba203/"
+SUBSTACK_URL = "https://substack.com/@tanmaydiary/posts"
 
 
 def apply_theme() -> None:

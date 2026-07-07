@@ -5,6 +5,36 @@
 
 An interactive venture capital platform that simulates how professional investors evaluate startups, value companies, model ownership dilution, and make investment decisions.
 
+🚀 **[Live Demo](https://vc-lab-5mg6vkhrt7uucrxjnowfe3.streamlit.app/)**
+
+---
+
+## Screenshots
+
+## Dashboard
+![Dashboard](assets/screenshots/dashboard.png)
+---
+## Startup Screening
+![Startup Screening](assets/screenshots/screening.png)
+---
+## Market Analysis
+![Market Analysis](assets/screenshots/market-analysis.png)
+---
+## Valuation
+![Valuation](assets/screenshots/valuation.png)
+---
+## Cap Table
+![Cap Table](assets/screenshots/captable.png)
+---
+## Portfolio Returns
+![Portfolio Returns](assets/screenshots/portfolio.png)
+---
+## Investment Memo
+![Investment Memo](assets/screenshots/memo.png)
+---
+## Future Reports (Roadmap Preview)
+![Future Reports](assets/screenshots/future-reports.png)
+
 ---
 
 ## Overview
@@ -39,9 +69,11 @@ Everything runs in the browser. Clone the repo, install dependencies, and it's l
 | Component | Technology |
 |---|---|
 | Dashboard | Streamlit |
-| Models | Python + Pandas |
+| Models | Python + Pandas + NumPy |
 | Charts | Plotly |
+| AI-assisted Intake | Rule-based parser (designed to be swapped for an LLM backend) |
 | Data | Synthetic startup dataset (28 companies, 10 sectors) |
+| Version Control | Git + GitHub |
 | Documentation | Markdown |
 | Research | Markdown whitepaper |
 
@@ -81,7 +113,7 @@ VC-Lab/
 ## How to Run
 
 ```bash
-git clone https://github.com/<your-username>/VC-Lab.git
+git clone https://github.com/tanmaygambhir37-design/VC-Lab.git
 cd VC-Lab
 pip install -r requirements.txt
 streamlit run app/app.py
@@ -108,9 +140,19 @@ The scoring, valuation, and returns logic isn't arbitrary — it's documented in
 
 ## Roadmap
 
-- [ ] Screenshot gallery and architecture diagram in `assets/`
-- [ ] AI Investment Committee: LLM-based memo critique and follow-up questions
-- [ ] Multi-investor cap tables (SAFEs, pro-rata rights, secondary sales)
+- [x] VC Scorecard
+- [x] Valuation Engine (VC Method / Comps / Scorecard)
+- [x] Cap Table Simulator
+- [x] Portfolio Returns
+- [x] AI-Assisted Startup Intake (rule-based parser, LLM-ready)
+- [x] Screenshot gallery in `assets/`
+- [ ] Architecture diagram
+- [ ] GPT-Powered Due Diligence
+- [ ] PDF Investment Memo Generation
+- [ ] Multi-Company Portfolio View
+- [ ] Comparable Company Analysis
+- [ ] Lightweight CRM for Deal Flow
+- [ ] Authentication for Private-Fund Deployment
 - [ ] Live market comparable data via API instead of static sector multiples
 - [ ] Portfolio-level Monte Carlo return simulation across many companies
 
