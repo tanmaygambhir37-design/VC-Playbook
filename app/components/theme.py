@@ -48,6 +48,14 @@ def apply_theme() -> None:
                 display: none;
             }
 
+            #MainMenu {
+                visibility: hidden;
+            }
+
+            footer {
+                visibility: hidden;
+            }
+
             .block-container {
                 padding-top: 2.25rem;
                 padding-bottom: 4rem;
@@ -225,11 +233,82 @@ def apply_theme() -> None:
                 box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
                 height: 100%;
                 padding: 22px;
+                transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
             }
 
             .vcl-card:hover {
                 border-color: #334155;
                 box-shadow: 0 22px 55px rgba(0, 0, 0, 0.28);
+                transform: translateY(-2px);
+            }
+
+            .vcl-deal-banner {
+                align-items: center;
+                background: var(--vcl-card-soft);
+                border: 1px solid var(--vcl-border);
+                border-radius: 999px;
+                display: inline-flex;
+                flex-wrap: wrap;
+                gap: 8px;
+                margin-bottom: 26px;
+                padding: 9px 18px;
+            }
+
+            .vcl-deal-tag {
+                color: var(--vcl-blue);
+                font-size: 0.7rem;
+                font-weight: 800;
+                letter-spacing: 0.07em;
+                text-transform: uppercase;
+            }
+
+            .vcl-deal-company {
+                color: var(--vcl-text);
+                font-size: 0.88rem;
+                font-weight: 750;
+            }
+
+            .vcl-deal-meta {
+                color: var(--vcl-muted);
+                font-size: 0.85rem;
+            }
+
+            .vcl-deal-dot {
+                color: #334155;
+            }
+
+            .vcl-deal-score {
+                font-size: 0.85rem;
+                font-weight: 700;
+            }
+
+            .vcl-rec-banner {
+                align-items: center;
+                border: 1px solid;
+                border-radius: 10px;
+                display: flex;
+                gap: 14px;
+                margin-bottom: 24px;
+                padding: 16px 22px;
+            }
+
+            .vcl-rec-dot {
+                border-radius: 999px;
+                flex-shrink: 0;
+                height: 10px;
+                width: 10px;
+            }
+
+            .vcl-rec-text {
+                font-size: 1.08rem;
+                font-weight: 820;
+                letter-spacing: 0.03em;
+            }
+
+            .vcl-rec-score {
+                color: var(--vcl-muted);
+                font-size: 0.9rem;
+                font-weight: 650;
             }
 
             .vcl-card-kicker {

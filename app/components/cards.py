@@ -1,6 +1,10 @@
+import html
+
 import streamlit as st
 
 from .icons import icon
+
+_RECOMMENDATION_COLORS = {"Proceed": "#10B981", "Watch": "#F59E0B", "Pass": "#EF4444"}
 
 
 def metric_card(title: str, value: str, detail: str, icon_name: str = "activity") -> None:
@@ -75,3 +79,36 @@ def text_card(title: str, body: str, kicker: str = "") -> None:
 
 def pill(label: str) -> str:
     return f'<span class="vcl-pill">{label}</span>'
+
+
+def deal_banner(company: str, sector: str, stage: str, vc_score: float, recommendation: str) -> None:
+    color = _RECOMMENDATION_COLORS.get(recommendation, "#94A3B8")
+    st.markdown(
+        f"""
+        <div class="vcl-deal-banner">
+            <span class="vcl-deal-tag">Active Deal</span>
+            <span class="vcl-deal-company">{html.escape(str(company))}</span>
+            <span class="vcl-deal-dot">&middot;</span>
+            <span class="vcl-deal-meta">{html.escape(str(stage))}</span>
+            <span class="vcl-deal-dot">&middot;</span>
+            <span class="vcl-deal-meta">{html.escape(str(sector))}</span>
+            <span class="vcl-deal-dot">&middot;</span>
+            <span class="vcl-deal-score" style="color:{color};">VC Score {vc_score:.1f}</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def recommendation_banner(recommendation: str, vc_score: float) -> None:
+    color = _RECOMMENDATION_COLORS.get(recommendation, "#94A3B8")
+    st.markdown(
+        f"""
+        <div class="vcl-rec-banner" style="background: {color}1A; border-color: {color};">
+            <span class="vcl-rec-dot" style="background:{color};"></span>
+            <span class="vcl-rec-text" style="color:{color};">{html.escape(str(recommendation).upper())}</span>
+            <span class="vcl-rec-score">VC Score {vc_score:.1f}/100</span>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )

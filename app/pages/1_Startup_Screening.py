@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 
 import pandas as pd
 import plotly.graph_objects as go
@@ -10,10 +11,11 @@ PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
 from components.cards import metric_card, pill, text_card
-from components.navigation import sidebar
+from components.navigation import nav_link, sidebar
 from components.theme import apply_theme, page_header, section_title
 from models.scoring import score_startup
 from services.startup_parser import parse_startup
+from state import get_active_deal_row, set_active_deal
 
 st.set_page_config(page_title="Startup Screening | VC-Lab", page_icon="🚀", layout="wide")
 apply_theme()
@@ -129,7 +131,7 @@ def selectbox_index(options: list, value: str) -> int:
     return options.index(value) if value in options else 0
 
 
-def render_company_form(company_defaults: dict, screening: dict) -> dict:
+def render_company_form(company_defaults: dict, screening: dict, expand_assumptions: bool = False) -> dict:
     c1, c2, c3 = st.columns(3)
     with c1:
         company = st.text_input("Company Name", company_defaults["company"])
@@ -146,34 +148,34 @@ def render_company_form(company_defaults: dict, screening: dict) -> dict:
         team_size = st.number_input("Team Size", 1, 20000, int(screening["team_size"]))
         description = st.text_area("Description", company_defaults["description"], height=126)
 
-    st.markdown('<div class="vcl-card-kicker">Screening Assumptions</div>', unsafe_allow_html=True)
-    s1, s2, s3 = st.columns(3)
-    with s1:
-        revenue_usd_k = st.number_input("Revenue ($'000 ARR)", 0.0, 1000.0, float(screening["revenue_usd_k"]))
-        mom_growth_pct = st.number_input("MoM Growth (%)", 0.0, 100.0, float(screening["mom_growth_pct"]))
-        cac_usd = st.number_input("CAC ($)", 1.0, 5000.0, float(screening["cac_usd"]))
-    with s2:
-        ltv_usd = st.number_input("LTV ($)", 1.0, 20000.0, float(screening["ltv_usd"]))
-        monthly_burn_usd_k = st.number_input("Monthly Burn ($'000)", 1.0, 1000.0, float(screening["monthly_burn_usd_k"]))
-        runway_months = st.number_input("Runway (months)", 0.0, 48.0, float(screening["runway_months"]))
-    with s3:
-        competition = st.selectbox(
-            "Competition",
-            ["Low", "Medium", "High"],
-            index=selectbox_index(["Low", "Medium", "High"], screening["competition"]),
-        )
-        founder_experience_score = st.slider(
-            "Founder Experience (1-10)",
-            1,
-            10,
-            int(screening["founder_experience_score"]),
-        )
-        sector_median_arr_multiple = st.number_input(
-            "Sector Median ARR Multiple",
-            1.0,
-            50.0,
-            float(screening["sector_median_arr_multiple"]),
-        )
+    with st.expander("Adjust Screening Assumptions", expanded=expand_assumptions):
+        s1, s2, s3 = st.columns(3)
+        with s1:
+            revenue_usd_k = st.number_input("Revenue ($'000 ARR)", 0.0, 1000.0, float(screening["revenue_usd_k"]))
+            mom_growth_pct = st.number_input("MoM Growth (%)", 0.0, 100.0, float(screening["mom_growth_pct"]))
+            cac_usd = st.number_input("CAC ($)", 1.0, 5000.0, float(screening["cac_usd"]))
+        with s2:
+            ltv_usd = st.number_input("LTV ($)", 1.0, 20000.0, float(screening["ltv_usd"]))
+            monthly_burn_usd_k = st.number_input("Monthly Burn ($'000)", 1.0, 1000.0, float(screening["monthly_burn_usd_k"]))
+            runway_months = st.number_input("Runway (months)", 0.0, 48.0, float(screening["runway_months"]))
+        with s3:
+            competition = st.selectbox(
+                "Competition",
+                ["Low", "Medium", "High"],
+                index=selectbox_index(["Low", "Medium", "High"], screening["competition"]),
+            )
+            founder_experience_score = st.slider(
+                "Founder Experience (1-10)",
+                1,
+                10,
+                int(screening["founder_experience_score"]),
+            )
+            sector_median_arr_multiple = st.number_input(
+                "Sector Median ARR Multiple",
+                1.0,
+                50.0,
+                float(screening["sector_median_arr_multiple"]),
+            )
 
     return {
         "company": company,
@@ -252,9 +254,17 @@ elif source == "Manual Entry":
 else:
     website_url = st.text_input("Startup Website", "https://www.stripe.com")
     if st.button("Analyze Startup", type="primary"):
-        with st.spinner("Analyzing startup..."):
+        with st.status("Analyzing startup...", expanded=True) as status:
+            st.write("Fetching company signals...")
+            time.sleep(0.35)
+            st.write("Extracting positioning and business model...")
+            time.sleep(0.35)
+            st.write("Assessing strengths and risks...")
+            time.sleep(0.3)
             st.session_state["parsed_startup"] = parse_startup(website_url)
             st.session_state["parsed_url"] = website_url
+            status.update(label="Analysis complete", state="complete", expanded=False)
+        st.toast(f"Parsed {st.session_state['parsed_startup'].get('name', 'startup')}", icon="✨")
 
     parsed_startup = st.session_state.get("parsed_startup")
     if parsed_startup:
@@ -265,12 +275,12 @@ else:
         screening = screening_defaults(source)
 
 section_title("Company Information", "Review and edit the company profile before running the scorecard.")
-row = render_company_form(company_defaults, screening)
+row = render_company_form(company_defaults, screening, expand_assumptions=source == "Manual Entry")
 
 section_title("AI Summary", "Parser output remains editable above and can later be replaced with OpenAI extraction.")
 render_ai_summary(parsed_startup, row)
 
-section_title("Continue to Screening", "The existing score_startup engine runs unchanged on the intake profile.")
+section_title("Scorecard Result", "The score_startup engine runs unchanged on the intake profile.")
 result = score_startup(row)
 
 c1, c2, c3 = st.columns(3)
@@ -281,6 +291,18 @@ with c2:
 with c3:
     ltv_cac = round(row["ltv_usd"] / row["cac_usd"], 2) if row["cac_usd"] else 0
     metric_card("LTV:CAC", f"{ltv_cac}x", "Unit economics signal used by the scorecard.", "activity")
+
+section_title("Continue the Workflow", "Carry this company into valuation, cap table, and memo without re-entering data.")
+if st.button("Use This Deal →", type="primary"):
+    set_active_deal(row, parsed_startup)
+    st.toast(f"Active deal set: {row['company']}", icon="🎯")
+
+active_row = get_active_deal_row()
+if active_row and active_row.get("company") == row.get("company"):
+    n1, n2, n3 = st.columns(3)
+    nav_link("pages/2_Valuation.py", label="Continue to Valuation", icon=":material/attach_money:", use_container_width=True, container=n1)
+    nav_link("pages/3_Cap_Table_Returns.py", label="Continue to Cap Table", icon=":material/account_tree:", use_container_width=True, container=n2)
+    nav_link("pages/5_Investment_Memo.py", label="Generate Memo", icon=":material/description:", use_container_width=True, container=n3)
 
 left, right = st.columns([1, 1.8])
 with left:
@@ -298,10 +320,13 @@ with right:
             theta=labels + [labels[0]],
             fill="toself",
             name=row.get("company", "Startup"),
-            line=dict(color="#2563EB"),
+            line=dict(color="#2563EB", width=2),
+            fillcolor="rgba(37, 99, 235, 0.22)",
+            hovertemplate="%{theta}: %{r:.0f}/100<extra></extra>",
         )
     )
     fig.update_layout(
+        title=dict(text="VC Scorecard Breakdown", font=dict(size=15, color="#F8FAFC"), x=0),
         paper_bgcolor="#0B0F17",
         plot_bgcolor="#0B0F17",
         font=dict(color="#F8FAFC"),
@@ -311,7 +336,7 @@ with right:
             angularaxis=dict(gridcolor="#1F2937"),
         ),
         showlegend=False,
-        margin=dict(t=20, b=20),
+        margin=dict(t=48, b=20, l=40, r=40),
     )
     st.plotly_chart(fig, use_container_width=True)
 

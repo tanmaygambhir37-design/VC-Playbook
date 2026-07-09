@@ -23,17 +23,12 @@ An interactive venture capital platform that simulates how professional investor
 ## Valuation
 ![Valuation](assets/screenshots/valuation.png)
 ---
-## Cap Table
+## Cap Table & Returns
 ![Cap Table](assets/screenshots/captable.png)
----
-## Portfolio Returns
 ![Portfolio Returns](assets/screenshots/portfolio.png)
 ---
 ## Investment Memo
 ![Investment Memo](assets/screenshots/memo.png)
----
-## Future Reports (Roadmap Preview)
-![Future Reports](assets/screenshots/future-reports.png)
 
 ---
 
@@ -90,8 +85,7 @@ VC-Lab/
 │   └── pages/
 │       ├── 1_Startup_Screening.py
 │       ├── 2_Valuation.py
-│       ├── 3_Cap_Table.py
-│       ├── 4_Portfolio_Returns.py
+│       ├── 3_Cap_Table_Returns.py
 │       └── 5_Investment_Memo.py
 ├── data/
 │   ├── startups.csv                    # Synthetic dataset (28 companies)

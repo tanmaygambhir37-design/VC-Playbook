@@ -34,12 +34,10 @@ def sidebar() -> None:
         nav_link("pages/2_Valuation.py", label="Valuation", icon=":material/attach_money:")
 
         st.markdown('<div class="vcl-sidebar-label">Models</div>', unsafe_allow_html=True)
-        nav_link("pages/3_Cap_Table.py", label="Cap Table", icon=":material/account_tree:")
-        nav_link("pages/4_Portfolio_Returns.py", label="Portfolio Returns", icon=":material/show_chart:")
+        nav_link("pages/3_Cap_Table_Returns.py", label="Cap Table & Returns", icon=":material/account_tree:")
 
         st.markdown('<div class="vcl-sidebar-label">Reports</div>', unsafe_allow_html=True)
         nav_link("pages/5_Investment_Memo.py", label="Investment Memo", icon=":material/description:")
-        nav_link("pages/7_Future_Reports.py", label="Future Reports", icon=":material/folder_open:")
 
         st.markdown('<div class="vcl-sidebar-label">Settings</div>', unsafe_allow_html=True)
         nav_link("pages/8_About_VC_Lab.py", label="About VC-Lab", icon=":material/settings:")

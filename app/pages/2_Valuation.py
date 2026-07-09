@@ -7,16 +7,27 @@ APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
-from components.cards import metric_card, text_card
+from components.cards import deal_banner, metric_card, text_card
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
+from models.scoring import score_startup
 from models.valuation import SCORECARD_FACTORS, comparable_multiples, scorecard_method, vc_method
+from state import deal_widget_key, get_active_deal_row
 
 st.set_page_config(page_title="Valuation | VC-Lab", page_icon="🚀", layout="wide")
 apply_theme()
 sidebar()
 
 page_header("Valuation", "Three complementary early-stage valuation methods, side by side.", "Analysis")
+
+active_deal = get_active_deal_row()
+if active_deal:
+    deal_score = score_startup(active_deal)
+    deal_banner(active_deal["company"], active_deal["sector"], active_deal["stage"], deal_score.total, deal_score.recommendation)
+    default_arr = round(min(max(active_deal["revenue_usd_k"] / 1000, 0.1), 50.0), 2)
+    default_multiple = int(round(min(max(active_deal["sector_median_arr_multiple"], 2), 25)))
+else:
+    default_arr, default_multiple = 2.0, 8
 
 tab1, tab2, tab3 = st.tabs(["VC Method", "Comparable Multiples", "Scorecard Method"])
 
@@ -39,8 +50,8 @@ with tab1:
 with tab2:
     section_title("Comparable Multiples", "Values the company as a multiple of ARR, benchmarked to sector comparables.")
     c1, c2, c3 = st.columns(3)
-    arr = c1.slider("Current ARR ($M)", 0.1, 50.0, 2.0, step=0.1)
-    multiple = c2.slider("Sector ARR Multiple (x)", 2, 25, 8)
+    arr = c1.slider("Current ARR ($M)", 0.1, 50.0, default_arr, step=0.1, key=deal_widget_key("arr"))
+    multiple = c2.slider("Sector ARR Multiple (x)", 2, 25, default_multiple, key=deal_widget_key("multiple"))
     discount = c3.slider("Illiquidity Discount (%)", 0, 50, 20)
 
     res2 = comparable_multiples(arr, multiple, discount)

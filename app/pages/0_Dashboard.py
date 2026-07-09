@@ -8,9 +8,9 @@ APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
-from components.cards import feature_card, metric_card, text_card
+from components.cards import metric_card, text_card
 from components.navigation import nav_link, sidebar
-from components.theme import TAGLINE, apply_theme, page_header, section_title
+from components.theme import apply_theme, page_header, section_title
 from models.scoring import score_startup
 
 st.set_page_config(page_title="Dashboard | VC-Lab", page_icon="🚀", layout="wide")
@@ -77,15 +77,6 @@ with right:
 section_title("Quick Actions", "Jump into the most common diligence tasks.")
 q1, q2, q3, q4 = st.columns(4)
 nav_link("pages/1_Startup_Screening.py", label="New Startup", icon=":material/add_circle:", use_container_width=True, container=q1)
-nav_link("pages/1_Startup_Screening.py", label="Open Screening", icon=":material/troubleshoot:", use_container_width=True, container=q2)
-nav_link("pages/5_Investment_Memo.py", label="Generate Memo", icon=":material/description:", use_container_width=True, container=q3)
-nav_link("pages/7_Future_Reports.py", label="View Reports", icon=":material/folder_open:", use_container_width=True, container=q4)
-
-section_title("Workspace Focus", TAGLINE)
-f1, f2, f3 = st.columns(3)
-with f1:
-    feature_card("Analysis", "Screen startups and inspect market patterns before moving into deeper diligence.", "search")
-with f2:
-    feature_card("Models", "Build valuation, dilution, and return views from consistent assumptions.", "calculator")
-with f3:
-    feature_card("Reports", "Turn outputs into clear investment memo narratives for decision-making.", "clipboard")
+nav_link("pages/2_Valuation.py", label="Run Valuation", icon=":material/attach_money:", use_container_width=True, container=q2)
+nav_link("pages/3_Cap_Table_Returns.py", label="Cap Table & Returns", icon=":material/account_tree:", use_container_width=True, container=q3)
+nav_link("pages/5_Investment_Memo.py", label="Generate Memo", icon=":material/description:", use_container_width=True, container=q4)
