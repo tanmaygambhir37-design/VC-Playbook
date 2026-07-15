@@ -52,7 +52,7 @@ def _footer(canvas, doc) -> None:
     canvas.setFillColor(MUTED)
     canvas.drawString(
         0.75 * inch, 0.5 * inch,
-        "VC-Lab · Confidential — illustrative analysis for demonstration purposes only. Not investment advice.",
+        "VC Playbook · Confidential — illustrative analysis for demonstration purposes only. Not investment advice.",
     )
     canvas.drawRightString(LETTER[0] - 0.75 * inch, 0.5 * inch, f"Page {doc.page}")
     canvas.restoreState()
@@ -113,7 +113,7 @@ def build_memo_pdf(row: dict, result, valuation: dict, narrative_sections: list,
     story = [
         Paragraph("CONFIDENTIAL &nbsp;·&nbsp; INVESTMENT COMMITTEE MEMO", EYEBROW),
         Paragraph(row["company"], TITLE),
-        Paragraph(f"{row['sector']} &nbsp;·&nbsp; {row['stage']} &nbsp;·&nbsp; Prepared by VC-Lab", META),
+        Paragraph(f"{row['sector']} &nbsp;·&nbsp; {row['stage']} &nbsp;·&nbsp; Prepared by VC Playbook", META),
         _recommendation_banner(result.recommendation, result.total),
         Spacer(1, 12),
         _metric_row([

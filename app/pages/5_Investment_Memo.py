@@ -26,7 +26,7 @@ from services.due_diligence import (
 from services.pdf_report import build_memo_pdf
 from state import get_active_deal_parsed, get_active_deal_row
 
-st.set_page_config(page_title="Investment Memo | VC-Lab", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="Investment Memo | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
 
@@ -99,7 +99,7 @@ if st.button("Generate Investment Memo", type="primary"):
     risk_bullets = build_risk_bullets(row, ltv_cac)
     next_steps = build_next_steps(result, risk_bullets)
 
-    section_title(f"Investment Memo - {row['company']}", f"{row['sector']} · {row['stage']} · Prepared by VC-Lab")
+    section_title(f"Investment Memo - {row['company']}", f"{row['sector']} · {row['stage']} · Prepared by VC Playbook")
     recommendation_banner(result.recommendation, result.total)
 
     c1, c2, c3, c4 = st.columns(4)

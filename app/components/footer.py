@@ -8,7 +8,7 @@ def footer() -> None:
         """
         <div class="vcl-footer">
             <div><strong>Built by Tanmay Gambhir</strong></div>
-            <div>Chartered Accountant · Management Consultant · Bocconi x ESSEC</div>
+            <div>Bocconi x ESSEC · Graduating 2028 · Chartered Accountant · Management Consultant</div>
         </div>
         """,
         unsafe_allow_html=True,

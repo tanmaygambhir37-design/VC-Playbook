@@ -12,33 +12,53 @@ from components.footer import footer
 from components.navigation import sidebar
 from components.theme import SUBTITLE, TAGLINE, apply_theme, page_header, section_title
 
-st.set_page_config(page_title="About VC-Lab | VC-Lab", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="About | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
 
-page_header("About VC-Lab", SUBTITLE, "Settings")
+page_header("About VC Playbook", SUBTITLE, "Settings")
 
-section_title("Platform", TAGLINE)
+section_title("What This Is", TAGLINE)
 text_card(
-    "What VC-Lab Does",
-    "VC-Lab is an interactive venture capital due diligence platform for evaluating startups, modeling valuation and dilution, projecting returns, and preparing investment memos.",
+    "An honest simulator, not a platform",
+    "VC Playbook is a learning tool. The VC Pulse page aggregates real, live venture capital news; "
+    "the simulator lets you practice the actual analytical workflow of an early-stage investor — "
+    "screening, valuation, dilution, returns, and memo writing — on a sample dataset or your own numbers. "
+    "The sample companies are synthetic and the outputs are illustrative, not investment advice.",
     "Overview",
 )
 
-section_title("Workspace Areas", "The application is organized around the workflow of a professional venture investor.")
-c1, c2, c3 = st.columns(3)
+section_title("Who It's For", "Two audiences, one workspace.")
+c1, c2 = st.columns(2)
 with c1:
-    feature_card("Analysis", "Startup screening, market context, and early diligence signals.", "search")
+    feature_card(
+        "VC-curious students & juniors",
+        "Get your daily VC news in one place and learn the vocabulary and mechanics of venture investing by doing.",
+        "search",
+    )
 with c2:
-    feature_card("Models", "Valuation, cap table, and portfolio return modeling.", "calculator")
-with c3:
-    feature_card("Reports", "Investment memo generation and future reporting surfaces.", "file-text")
+    feature_card(
+        "Analysts & operators",
+        "Sanity-check a scorecard, a valuation triangulation, or a dilution scenario in seconds with your own inputs.",
+        "calculator",
+    )
 
-section_title("Methodology", "The existing formulas remain in the model layer.")
+section_title("Methodology", "Standard early-stage frameworks, implemented faithfully.")
 text_card(
-    "Preserved Logic",
-    "Scoring, valuation, dilution, and returns calculations continue to run through the existing modules in the models directory. The redesign changes structure, navigation, and interface presentation only.",
+    "The models",
+    "Screening uses a weighted scorecard (unit economics, growth, market, team, efficiency). "
+    "Valuation triangulates the VC Method, comparable ARR multiples with an illiquidity discount, "
+    "and the Bill Payne scorecard method. Cap table and returns use standard priced-round and "
+    "MOIC/IRR math. All formulas live in the open-source models directory on GitHub.",
     "Technical Note",
+)
+
+section_title("Built By", "")
+text_card(
+    "Tanmay Gambhir",
+    "Bocconi x ESSEC double degree, graduating 2028 · Chartered Accountant · Management Consultant. "
+    "Building at the intersection of finance, strategy, and AI.",
+    "Author",
 )
 
 footer()

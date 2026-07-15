@@ -1,11 +1,15 @@
-# 🚀 VC-Lab
+# 📗 VC Playbook
 
-**Building at the intersection of Finance, Strategy & AI**
-*Research • Models • Dashboards • AI Applications*
+**Learn venture capital by reading the news and running the numbers.**
 
-An interactive venture capital platform that simulates how professional investors evaluate startups, value companies, model ownership dilution, and make investment decisions.
+VC Playbook is two things in one Streamlit app:
+
+1. **VC Pulse** — a live news hub aggregating the latest venture capital headlines from TechCrunch, Crunchbase News, Axios, and more, plus curated videos and articles.
+2. **A due diligence simulator** — an interactive sandbox that walks you through how professional investors evaluate startups: weighted scorecards, three valuation methods, cap table dilution, fund returns, and auto-drafted investment memos.
 
 🚀 **[Live Demo](https://vc-lab-5mg6vkhrt7uucrxjnowfe3.streamlit.app/)**
+
+Built for VC-curious students, analysts, and juniors — get your industry news in one place, and practice real diligence on the sample dataset or your own numbers (manual entry or CSV upload).
 
 ---
 
@@ -32,17 +36,15 @@ An interactive venture capital platform that simulates how professional investor
 
 ---
 
-## Overview
+## The Simulator Workflow
 
-VC-Lab reconstructs the core analytical workflow of an early-stage VC investor as a working, interactive tool:
-
-1. **Screen** a startup against a weighted scorecard
-2. **Value** it using three standard methodologies
+1. **Screen** a startup against a weighted scorecard — from the sample dataset, manual entry, or your own CSV
+2. **Value** it using three standard methodologies (VC Method, comparable multiples, scorecard method)
 3. **Model** ownership dilution across funding rounds
 4. **Project** portfolio returns and stress-test exit scenarios
-5. **Generate** a structured investment memo — automatically
+5. **Generate** a structured investment memo — downloadable as PDF
 
-Everything runs in the browser. Clone the repo, install dependencies, and it's live in under a minute.
+A beginner glossary explains every term (ARR, LTV, CAC, MOIC, IRR, dilution…) along the way.
 
 ---
 
@@ -50,12 +52,12 @@ Everything runs in the browser. Clone the repo, install dependencies, and it's l
 
 | Module | What it does |
 |---|---|
-| 🚀 **Launch Dashboard** | Portfolio-level KPIs across all screened companies |
-| 📊 **Startup Screening** | Weighted VC scorecard (unit economics, growth, market, team, efficiency) with a radar chart breakdown |
+| 📰 **VC Pulse** | Live VC news wall from RSS feeds + curated learning resources |
+| 📊 **Startup Screening** | Weighted VC scorecard (unit economics, growth, market, team, efficiency) with a radar chart, manual entry, and CSV upload |
 | 💰 **Valuation Engine** | VC Method, Comparable Multiples, and Scorecard Method — with live sliders |
 | 📈 **Cap Table Simulator** | Model dilution across Seed → Series A → Series B, including ESOP top-ups |
 | 📉 **Portfolio Returns** | MOIC, IRR, and an exit-valuation × holding-period sensitivity heatmap |
-| 📚 **Investment Memo** | One click generates a thesis, risk assessment, valuation, and recommendation — downloadable as text |
+| 📚 **Investment Memo** | One click generates a thesis, risk assessment, valuation, and recommendation — downloadable as PDF |
 
 ---
 
@@ -63,14 +65,12 @@ Everything runs in the browser. Clone the repo, install dependencies, and it's l
 
 | Component | Technology |
 |---|---|
-| Dashboard | Streamlit |
+| App | Streamlit |
 | Models | Python + Pandas + NumPy |
 | Charts | Plotly |
-| AI-assisted Intake | Rule-based parser (designed to be swapped for an LLM backend) |
-| Data | Synthetic startup dataset (28 companies, 10 sectors) |
-| Version Control | Git + GitHub |
-| Documentation | Markdown |
-| Research | Markdown whitepaper |
+| News | RSS via feedparser |
+| PDF Reports | ReportLab |
+| Data | Synthetic startup dataset (28 companies, 10 sectors) — or bring your own CSV |
 
 ---
 
@@ -81,12 +81,16 @@ VC-Lab/
 ├── README.md
 ├── requirements.txt
 ├── app/
-│   ├── app.py                          # Landing dashboard
+│   ├── app.py                          # Landing page
 │   └── pages/
+│       ├── 0_Dashboard.py
 │       ├── 1_Startup_Screening.py
 │       ├── 2_Valuation.py
 │       ├── 3_Cap_Table_Returns.py
-│       └── 5_Investment_Memo.py
+│       ├── 5_Investment_Memo.py
+│       ├── 6_Market_Analysis.py
+│       ├── 7_VC_Pulse.py               # News hub
+│       └── 8_About_VC_Lab.py
 ├── data/
 │   ├── startups.csv                    # Synthetic dataset (28 companies)
 │   └── generate_data.py                # Regenerate the dataset
@@ -98,8 +102,7 @@ VC-Lab/
 ├── reports/
 │   └── VC-Lab-Whitepaper.md            # Methodology writeup
 └── assets/
-    ├── screenshots/
-    └── diagrams/
+    └── screenshots/
 ```
 
 ---
@@ -118,6 +121,8 @@ The app opens at `http://localhost:8501`. To regenerate the synthetic dataset wi
 ```bash
 python data/generate_data.py
 ```
+
+Optional: to get an email whenever someone runs a screening, create a free [Formspree](https://formspree.io) form and add its endpoint to Streamlit secrets as `FORMSPREE_URL`.
 
 ---
 
@@ -138,28 +143,18 @@ The scoring, valuation, and returns logic isn't arbitrary — it's documented in
 - [x] Valuation Engine (VC Method / Comps / Scorecard)
 - [x] Cap Table Simulator
 - [x] Portfolio Returns
-- [x] AI-Assisted Startup Intake (rule-based parser, LLM-ready)
-- [x] Screenshot gallery in `assets/`
-- [ ] Architecture diagram
-- [ ] GPT-Powered Due Diligence
-- [ ] PDF Investment Memo Generation
+- [x] PDF Investment Memo Generation
+- [x] VC Pulse news hub (RSS)
+- [x] Manual entry + CSV upload for screening
+- [x] Beginner glossary
+- [ ] Curated YouTube / Substack learning library
+- [ ] LLM-powered company research
 - [ ] Multi-Company Portfolio View
-- [ ] Comparable Company Analysis
-- [ ] Lightweight CRM for Deal Flow
-- [ ] Authentication for Private-Fund Deployment
 - [ ] Live market comparable data via API instead of static sector multiples
-- [ ] Portfolio-level Monte Carlo return simulation across many companies
-
----
-
-## Future Improvements
-
-- Persist screened startups and memos to a lightweight database instead of session state
-- Add authentication for a private-fund deployment
-- Export investment memos as formatted PDF instead of plain text
+- [ ] Portfolio-level Monte Carlo return simulation
 
 ---
 
 ## Disclaimer
 
-VC-Lab is an educational and portfolio-demonstration project. It is not investment advice, and its benchmarks (LTV:CAC targets, growth rates, valuation multiples) are illustrative defaults — not current market data.
+VC Playbook is an educational and portfolio-demonstration project. It is not investment advice, and its benchmarks (LTV:CAC targets, growth rates, valuation multiples) are illustrative defaults — not current market data. The sample companies are synthetic.

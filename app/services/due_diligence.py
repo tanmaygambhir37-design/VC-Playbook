@@ -168,7 +168,7 @@ def generate_recommendation(row: dict, parsed: dict | None = None) -> DueDiligen
         "Recommendation",
         "Proceed to quantitative screening and targeted follow-up diligence. The next step is to validate the intake assumptions against financial data, customer references, and competitive benchmarks.",
         "Medium",
-        _sources("Company Profile", "VC-Lab Scorecard"),
+        _sources("Company Profile", "VC Playbook Scorecard"),
     )
 
 

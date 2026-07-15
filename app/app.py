@@ -1,59 +1,73 @@
 import os
 import sys
 
-import pandas as pd
 import streamlit as st
 
 APP_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
-from components.cards import feature_card, metric_card, preview_card, workflow_step
+from components.cards import feature_card, workflow_step
 from components.footer import footer
-from components.theme import GITHUB_URL, apply_theme, landing_header, section_title
-from models.scoring import score_startup
+from components.theme import (
+    GITHUB_URL,
+    LINKEDIN_URL,
+    SUBSTACK_URL,
+    apply_theme,
+    hide_sidebar,
+    landing_header,
+    section_title,
+)
 
-st.set_page_config(page_title="VC-Lab", page_icon="🚀", layout="wide", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="VC Playbook", page_icon="📗", layout="wide", initial_sidebar_state="collapsed")
 apply_theme()
-
-DATA_PATH = os.path.join(PROJECT_ROOT, "data", "startups.csv")
-
-
-@st.cache_data
-def load_data():
-    return pd.read_csv(DATA_PATH)
-
-
-def scored_dataset():
-    df = load_data()
-    scores = df.apply(lambda r: score_startup(r.to_dict()).total, axis=1)
-    recommendations = df.apply(lambda r: score_startup(r.to_dict()).recommendation, axis=1)
-    return df.assign(vc_score=scores, recommendation=recommendations)
+hide_sidebar()
 
 
 def landing_page() -> None:
+    st.markdown(
+        f"""
+        <div class="vcl-topbar">
+            <span class="vcl-topbar-bio"><strong style="color:#F8FAFC;">Tanmay Gambhir</strong> · Bocconi x ESSEC · Graduating 2028</span>
+            <a href="{LINKEDIN_URL}" target="_blank">LinkedIn</a>
+            <a href="{GITHUB_URL}" target="_blank">GitHub</a>
+            <a href="{SUBSTACK_URL}" target="_blank">Substack</a>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
     landing_header()
 
-    c1, c2, _ = st.columns([1.15, 1, 3.6])
+    c1, c2, c3, _ = st.columns([1.15, 1.15, 1, 2.4])
     with c1:
-        if st.button("Launch Workspace", type="primary", use_container_width=True):
+        if st.button("Open the Simulator", type="primary", use_container_width=True):
             st.switch_page("pages/0_Dashboard.py")
     with c2:
+        if st.button("Read VC News", use_container_width=True):
+            st.switch_page("pages/7_VC_Pulse.py")
+    with c3:
         st.link_button("View GitHub", GITHUB_URL, use_container_width=True)
 
-    df_scored = scored_dataset()
-
-    section_title("Platform Metrics", "A professional diligence workspace for screening, modeling, and memo generation.")
-    cols = st.columns(4)
-    metrics = [
-        ("Companies Analysed", f"{len(df_scored)}", "Synthetic startup profiles across sectors and stages.", "building"),
-        ("Investment Memos", "12", "Structured committee-ready memo outputs.", "file-text"),
-        ("Valuation Models", "3", "VC Method, comparables, and scorecard valuation.", "calculator"),
-        ("Interactive Dashboards", "6", "Screening, market, valuation, cap table, returns, memo.", "layout-dashboard"),
-    ]
-    for col, item in zip(cols, metrics):
-        with col:
-            metric_card(*item)
+    section_title("What is VC Playbook?", "Two things, honestly labeled — no fake metrics.")
+    w1, w2 = st.columns(2)
+    with w1:
+        feature_card(
+            "A VC news hub",
+            "A live feed pulling the latest venture capital news from TechCrunch, Crunchbase News, "
+            "Axios, and more — plus curated videos and articles. Built for students, analysts, and "
+            "juniors who want one place to stay current on the industry.",
+            "bar-chart",
+        )
+    with w2:
+        feature_card(
+            "A due diligence simulator",
+            "An interactive sandbox that walks you through how professional investors evaluate "
+            "startups: weighted scorecards, three valuation methods, cap table dilution, fund "
+            "returns, and auto-drafted investment memos. Try your own diligence — on the sample "
+            "dataset or your own numbers.",
+            "target",
+        )
 
     section_title("Workflow", "Move from first-pass screen to investment committee memo in one connected flow.")
     workflow = [
@@ -85,17 +99,6 @@ def landing_page() -> None:
         for offset, col in enumerate(cols):
             with col:
                 feature_card(*features[row_start + offset])
-
-    section_title("Workspace Preview", "Modern module previews for the diligence flow.")
-    preview_cols = st.columns(3)
-    previews = [
-        ("Screening Dashboard", "Rank companies by VC score and recommendation."),
-        ("Valuation Workspace", "Compare model outputs with live assumptions."),
-        ("Memo Studio", "Generate thesis, risk, valuation, and recommendation sections."),
-    ]
-    for col, item in zip(preview_cols, previews):
-        with col:
-            preview_card(*item)
 
     footer()
 

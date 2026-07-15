@@ -1,9 +1,9 @@
 import streamlit as st
 
 
-APP_NAME = "VC-Lab"
-SUBTITLE = "Interactive Venture Capital Due Diligence Platform"
-TAGLINE = "Building at the intersection of Finance, Strategy & AI."
+APP_NAME = "VC Playbook"
+SUBTITLE = "VC News Hub & Due Diligence Simulator"
+TAGLINE = "Learn venture capital by reading the news and running the numbers."
 
 GITHUB_URL = "https://github.com/tanmaygambhir37-design/VC-Lab"
 LINKEDIN_URL = "https://www.linkedin.com/in/tanmay-g-5432ba203/"
@@ -183,6 +183,89 @@ def apply_theme() -> None:
 
             .vcl-page-header {
                 margin-bottom: 28px;
+            }
+
+            .vcl-hero {
+                background:
+                    linear-gradient(100deg, rgba(11, 15, 23, 0.94) 30%, rgba(11, 15, 23, 0.55) 75%, rgba(37, 99, 235, 0.28)),
+                    url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1800&q=70');
+                background-position: center;
+                background-size: cover;
+                border: 1px solid var(--vcl-border);
+                border-radius: 14px;
+                margin: 18px 0 8px;
+                padding: 72px 54px;
+            }
+
+            .vcl-hero-inner {
+                max-width: 820px;
+            }
+
+            .vcl-topbar {
+                align-items: center;
+                display: flex;
+                gap: 10px;
+                justify-content: flex-end;
+                padding-top: 6px;
+            }
+
+            .vcl-topbar a {
+                border: 1px solid var(--vcl-border);
+                border-radius: 999px;
+                color: var(--vcl-text);
+                font-size: 0.82rem;
+                font-weight: 650;
+                padding: 7px 16px;
+                text-decoration: none;
+                transition: border-color 160ms ease;
+            }
+
+            .vcl-topbar a:hover {
+                border-color: var(--vcl-blue);
+            }
+
+            .vcl-topbar-bio {
+                color: var(--vcl-muted);
+                font-size: 0.82rem;
+                margin-right: auto;
+            }
+
+            .vcl-news-card {
+                background: var(--vcl-card);
+                border: 1px solid var(--vcl-border);
+                border-radius: 8px;
+                display: block;
+                height: 100%;
+                padding: 18px;
+                text-decoration: none;
+                transition: border-color 160ms ease, transform 160ms ease;
+            }
+
+            .vcl-news-card:hover {
+                border-color: var(--vcl-blue);
+                transform: translateY(-2px);
+            }
+
+            .vcl-news-source {
+                color: var(--vcl-blue);
+                font-size: 0.72rem;
+                font-weight: 800;
+                letter-spacing: 0.07em;
+                margin-bottom: 8px;
+                text-transform: uppercase;
+            }
+
+            .vcl-news-title {
+                color: var(--vcl-text);
+                font-size: 0.98rem;
+                font-weight: 700;
+                line-height: 1.4;
+                margin-bottom: 8px;
+            }
+
+            .vcl-news-meta {
+                color: var(--vcl-muted);
+                font-size: 0.8rem;
             }
 
             .vcl-eyebrow {
@@ -477,17 +560,33 @@ def page_header(title: str, subtitle: str, eyebrow: str = APP_NAME) -> None:
     )
 
 
+def hide_sidebar() -> None:
+    """Landing page: no sidebar, no collapsed-sidebar arrow, full-width hero."""
+    st.markdown(
+        """
+        <style>
+            [data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"],
+            [data-testid="collapsedControl"] { display: none !important; }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
 def landing_header() -> None:
     st.markdown(
         f"""
-        <div class="vcl-page-header" style="padding: 50px 0 22px;">
-            <div class="vcl-eyebrow">{TAGLINE}</div>
-            <div class="vcl-page-title">{APP_NAME}</div>
-            <div class="vcl-subtitle">{SUBTITLE}</div>
-            <div class="vcl-copy">
-                An interactive platform that simulates how professional venture capital investors
-                evaluate startups, perform due diligence, value companies, model dilution and make
-                investment decisions.
+        <div class="vcl-hero">
+            <div class="vcl-hero-inner">
+                <div class="vcl-eyebrow">{TAGLINE}</div>
+                <div class="vcl-page-title">{APP_NAME}</div>
+                <div class="vcl-subtitle">{SUBTITLE}</div>
+                <div class="vcl-copy" style="color:#CBD5E1;">
+                    One place to stay on top of venture capital — a live feed of VC news, deals,
+                    and analysis, plus an interactive simulator where you can screen startups,
+                    value companies, model dilution, and write investment memos the way
+                    professional investors do.
+                </div>
             </div>
         </div>
         """,

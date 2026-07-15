@@ -19,7 +19,7 @@ from models.returns import exit_proceeds, irr_from_moic, moic, sensitivity_grid
 from models.scoring import score_startup
 from state import get_active_deal_row
 
-st.set_page_config(page_title="Cap Table & Returns | VC-Lab", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="Cap Table & Returns | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
 

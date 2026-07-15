@@ -1,27 +1,75 @@
+import io
 import os
 import sys
-import time
 
 import pandas as pd
 import plotly.graph_objects as go
+import requests
 import streamlit as st
 
 APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
-from components.cards import metric_card, pill, text_card
+from components.cards import metric_card, text_card, workflow_step
 from components.navigation import nav_link, sidebar
 from components.theme import apply_theme, page_header, section_title
 from models.scoring import score_startup
-from services.startup_parser import parse_startup
 from state import get_active_deal_row, set_active_deal
 
-st.set_page_config(page_title="Startup Screening | VC-Lab", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="Startup Screening | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
 
-page_header("Startup Screening", "AI-assisted startup intake with the existing VC scorecard engine.", "Analysis")
+page_header("Startup Screening", "Score a startup with the VC scorecard — from the sample dataset, your own inputs, or a CSV upload.", "Analysis")
+
+
+def notify_usage(event: str) -> None:
+    """Ping Formspree so the site owner knows someone ran an analysis.
+    No-op unless FORMSPREE_URL is set in Streamlit secrets."""
+    url = st.secrets.get("FORMSPREE_URL", "")
+    if not url or st.session_state.get("usage_notified"):
+        return
+    try:
+        requests.post(url, data={"event": event}, timeout=3)
+        st.session_state["usage_notified"] = True
+    except Exception:
+        pass
+
+
+GLOSSARY = {
+    "ARR (Annual Recurring Revenue)": "The yearly value of a company's subscription revenue. A $50k/month subscription business has $600k ARR.",
+    "MoM Growth": "Month-over-month revenue growth. 10% MoM means revenue grows 10% each month — roughly 3x in a year.",
+    "CAC (Customer Acquisition Cost)": "How much it costs (marketing + sales) to win one new customer.",
+    "LTV (Lifetime Value)": "The total revenue one customer generates before they churn. Healthy startups aim for LTV at least 3x CAC.",
+    "Burn / Runway": "Burn is the cash a startup loses each month; runway is how many months of cash remain before it must raise again.",
+    "Pre-money / Post-money": "Company value before an investment vs. after it. Post-money = pre-money + amount invested.",
+    "Dilution": "How the founders' ownership percentage shrinks each time new shares are issued to investors.",
+    "MOIC (Multiple on Invested Capital)": "How many times an investment pays back — invest $1M, return $4M, MOIC is 4x.",
+    "IRR (Internal Rate of Return)": "The annualized return of an investment, accounting for how long the money was held.",
+    "VC Score": "This simulator's 0-100 weighted score across unit economics, growth, market, team, and burn efficiency.",
+}
+
+
+with st.expander("📖 New to these terms? Open the beginner glossary"):
+    g1, g2 = st.columns(2)
+    terms = list(GLOSSARY.items())
+    for col, chunk in ((g1, terms[:5]), (g2, terms[5:])):
+        with col:
+            for term, definition in chunk:
+                st.markdown(f"**{term}**  \n{definition}")
+
+section_title("How It Works", "Four steps from raw numbers to a committee-ready memo.")
+h1, h2, h3, h4 = st.columns(4)
+steps = [
+    ("Pick a company", "Choose from the sample dataset, type details manually, or upload a CSV.", "search"),
+    ("Review the profile", "Check and edit the company info and screening assumptions below.", "file-text"),
+    ("Read the scorecard", "Get a 0-100 VC Score with strengths, weaknesses, and a Proceed / Watch / Pass call.", "gauge"),
+    ("Continue the flow", "Carry the deal into Valuation, Cap Table, and the Investment Memo.", "clipboard"),
+]
+for i, (col, (title, desc, icon_name)) in enumerate(zip((h1, h2, h3, h4), steps), start=1):
+    with col:
+        workflow_step(i, title, desc, icon_name)
 
 DATA_PATH = os.path.join(PROJECT_ROOT, "data", "startups.csv")
 df = pd.read_csv(DATA_PATH)
@@ -75,56 +123,18 @@ def to_company_payload(row: dict) -> dict:
     }
 
 
-def parsed_to_company_payload(parsed: dict) -> dict:
-    return {
-        "company": parsed.get("name") or DEFAULT_COMPANY["company"],
-        "sector": parsed.get("sector") or DEFAULT_COMPANY["sector"],
-        "stage": parsed.get("stage") or DEFAULT_COMPANY["stage"],
-        "business_model": parsed.get("business_model") or DEFAULT_COMPANY["business_model"],
-        "customers": parsed.get("customers") or DEFAULT_COMPANY["customers"],
-        "location": parsed.get("location") or DEFAULT_COMPANY["location"],
-        "website": parsed.get("website") or DEFAULT_COMPANY["website"],
-        "founding_year": str(parsed.get("founding_year") or DEFAULT_COMPANY["founding_year"]),
-        "revenue_model": parsed.get("revenue_model") or DEFAULT_COMPANY["revenue_model"],
-        "description": parsed.get("description") or DEFAULT_COMPANY["description"],
-    }
+SCREENING_COLUMNS = [
+    "company", "sector", "stage", "business_model", "customers", "location",
+    "website", "founding_year", "revenue_model", "description",
+    "revenue_usd_k", "mom_growth_pct", "cac_usd", "ltv_usd",
+    "monthly_burn_usd_k", "runway_months", "competition",
+    "founder_experience_score", "team_size", "sector_median_arr_multiple",
+]
 
 
-def screening_defaults(source: str, parsed: dict | None = None) -> dict:
-    defaults = DEFAULT_SCREENING.copy()
-    if parsed:
-        defaults["team_size"] = int(parsed.get("team_size") or defaults["team_size"])
-        if parsed.get("sector") == "Fintech":
-            defaults.update(
-                {
-                    "revenue_usd_k": 900.0,
-                    "mom_growth_pct": 14.0,
-                    "cac_usd": 420.0,
-                    "ltv_usd": 2400.0,
-                    "monthly_burn_usd_k": 520.0,
-                    "runway_months": 24.0,
-                    "competition": "High",
-                    "founder_experience_score": 9,
-                    "sector_median_arr_multiple": 9.0,
-                }
-            )
-        elif parsed.get("sector") == "AI":
-            defaults.update(
-                {
-                    "revenue_usd_k": 850.0,
-                    "mom_growth_pct": 18.0,
-                    "cac_usd": 360.0,
-                    "ltv_usd": 3000.0,
-                    "monthly_burn_usd_k": 700.0,
-                    "runway_months": 20.0,
-                    "competition": "High",
-                    "founder_experience_score": 9,
-                    "sector_median_arr_multiple": 12.0,
-                }
-            )
-    if source == "Existing Dataset":
-        defaults["sector_median_arr_multiple"] = 8.0
-    return defaults
+def csv_template() -> bytes:
+    example = DEFAULT_COMPANY | DEFAULT_SCREENING | {"company": "Example Startup"}
+    return pd.DataFrame([{col: example.get(col, "") for col in SCREENING_COLUMNS}]).to_csv(index=False).encode()
 
 
 def selectbox_index(options: list, value: str) -> int:
@@ -201,47 +211,12 @@ def render_company_form(company_defaults: dict, screening: dict, expand_assumpti
     }
 
 
-def render_ai_summary(parsed: dict | None, row: dict) -> None:
-    if parsed:
-        strengths = "".join(pill(item) for item in parsed.get("strengths", []))
-        risks = "".join(pill(item) for item in parsed.get("risks", []))
-        summary = parsed.get("summary") or row.get("description", "")
-        business_model = parsed.get("business_model") or row.get("business_model", "")
-    else:
-        strengths = pill("Editable intake profile")
-        risks = pill("Requires diligence validation")
-        summary = row.get("description", "")
-        business_model = row.get("business_model", "")
-
-    st.markdown(
-        f"""
-        <div class="vcl-card">
-            <div class="vcl-card-kicker">AI Summary</div>
-            <div class="vcl-card-title">Company Summary</div>
-            <div class="vcl-card-body">{summary}</div>
-            <div style="height: 18px;"></div>
-            <div class="vcl-card-title">Business Model</div>
-            <div class="vcl-card-body">{business_model}</div>
-            <div style="height: 18px;"></div>
-            <div class="vcl-card-title">Key Strengths</div>
-            <div>{strengths}</div>
-            <div style="height: 12px;"></div>
-            <div class="vcl-card-title">Potential Risks</div>
-            <div>{risks}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-section_title("Choose Startup Source", "Start from the dataset, enter details manually, or analyze a startup website.")
+section_title("Choose Startup Source", "Start from the sample dataset, enter details manually, or upload your own CSV.")
 source = st.radio(
     "Startup source",
-    ["Existing Dataset", "Manual Entry", "AI Website Analysis"],
+    ["Existing Dataset", "Manual Entry", "Upload CSV"],
     horizontal=True,
 )
-
-parsed_startup = None
 
 if source == "Existing Dataset":
     company = st.selectbox("Company", df["company"])
@@ -250,35 +225,35 @@ if source == "Existing Dataset":
     screening = {key: dataset_row.get(key, value) for key, value in DEFAULT_SCREENING.items()}
 elif source == "Manual Entry":
     company_defaults = DEFAULT_COMPANY.copy()
-    screening = screening_defaults(source)
+    screening = DEFAULT_SCREENING.copy()
 else:
-    website_url = st.text_input("Startup Website", "https://www.stripe.com")
-    if st.button("Analyze Startup", type="primary"):
-        with st.status("Analyzing startup...", expanded=True) as status:
-            st.write("Fetching company signals...")
-            time.sleep(0.35)
-            st.write("Extracting positioning and business model...")
-            time.sleep(0.35)
-            st.write("Assessing strengths and risks...")
-            time.sleep(0.3)
-            st.session_state["parsed_startup"] = parse_startup(website_url)
-            st.session_state["parsed_url"] = website_url
-            status.update(label="Analysis complete", state="complete", expanded=False)
-        st.toast(f"Parsed {st.session_state['parsed_startup'].get('name', 'startup')}", icon="✨")
-
-    parsed_startup = st.session_state.get("parsed_startup")
-    if parsed_startup:
-        company_defaults = parsed_to_company_payload(parsed_startup)
-        screening = screening_defaults(source, parsed_startup)
-    else:
-        company_defaults = DEFAULT_COMPANY | {"website": website_url}
-        screening = screening_defaults(source)
+    st.download_button(
+        "Download CSV template",
+        data=csv_template(),
+        file_name="vc_playbook_template.csv",
+        mime="text/csv",
+        help="Fill one row per company using exactly these columns, then upload it below.",
+    )
+    uploaded = st.file_uploader("Upload your startup CSV", type="csv")
+    company_defaults = DEFAULT_COMPANY.copy()
+    screening = DEFAULT_SCREENING.copy()
+    if uploaded:
+        try:
+            user_df = pd.read_csv(io.BytesIO(uploaded.getvalue()))
+            missing = [c for c in DEFAULT_SCREENING if c not in user_df.columns]
+            if missing:
+                st.error(f"Your CSV is missing required columns: {', '.join(missing)}. Download the template above for the exact format.")
+            else:
+                pick = st.selectbox("Company from your CSV", user_df["company"]) if "company" in user_df.columns and len(user_df) > 1 else None
+                user_row = (user_df[user_df["company"] == pick].iloc[0] if pick else user_df.iloc[0]).to_dict()
+                company_defaults = to_company_payload(user_row)
+                screening = {key: user_row.get(key, value) for key, value in DEFAULT_SCREENING.items()}
+                st.success(f"Loaded {company_defaults['company']} from your CSV.")
+        except Exception as exc:
+            st.error(f"Could not read that CSV: {exc}")
 
 section_title("Company Information", "Review and edit the company profile before running the scorecard.")
-row = render_company_form(company_defaults, screening, expand_assumptions=source == "Manual Entry")
-
-section_title("AI Summary", "Parser output remains editable above and can later be replaced with OpenAI extraction.")
-render_ai_summary(parsed_startup, row)
+row = render_company_form(company_defaults, screening, expand_assumptions=source != "Existing Dataset")
 
 section_title("Scorecard Result", "The score_startup engine runs unchanged on the intake profile.")
 result = score_startup(row)
@@ -294,7 +269,8 @@ with c3:
 
 section_title("Continue the Workflow", "Carry this company into valuation, cap table, and memo without re-entering data.")
 if st.button("Use This Deal →", type="primary"):
-    set_active_deal(row, parsed_startup)
+    set_active_deal(row)
+    notify_usage(f"Screening run: {row['company']} ({row['sector']}, {row['stage']})")
     st.toast(f"Active deal set: {row['company']}", icon="🎯")
 
 active_row = get_active_deal_row()

@@ -14,7 +14,7 @@ from models.scoring import score_startup
 from models.valuation import SCORECARD_FACTORS, comparable_multiples, scorecard_method, vc_method
 from state import deal_widget_key, get_active_deal_row
 
-st.set_page_config(page_title="Valuation | VC-Lab", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="Valuation | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
 

@@ -13,7 +13,7 @@ from components.navigation import nav_link, sidebar
 from components.theme import apply_theme, page_header, section_title
 from models.scoring import score_startup
 
-st.set_page_config(page_title="Dashboard | VC-Lab", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="Dashboard | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
 
@@ -32,14 +32,14 @@ df_scored = df.assign(vc_score=scores, recommendation=recommendations)
 avg_score = df_scored["vc_score"].mean()
 recommended = int((df_scored["vc_score"] >= 75).sum())
 
-page_header("Dashboard", "Professional Venture Capital Workspace")
+page_header("Dashboard", "Your due diligence simulator workspace. Everything below is computed live from the sample dataset — screen a company, value it, model dilution, and generate a memo.")
 
 cols = st.columns(4)
 dashboard_metrics = [
-    ("Recent Analyses", f"{len(df_scored)}", "Companies screened in the current dataset.", "database"),
-    ("Average VC Score", f"{avg_score:.0f}", "Portfolio-wide scorecard benchmark.", "gauge"),
-    ("Investment Memos Generated", "12", "Memo workflows prepared for review.", "file-text"),
-    ("Portfolio IRR", "31%", "Illustrative expected return snapshot.", "line-chart"),
+    ("Sample Companies", f"{len(df_scored)}", "Synthetic startup profiles loaded in the dataset.", "database"),
+    ("Average VC Score", f"{avg_score:.0f}", "Scorecard benchmark across the dataset.", "gauge"),
+    ("Clear the Proceed Bar", f"{recommended}", "Companies scoring 75+ on the weighted scorecard.", "target"),
+    ("Sectors Covered", f"{df_scored['sector'].nunique()}", "Industries represented in the sample set.", "bar-chart"),
 ]
 for col, item in zip(cols, dashboard_metrics):
     with col:

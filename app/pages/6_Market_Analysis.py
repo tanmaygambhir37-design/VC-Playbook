@@ -14,7 +14,7 @@ from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
 from models.scoring import score_startup
 
-st.set_page_config(page_title="Market Analysis | VC-Lab", page_icon="🚀", layout="wide")
+st.set_page_config(page_title="Market Analysis | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
 
