@@ -37,6 +37,7 @@ def news_line(item: dict) -> str:
 def deal_card_html(deal: dict) -> str:
     return f"""
         <a class="vcl-deal-card" style="display:block; text-decoration:none;" href="{html.escape(deal['link'])}" target="_blank">
+            <div class="vcl-news-source">{html.escape(deal['source'])}</div>
             <div class="vcl-deal-name">{html.escape(deal['company'])}
                 <span class="vcl-deal-sector">{html.escape(deal['sector'])}</span></div>
             <div class="vcl-deal-amount">{html.escape(deal['amount'])}</div>
@@ -127,20 +128,23 @@ if picks.get("deals"):
                 st.markdown(weekly_deal_html(deal), unsafe_allow_html=True)
     simulator_invite(weekly[0]["company"], "weekly_sim")
 
-if picks.get("videos") or picks.get("articles"):
-    section_title("Spotlight of the Week", "One video and one read, refreshed weekly.")
-    s1, s2 = st.columns(2)
-    with s1:
-        st.markdown('<div class="vcl-card-kicker">Video of the Week</div>', unsafe_allow_html=True)
-        for video in picks.get("videos", []):
-            st.markdown(f"**[{video['title']}]({video['url']})**  \n{video.get('why', '')}")
-        if not picks.get("videos"):
-            st.caption("Coming this week.")
-    with s2:
-        st.markdown('<div class="vcl-card-kicker">Article of the Week</div>', unsafe_allow_html=True)
-        for article in picks.get("articles", []):
-            st.markdown(f"**[{article['title']}]({article['url']})**  \n{article.get('why', '')}")
-        if not picks.get("articles"):
-            st.caption("Coming this week.")
+section_title("Spotlight of the Week", "One video and one read, hand-picked every week.")
+
+
+def spotlight_row(kicker: str, entries: list[dict]) -> None:
+    items = "".join(
+        f'<div class="vcl-card-title"><a href="{html.escape(e["url"])}" target="_blank" '
+        f'style="color:#1E3A5F; text-decoration:none;">{html.escape(e["title"])}</a></div>'
+        f'<div class="vcl-card-body">{html.escape(e.get("why", ""))}</div>'
+        for e in entries
+    ) or '<div class="vcl-card-body">Coming this week.</div>'
+    st.markdown(
+        f'<div class="vcl-card" style="margin-bottom:14px;"><div class="vcl-card-kicker">{kicker}</div>{items}</div>',
+        unsafe_allow_html=True,
+    )
+
+
+spotlight_row("🎥 Video of the Week", picks.get("videos", []))
+spotlight_row("📄 Article of the Week", picks.get("articles", []))
 
 footer()

@@ -26,6 +26,7 @@ def sidebar() -> None:
             """,
             unsafe_allow_html=True,
         )
+        nav_link("app.py", label="Home", icon=":material/home:")
         nav_link("pages/0_Dashboard.py", label="Dashboard", icon=":material/dashboard:")
 
         st.markdown('<div class="vcl-sidebar-label">News</div>', unsafe_allow_html=True)

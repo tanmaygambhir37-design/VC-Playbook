@@ -8,7 +8,7 @@ APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
-from components.cards import metric_card, text_card, workflow_step
+from components.cards import text_card, workflow_step
 from components.navigation import nav_link, sidebar
 from components.theme import apply_theme, page_header, section_title
 from models.scoring import score_startup
@@ -29,21 +29,9 @@ df = load_data()
 scores = df.apply(lambda r: score_startup(r.to_dict()).total, axis=1)
 recommendations = df.apply(lambda r: score_startup(r.to_dict()).recommendation, axis=1)
 df_scored = df.assign(vc_score=scores, recommendation=recommendations)
-avg_score = df_scored["vc_score"].mean()
 recommended = int((df_scored["vc_score"] >= 75).sum())
 
-page_header("Dashboard", "Your due diligence simulator workspace. Everything below is computed live from the sample dataset — screen a company, value it, model dilution, and generate a memo.")
-
-cols = st.columns(4)
-dashboard_metrics = [
-    ("Sample Companies", f"{len(df_scored)}", "Synthetic startup profiles loaded in the dataset.", "database"),
-    ("Average VC Score", f"{avg_score:.0f}", "Scorecard benchmark across the dataset.", "gauge"),
-    ("Clear the Proceed Bar", f"{recommended}", "Companies scoring 75+ on the weighted scorecard.", "target"),
-    ("Sectors Covered", f"{df_scored['sector'].nunique()}", "Industries represented in the sample set.", "bar-chart"),
-]
-for col, item in zip(cols, dashboard_metrics):
-    with col:
-        metric_card(*item)
+page_header("Dashboard", "Your due diligence simulator workspace — screen a company, value it, model dilution, and generate a memo. Practice on the sample dataset or bring your own numbers.")
 
 section_title("Workflow", "Move from first-pass screen to investment committee memo in one connected flow.")
 workflow = [
