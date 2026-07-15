@@ -1,6 +1,6 @@
 {
-  "_how_to_edit": "Update this file weekly (GitHub web editor works). 'deals': the funding rounds you want to highlight, in your own words. 'category' is one of: Venture, Private Equity, Funds, People. 'videos'/'articles': your picks of the week. Save = site auto-redeploys.",
-  "week_of": "July 14, 2026",
+  "_how_to_edit": "Update this file weekly (GitHub web editor works). 'week_of' must be an ISO date (YYYY-MM-DD) — if it is more than 14 days old the curated sections hide automatically. 'deals': funding rounds in your own words; 'category' is one of: Venture, Private Equity, Funds, People. 'videos'/'articles': your picks of the week. Save = site auto-redeploys.",
+  "week_of": "2026-07-14",
   "deals": [
     {
       "category": "Venture",

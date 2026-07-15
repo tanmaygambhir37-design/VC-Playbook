@@ -82,6 +82,8 @@ if deals:
         st.switch_page("pages/1_Startup_Screening.py")
 
 picks = load_weekly_picks()
+if picks.get("stale"):
+    picks = {**picks, "deals": [], "videos": [], "articles": []}
 if picks.get("deals"):
     section_title("This Week's Picks", f"Hand-picked deals worth studying · Week of {picks.get('week_of', '')}")
     grid([weekly_deal_card(d) for d in picks["deals"]], per_row=2)

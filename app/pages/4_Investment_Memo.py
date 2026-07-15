@@ -84,7 +84,7 @@ def build_next_steps(result, risk_bullets: list) -> list:
 
 if st.button("Generate Investment Memo", type="primary"):
     result = score_startup(row)
-    val = comparable_multiples(row["revenue_usd_k"] / 1000, row["sector_median_arr_multiple"])
+    val = comparable_multiples(row.get("revenue_usd_k", 0) / 1000, row.get("sector_median_arr_multiple", 8))
     ltv_cac = round(row["ltv_usd"] / row["cac_usd"], 2) if row["cac_usd"] else 0
 
     narrative_sections = [

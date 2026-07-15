@@ -11,8 +11,12 @@ from components.cards import deal_banner, metric_card, text_card
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
 from models.scoring import score_startup
+from models.returns import irr_from_moic
 from models.valuation import SCORECARD_FACTORS, comparable_multiples, scorecard_method, vc_method
 from state import deal_widget_key, get_active_deal_row
+
+# Typical share of ownership retained through future dilution, by entry stage
+STAGE_RETENTION = {"Pre-Seed": 40, "Seed": 50, "Series A": 65, "Series B": 80, "Growth": 85}
 
 st.set_page_config(page_title="Valuation | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
@@ -24,10 +28,11 @@ active_deal = get_active_deal_row()
 if active_deal:
     deal_score = score_startup(active_deal)
     deal_banner(active_deal["company"], active_deal["sector"], active_deal["stage"], deal_score.total, deal_score.recommendation)
-    default_arr = round(min(max(active_deal["revenue_usd_k"] / 1000, 0.1), 50.0), 2)
-    default_multiple = int(round(min(max(active_deal["sector_median_arr_multiple"], 2), 25)))
+    default_arr = round(min(max(active_deal.get("revenue_usd_k", 2000) / 1000, 0.1), 50.0), 2)
+    default_multiple = int(round(min(max(active_deal.get("sector_median_arr_multiple", 8), 2), 25)))
+    default_retention = STAGE_RETENTION.get(active_deal.get("stage"), 60)
 else:
-    default_arr, default_multiple = 2.0, 8
+    default_arr, default_multiple, default_retention = 2.0, 8, 60
 
 tab1, tab2, tab3 = st.tabs(["VC Method", "Comparable Multiples", "Scorecard Method"])
 
@@ -38,11 +43,17 @@ with tab1:
     target_multiple = c2.slider("Required Return Multiple (x)", 2, 30, 10)
     investment = c3.slider("Investment Amount ($M)", 0.1, 20.0, 2.0, step=0.1)
     retention = c4.slider(
-        "Retention Through Future Rounds (%)", 30, 100, 60, step=5,
-        help="Share of today's ownership the investor still holds at exit after future dilution. Seed investors typically retain 50-70%.",
+        "Retention Through Future Rounds (%)", 30, 100, default_retention, step=5,
+        help="Share of today's ownership the investor still holds at exit after future dilution. Typical: Pre-Seed ~40%, Seed ~50%, Series A ~65%, Series B ~80%.",
     )
 
     res = vc_method(exit_value, target_multiple, investment, retention / 100)
+    hold_years = st.slider("Holding Period (years)", 3, 12, 7)
+    implied_irr = irr_from_moic(target_multiple, hold_years)
+    st.caption(
+        f"Sanity check: ${investment}M in at ${res.pre_money}M pre, exiting at ${exit_value}M "
+        f"in {hold_years} years returns your {target_multiple}x target — a {implied_irr}% IRR."
+    )
     m1, m2, m3 = st.columns(3)
     with m1:
         metric_card("Post-Money Valuation", f"${res.post_money}M", "Implied current post-money valuation.", "circle-dollar")

@@ -8,6 +8,8 @@ week and the site redeploys itself.
 import json
 import os
 import re
+from concurrent.futures import ThreadPoolExecutor
+from datetime import date, datetime
 
 import feedparser
 import requests
@@ -68,8 +70,6 @@ def fetch_feed(source: str, url: str) -> list[dict]:
 def fetch_all_feeds() -> tuple[list[list[dict]], list[str]]:
     """Returns (list of per-source item lists, list of unavailable source names).
     Feeds are fetched in parallel so a slow source doesn't block the page."""
-    from concurrent.futures import ThreadPoolExecutor
-
     with ThreadPoolExecutor(max_workers=len(FEEDS)) as pool:
         results = list(pool.map(lambda kv: (kv[0], fetch_feed(*kv)), FEEDS.items()))
     groups = [items for _, items in results if items]
@@ -128,8 +128,33 @@ def extract_deals(items: list[dict]) -> list[dict]:
 
 
 def load_weekly_picks() -> dict:
+    """Weekly picks, with a staleness guard: if week_of (ISO date) is more
+    than 14 days old, the curated sections hide so the site never looks
+    abandoned. `stale` is set on the returned dict."""
+    empty = {"week_of": "", "deals": [], "videos": [], "articles": [], "stale": True}
     try:
         with open(WEEKLY_PICKS_PATH) as fh:
-            return json.load(fh)
+            picks = json.load(fh)
     except Exception:
-        return {"week_of": "", "deals": [], "videos": [], "articles": []}
+        return empty
+    try:
+        week = datetime.strptime(picks.get("week_of", ""), "%Y-%m-%d").date()
+        picks["stale"] = (date.today() - week).days > 14
+    except ValueError:
+        picks["stale"] = False  # unparseable date -> show rather than hide
+    return picks
+
+
+SUBSTACK_FEED = "https://tanmaydiary.substack.com/feed"
+
+
+@st.cache_data(ttl=3600, show_spinner=False)
+def latest_substack_post() -> dict | None:
+    """Newest post from the author's Substack, or None if unreachable."""
+    try:
+        response = requests.get(SUBSTACK_FEED, headers={"User-Agent": USER_AGENT}, timeout=6)
+        parsed = feedparser.parse(response.content)
+        entry = parsed.entries[0]
+        return {"title": entry.get("title", ""), "link": entry.get("link", "#")}
+    except Exception:
+        return None

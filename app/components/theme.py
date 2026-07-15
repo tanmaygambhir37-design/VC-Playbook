@@ -5,7 +5,7 @@ APP_NAME = "VC Playbook"
 SUBTITLE = "Learn venture capital through real deals."
 TAGLINE = "Read the news. Think like an investor."
 
-GITHUB_URL = "https://github.com/tanmaygambhir37-design/VC-Lab"
+GITHUB_URL = "https://github.com/tanmaygambhir37-design/VC-Playbook"
 LINKEDIN_URL = "https://www.linkedin.com/in/tanmay-g-5432ba203/"
 SUBSTACK_URL = "https://substack.com/@tanmaydiary/posts"
 

@@ -1,6 +1,6 @@
 """
 Generates data/startups.csv — a realistic synthetic dataset of 28 startups
-spanning multiple sectors, used across every VC-Lab module.
+spanning multiple sectors, used across every VC Playbook module.
 
 Run once with: python data/generate_data.py
 """

@@ -11,6 +11,8 @@ VC Playbook is two things in one Streamlit app:
 
 Built for VC-curious students, analysts, and juniors — get your industry news in one place, and practice real diligence on the sample dataset or your own numbers (manual entry or CSV upload).
 
+**Where this fits:** VC Playbook is not a replacement for professional tooling like Affinity, Harmonic, or Tactyc — those manage real deal flow with real data. This is a learning tool that shows the *shape* of the work: what a scorecard, a valuation triangulation, a dilution model, and an IC memo actually look like, with every formula open-source and every assumption exposed.
+
 ---
 
 ## Screenshots
@@ -29,10 +31,12 @@ Built for VC-curious students, analysts, and juniors — get your industry news 
 ---
 ## Cap Table & Returns
 ![Cap Table](assets/screenshots/captable.png)
-![Portfolio Returns](assets/screenshots/portfolio.png)
 ---
 ## Investment Memo
 ![Investment Memo](assets/screenshots/memo.png)
+---
+## VC Pulse — Live News & Deal Radar
+![VC Pulse](assets/screenshots/portfolio.png)
 
 ---
 
@@ -77,30 +81,35 @@ A beginner glossary explains every term (ARR, LTV, CAC, MOIC, IRR, dilution…) 
 ## Repository Structure
 
 ```
-VC-Lab/
+VC-Playbook/
 ├── README.md
 ├── requirements.txt
+├── runtime.txt                         # Pins Python for Streamlit Cloud
 ├── app/
-│   ├── app.py                          # Landing page
+│   ├── app.py                          # Landing page (news + deal radar)
+│   ├── services/                       # News aggregation, memo drafting, PDF
 │   └── pages/
 │       ├── 0_Dashboard.py
 │       ├── 1_Startup_Screening.py
 │       ├── 2_Valuation.py
 │       ├── 3_Cap_Table_Returns.py
-│       ├── 5_Investment_Memo.py
-│       ├── 6_Market_Analysis.py
-│       ├── 7_VC_Pulse.py               # News hub
-│       └── 8_About_VC_Lab.py
+│       ├── 4_Investment_Memo.py
+│       ├── 5_Market_Analysis.py
+│       ├── 6_VC_Pulse.py               # News hub
+│       └── 7_About.py
 ├── data/
 │   ├── startups.csv                    # Synthetic dataset (28 companies)
+│   ├── weekly_picks.json               # Hand-curated deals & spotlight (edit weekly)
 │   └── generate_data.py                # Regenerate the dataset
 ├── models/
 │   ├── scoring.py                      # VC scorecard model
 │   ├── valuation.py                    # VC Method / Comps / Scorecard
 │   ├── cap_table.py                    # Round-by-round dilution engine
 │   └── returns.py                      # MOIC / IRR / sensitivity
+├── tests/
+│   └── test_models.py                  # Pytest suite for the model layer
 ├── reports/
-│   └── VC-Lab-Whitepaper.md            # Methodology writeup
+│   └── VC-Playbook-Whitepaper.md       # Methodology writeup
 └── assets/
     └── screenshots/
 ```
@@ -110,8 +119,8 @@ VC-Lab/
 ## How to Run
 
 ```bash
-git clone https://github.com/tanmaygambhir37-design/VC-Lab.git
-cd VC-Lab
+git clone https://github.com/tanmaygambhir37-design/VC-Playbook.git
+cd VC-Playbook
 pip install -r requirements.txt
 streamlit run app/app.py
 ```
@@ -128,9 +137,11 @@ Optional: to get an email whenever someone runs a screening, create a free [Form
 
 ## Methodology
 
-The scoring, valuation, and returns logic isn't arbitrary — it's documented in [`reports/VC-Lab-Whitepaper.md`](reports/VC-Lab-Whitepaper.md), covering:
+The scoring, valuation, and returns logic isn't arbitrary — it's documented in [`reports/VC-Playbook-Whitepaper.md`](reports/VC-Playbook-Whitepaper.md), covering:
 
-- Why the scorecard weights unit economics at 30%
+- Why the scorecard weights unit economics at 30% (and why the weights are a labeled judgment call, per Bill Payne's factor structure)
+- Growth benchmarks anchored to YC guidance; burn multiple per the Sacks definition
+- The VC Method's future-dilution (retention ratio) adjustment
 - How the three valuation methods complement each other
 - How ESOP top-ups are modeled as pre-money dilution events
 - Why IRR is derived from MOIC rather than a full cash-flow solver

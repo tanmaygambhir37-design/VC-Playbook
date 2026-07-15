@@ -44,9 +44,11 @@ def score_unit_economics(cac: float, ltv: float) -> float:
 
 
 def score_growth(mom_growth_pct: float, stage: str) -> float:
-    # Expectations shift by stage: pre-seed noise is normal, Series A needs consistency
-    benchmarks = {"Pre-Seed": 15, "Seed": 12, "Series A": 8}
-    target = benchmarks.get(stage, 10)
+    # Benchmarks anchored to YC guidance (~5-7%/week exceptional, 1-2%/week
+    # good => roughly 5-10% MoM for a solid early-stage company). Hitting the
+    # benchmark scores 50; each point above/below moves the score by 3.
+    benchmarks = {"Pre-Seed": 10, "Seed": 8, "Series A": 6}
+    target = benchmarks.get(stage, 8)
     return _clip(50 + (mom_growth_pct - target) * 3)
 
 
@@ -62,13 +64,18 @@ def score_team(founder_experience_score: int, team_size: int) -> float:
 
 def score_efficiency(monthly_burn_usd_k: float, runway_months: float, revenue_usd_k: float,
                      mom_growth_pct: float = 10.0) -> float:
+    runway_score = _clip(runway_months * 5)
+
+    # Pre-revenue: a burn multiple is meaningless, so score on runway alone.
+    if revenue_usd_k < 1:
+        return runway_score
+
     # Burn multiple (Sacks): net burn / net new ARR.
     # Net new ARR per month ~= current ARR * MoM growth rate.
     net_new_arr_usd_k = revenue_usd_k * (mom_growth_pct / 100)
     burn_multiple = monthly_burn_usd_k / max(net_new_arr_usd_k, 1)
     # Sacks bands: <1x amazing, 1-2x good, 2-3x suboptimal, >3x concerning
     burn_score = _clip(100 - burn_multiple * 25)
-    runway_score = _clip(runway_months * 5)
     return _clip((burn_score + runway_score) / 2)
 
 

@@ -18,7 +18,7 @@ from components.theme import (
     landing_header,
     section_title,
 )
-from services.news import extract_deals, fetch_all_feeds, interleave, load_weekly_picks
+from services.news import extract_deals, fetch_all_feeds, interleave, latest_substack_post, load_weekly_picks
 
 st.set_page_config(page_title="VC Playbook", page_icon="📗", layout="wide", initial_sidebar_state="collapsed")
 apply_theme()
@@ -118,6 +118,8 @@ if deals:
     simulator_invite(show[0]["company"], "radar_sim")
 
 picks = load_weekly_picks()
+if picks.get("stale"):
+    picks = {**picks, "deals": [], "videos": [], "articles": []}
 if picks.get("deals"):
     section_title("This Week's Picks", f"Hand-picked deals worth studying · Week of {picks.get('week_of', '')}")
     weekly = picks["deals"]
@@ -146,5 +148,9 @@ def spotlight_row(kicker: str, entries: list[dict]) -> None:
 
 spotlight_row("🎥 Video of the Week", picks.get("videos", []))
 spotlight_row("📄 Article of the Week", picks.get("articles", []))
+
+latest_post = latest_substack_post()
+if latest_post:
+    spotlight_row("✍️ Latest from my Substack", [{"title": latest_post["title"], "url": latest_post["link"], "why": ""}])
 
 footer()
