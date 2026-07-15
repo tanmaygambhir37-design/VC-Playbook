@@ -30,21 +30,34 @@ if active_deal:
     deal_banner(active_deal["company"], active_deal["sector"], active_deal["stage"], deal_score.total, deal_score.recommendation)
     default_arr = round(min(max(active_deal.get("revenue_usd_k", 2000) / 1000, 0.1), 50.0), 2)
     default_multiple = int(round(min(max(active_deal.get("sector_median_arr_multiple", 8), 2), 25)))
-    default_retention = STAGE_RETENTION.get(active_deal.get("stage"), 60)
+    default_stage = active_deal.get("stage") if active_deal.get("stage") in STAGE_RETENTION else "Seed"
 else:
-    default_arr, default_multiple, default_retention = 2.0, 8, 60
+    default_arr, default_multiple, default_stage = 2.0, 8, "Seed"
 
 tab1, tab2, tab3 = st.tabs(["VC Method", "Comparable Multiples", "Scorecard Method"])
 
 with tab1:
     section_title("VC Method", "Back-solves today's valuation from a target exit outcome and required return.")
-    c1, c2, c3, c4 = st.columns(4)
+    stage_options = list(STAGE_RETENTION.keys())
+    c0, c1, c2, c3 = st.columns(4)
+    entry_stage = c0.selectbox(
+        "Entry Stage",
+        stage_options,
+        index=stage_options.index(default_stage),
+        help="Sets a stage-appropriate default for retention through future dilution.",
+    )
     exit_value = c1.slider("Projected Exit Value ($M)", 10, 2000, 300, step=10)
     target_multiple = c2.slider("Required Return Multiple (x)", 2, 30, 10)
     investment = c3.slider("Investment Amount ($M)", 0.1, 20.0, 2.0, step=0.1)
-    retention = c4.slider(
-        "Retention Through Future Rounds (%)", 30, 100, default_retention, step=5,
-        help="Share of today's ownership the investor still holds at exit after future dilution. Typical: Pre-Seed ~40%, Seed ~50%, Series A ~65%, Series B ~80%.",
+    stage_default_retention = STAGE_RETENTION[entry_stage]
+    retention = st.slider(
+        "Retention Through Future Rounds (%)", 30, 100, stage_default_retention, step=5,
+        key=f"vc_method_retention_{entry_stage}",
+        help=(
+            "Share of today's ownership the investor still holds at exit after future dilution. "
+            f"Default for {entry_stage} is {stage_default_retention}%. "
+            "Typical: Pre-Seed ~40%, Seed ~50%, Series A ~65%, Series B ~80%, Growth ~85%."
+        ),
     )
 
     res = vc_method(exit_value, target_multiple, investment, retention / 100)
