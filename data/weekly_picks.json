@@ -43,6 +43,12 @@
       "note": "First fund, focused on middle-market services, industrials, and consumer."
     }
   ],
-  "videos": [],
+  "videos": [
+    {
+      "title": "Video of the Week",
+      "url": "https://www.youtube.com/watch?v=zOmdvfkE-iY",
+      "why": ""
+    }
+  ],
   "articles": []
 }
