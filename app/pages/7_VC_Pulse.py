@@ -1,15 +1,9 @@
-"""VC Pulse — live venture capital news wall + curated learning resources.
-
-News comes from public RSS feeds (no scraping, no accounts). Curated
-YouTube / Substack sections are plain lists below — edit them to add links.
-"""
+"""VC Pulse — full news wall, deal radar, and weekly picks."""
 
 import html
 import os
 import sys
 
-import feedparser
-import requests
 import streamlit as st
 
 APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -19,6 +13,7 @@ sys.path.append(PROJECT_ROOT)
 from components.footer import footer
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
+from services.news import extract_deals, fetch_all_feeds, interleave, load_weekly_picks
 
 st.set_page_config(page_title="VC Pulse | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
@@ -26,41 +21,9 @@ sidebar()
 
 page_header("VC Pulse", "The latest venture capital news, deals, and analysis — refreshed automatically.", "News")
 
-FEEDS = {
-    "TechCrunch Venture": "https://techcrunch.com/category/venture/feed/",
-    "Crunchbase News": "https://news.crunchbase.com/feed",
-    "Axios": "https://api.axios.com/feed/",
-    "Sifted": "https://sifted.eu/feed",
-    "EU-Startups": "https://www.eu-startups.com/feed/",
-}
-
-USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
-
-# Add your favorite resources here: ("Title", "https://link", "one-line why")
-CURATED_YOUTUBE: list[tuple[str, str, str]] = []
-CURATED_SUBSTACK: list[tuple[str, str, str]] = []
-
-
-@st.cache_data(ttl=1800, show_spinner=False)
-def fetch_feed(source: str, url: str) -> list[dict]:
-    try:
-        response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=10)
-        parsed = feedparser.parse(response.content)
-        return [
-            {
-                "source": source,
-                "title": entry.get("title", "Untitled"),
-                "link": entry.get("link", "#"),
-                "published": entry.get("published", entry.get("updated", "")),
-            }
-            for entry in parsed.entries[:8]
-        ]
-    except Exception:
-        return []
-
 
 def news_card(item: dict) -> str:
-    published = item["published"][:22] if item["published"] else ""
+    published = item["published"][:22] if item.get("published") else ""
     return f"""
         <a class="vcl-news-card" href="{html.escape(item['link'])}" target="_blank">
             <div class="vcl-news-source">{html.escape(item['source'])}</div>
@@ -70,58 +33,87 @@ def news_card(item: dict) -> str:
     """
 
 
-with st.spinner("Pulling the latest VC headlines..."):
-    all_items = []
-    dead_sources = []
-    for source, url in FEEDS.items():
-        items = fetch_feed(source, url)
-        if items:
-            all_items.append(items)
-        else:
-            dead_sources.append(source)
+def deal_card(deal: dict) -> str:
+    return f"""
+        <a class="vcl-deal-card" style="display:block; text-decoration:none;" href="{html.escape(deal['link'])}" target="_blank">
+            <div class="vcl-deal-name">{html.escape(deal['company'])}
+                <span class="vcl-deal-sector">{html.escape(deal['sector'])}</span></div>
+            <div class="vcl-deal-amount">{html.escape(deal['amount'])}</div>
+            <div class="vcl-deal-body">{html.escape(deal['title'])}</div>
+        </a>
+    """
 
-if not all_items:
+
+def weekly_deal_card(deal: dict) -> str:
+    lead = f"<strong>Lead:</strong> {html.escape(deal['lead'])}<br>" if deal.get("lead") else ""
+    investors = f"<strong>Investors:</strong> {html.escape(deal['investors'])}<br>" if deal.get("investors") else ""
+    return f"""
+        <div class="vcl-deal-card">
+            <div class="vcl-news-source">{html.escape(deal.get('category', 'Venture'))}</div>
+            <div class="vcl-deal-name">{html.escape(deal['company'])}
+                <span class="vcl-deal-sector">{html.escape(deal.get('sector', ''))}</span></div>
+            <div class="vcl-deal-amount">{html.escape(deal.get('amount', ''))} <span style="font-size:0.8rem; color:#6B7280; font-weight:600;">{html.escape(deal.get('round', ''))}</span></div>
+            <div class="vcl-deal-body">{lead}{investors}{html.escape(deal.get('note', ''))}</div>
+        </div>
+    """
+
+
+def grid(cards: list[str], per_row: int = 3) -> None:
+    for row_start in range(0, len(cards), per_row):
+        cols = st.columns(per_row)
+        for col, card in zip(cols, cards[row_start:row_start + per_row]):
+            with col:
+                st.markdown(card, unsafe_allow_html=True)
+
+
+with st.spinner("Pulling the latest VC headlines..."):
+    groups, dead_sources = fetch_all_feeds()
+
+all_items = [item for group in groups for item in group]
+deals = extract_deals(all_items)
+
+if deals:
+    section_title("Deal Radar", "Funding rounds detected in today's news, with sector tags.")
+    grid([deal_card(d) for d in deals[:9]])
+    c1, c2 = st.columns([2.6, 1.4])
+    c1.caption(f"Interested in analyzing {deals[0]['company']}? Try your own due diligence in the simulator.")
+    if c2.button("Try the simulator →", use_container_width=True):
+        st.session_state["prefill_company"] = deals[0]["company"]
+        st.switch_page("pages/1_Startup_Screening.py")
+
+picks = load_weekly_picks()
+if picks.get("deals"):
+    section_title("This Week's Picks", f"Hand-picked deals worth studying · Week of {picks.get('week_of', '')}")
+    grid([weekly_deal_card(d) for d in picks["deals"]], per_row=2)
+
+section_title("All Headlines", "Everything from the wire, by source.")
+if not groups:
     st.warning("No feeds could be reached right now — try refreshing in a minute.")
 else:
-    sources = [items[0]["source"] for items in all_items]
+    sources = [g[0]["source"] for g in groups]
     tabs = st.tabs(["All"] + sources)
-
     with tabs[0]:
-        # Interleave sources so the top of the wall is mixed, not one outlet
-        mixed = [item for group in zip(*[iter(i) for i in all_items]) for item in group] if len(all_items) > 1 else all_items[0]
-        mixed = mixed or [item for items in all_items for item in items]
-        for row_start in range(0, min(len(mixed), 18), 3):
-            cols = st.columns(3)
-            for col, item in zip(cols, mixed[row_start:row_start + 3]):
-                with col:
-                    st.markdown(news_card(item), unsafe_allow_html=True)
-
-    for tab, items in zip(tabs[1:], all_items):
+        grid([news_card(i) for i in interleave(groups)[:18]])
+    for tab, group in zip(tabs[1:], groups):
         with tab:
-            for row_start in range(0, len(items), 3):
-                cols = st.columns(3)
-                for col, item in zip(cols, items[row_start:row_start + 3]):
-                    with col:
-                        st.markdown(news_card(item), unsafe_allow_html=True)
+            grid([news_card(i) for i in group])
 
 if dead_sources:
     st.caption(f"Currently unavailable: {', '.join(dead_sources)}")
 
-section_title("Watch & Read", "Hand-picked videos and articles for learning venture capital.")
-y1, y2 = st.columns(2)
-with y1:
-    st.markdown('<div class="vcl-card-kicker">YouTube</div>', unsafe_allow_html=True)
-    if CURATED_YOUTUBE:
-        for title, link, why in CURATED_YOUTUBE:
-            st.markdown(f"- [{title}]({link}) — {why}")
-    else:
-        st.caption("Curated videos coming soon.")
-with y2:
-    st.markdown('<div class="vcl-card-kicker">Substack & Articles</div>', unsafe_allow_html=True)
-    if CURATED_SUBSTACK:
-        for title, link, why in CURATED_SUBSTACK:
-            st.markdown(f"- [{title}]({link}) — {why}")
-    else:
-        st.caption("Curated articles coming soon.")
+section_title("Spotlight of the Week", "One video and one read, refreshed weekly.")
+s1, s2 = st.columns(2)
+with s1:
+    st.markdown('<div class="vcl-card-kicker">Video of the Week</div>', unsafe_allow_html=True)
+    for video in picks.get("videos", []):
+        st.markdown(f"**[{video['title']}]({video['url']})**  \n{video.get('why', '')}")
+    if not picks.get("videos"):
+        st.caption("Coming this week.")
+with s2:
+    st.markdown('<div class="vcl-card-kicker">Article of the Week</div>', unsafe_allow_html=True)
+    for article in picks.get("articles", []):
+        st.markdown(f"**[{article['title']}]({article['url']})**  \n{article.get('why', '')}")
+    if not picks.get("articles"):
+        st.caption("Coming this week.")
 
 footer()

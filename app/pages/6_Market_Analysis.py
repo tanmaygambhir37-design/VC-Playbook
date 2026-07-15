@@ -55,11 +55,11 @@ fig = px.bar(
     color_continuous_scale=["#EF4444", "#F59E0B", "#10B981"],
 )
 fig.update_layout(
-    paper_bgcolor="#0B0F17",
-    plot_bgcolor="#0B0F17",
-    font=dict(color="#F8FAFC"),
-    xaxis=dict(gridcolor="#1F2937"),
-    yaxis=dict(gridcolor="#1F2937", title="Average VC Score"),
+    paper_bgcolor="#FFFFFF",
+    plot_bgcolor="#FFFFFF",
+    font=dict(color="#111827"),
+    xaxis=dict(gridcolor="#E5DFD3"),
+    yaxis=dict(gridcolor="#E5DFD3", title="Average VC Score"),
     coloraxis_showscale=False,
 )
 st.plotly_chart(fig, use_container_width=True)
@@ -75,10 +75,10 @@ with right:
     competition_counts = df_scored["competition"].value_counts().rename_axis("competition").reset_index(name="companies")
     fig2 = px.pie(competition_counts, names="competition", values="companies", hole=0.55)
     fig2.update_layout(
-        paper_bgcolor="#0B0F17",
-        plot_bgcolor="#0B0F17",
-        font=dict(color="#F8FAFC"),
-        legend=dict(bgcolor="#0B0F17"),
+        paper_bgcolor="#FFFFFF",
+        plot_bgcolor="#FFFFFF",
+        font=dict(color="#111827"),
+        legend=dict(bgcolor="#FFFFFF"),
         margin=dict(t=10, b=10),
     )
     st.plotly_chart(fig2, use_container_width=True)

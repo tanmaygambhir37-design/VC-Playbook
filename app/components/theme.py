@@ -2,8 +2,8 @@ import streamlit as st
 
 
 APP_NAME = "VC Playbook"
-SUBTITLE = "VC News Hub & Due Diligence Simulator"
-TAGLINE = "Learn venture capital by reading the news and running the numbers."
+SUBTITLE = "Learn venture capital through real deals."
+TAGLINE = "Read the news. Think like an investor."
 
 GITHUB_URL = "https://github.com/tanmaygambhir37-design/VC-Lab"
 LINKEDIN_URL = "https://www.linkedin.com/in/tanmay-g-5432ba203/"
@@ -17,16 +17,17 @@ def apply_theme() -> None:
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
             :root {
-                --vcl-bg: #0B0F17;
-                --vcl-card: #111827;
-                --vcl-card-soft: #0F1623;
-                --vcl-border: #1F2937;
-                --vcl-text: #F8FAFC;
-                --vcl-muted: #94A3B8;
-                --vcl-blue: #2563EB;
-                --vcl-success: #10B981;
-                --vcl-warning: #F59E0B;
-                --vcl-danger: #EF4444;
+                --vcl-bg: #F8F5EF;
+                --vcl-card: #FFFFFF;
+                --vcl-card-soft: #FDFBF7;
+                --vcl-border: #E5DFD3;
+                --vcl-text: #111827;
+                --vcl-muted: #6B7280;
+                --vcl-blue: #1E3A5F;
+                --vcl-gold: #C89B3C;
+                --vcl-success: #0F766E;
+                --vcl-warning: #B45309;
+                --vcl-danger: #B91C1C;
             }
 
             html, body, [class*="css"], .stApp {
@@ -40,8 +41,38 @@ def apply_theme() -> None:
             }
 
             [data-testid="stSidebar"] {
-                background: #090D14;
-                border-right: 1px solid var(--vcl-border);
+                background: #111827;
+                border-right: 1px solid #111827;
+            }
+
+            [data-testid="stSidebar"] * {
+                color: #F8F5EF;
+            }
+
+            [data-testid="stSidebar"] div[data-testid="stPageLink"] a {
+                background: transparent;
+                border-color: #2A3648;
+                color: #F8F5EF;
+            }
+
+            [data-testid="stSidebar"] div[data-testid="stPageLink"] a:hover {
+                border-color: var(--vcl-gold);
+            }
+
+            [data-testid="stSidebar"] .vcl-logo-title {
+                color: #FFFFFF;
+            }
+
+            [data-testid="stSidebar"] .vcl-logo-subtitle {
+                color: #B8C0CC;
+            }
+
+            [data-testid="stSidebar"] .vcl-sidebar-label {
+                color: #C89B3C;
+            }
+
+            [data-testid="stSidebar"] .vcl-brand {
+                border-bottom: 1px solid #2A3648;
             }
 
             [data-testid="stSidebarNav"] {
@@ -76,7 +107,7 @@ def apply_theme() -> None:
                 border: 1px solid var(--vcl-border);
                 border-radius: 8px;
                 padding: 18px 18px 16px;
-                box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+                box-shadow: 0 10px 30px rgba(17, 24, 39, 0.06);
             }
 
             div[data-testid="stMetric"] label {
@@ -107,15 +138,21 @@ def apply_theme() -> None:
             .stDownloadButton > button:hover,
             .stLinkButton > a:hover,
             div[data-testid="stPageLink"] a:hover {
-                border-color: var(--vcl-blue);
-                color: #FFFFFF;
+                border-color: var(--vcl-gold);
+                color: var(--vcl-blue);
                 transform: translateY(-1px);
-                box-shadow: 0 14px 34px rgba(37, 99, 235, 0.18);
+                box-shadow: 0 10px 26px rgba(200, 155, 60, 0.22);
             }
 
             .stButton > button[kind="primary"] {
                 background: var(--vcl-blue);
                 border-color: var(--vcl-blue);
+                color: #FFFFFF;
+            }
+
+            .stButton > button[kind="primary"]:hover {
+                background: #16304F;
+                border-color: var(--vcl-gold);
                 color: #FFFFFF;
             }
 
@@ -187,14 +224,74 @@ def apply_theme() -> None:
 
             .vcl-hero {
                 background:
-                    linear-gradient(100deg, rgba(11, 15, 23, 0.94) 30%, rgba(11, 15, 23, 0.55) 75%, rgba(37, 99, 235, 0.28)),
+                    linear-gradient(100deg, rgba(17, 24, 39, 0.93) 35%, rgba(17, 24, 39, 0.62) 75%, rgba(200, 155, 60, 0.35)),
                     url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1800&q=70');
                 background-position: center;
                 background-size: cover;
-                border: 1px solid var(--vcl-border);
                 border-radius: 14px;
-                margin: 18px 0 8px;
-                padding: 72px 54px;
+                margin: 14px 0 4px;
+                padding: 34px 40px;
+            }
+
+            .vcl-hero .vcl-eyebrow {
+                color: var(--vcl-gold);
+            }
+
+            .vcl-hero .vcl-page-title {
+                color: #FFFFFF;
+                font-size: clamp(2rem, 4.5vw, 3.6rem);
+                margin-bottom: 8px;
+            }
+
+            .vcl-hero .vcl-subtitle {
+                color: #F8F5EF;
+            }
+
+            .vcl-deal-card {
+                background: var(--vcl-card);
+                border: 1px solid var(--vcl-border);
+                border-left: 3px solid var(--vcl-gold);
+                border-radius: 8px;
+                height: 100%;
+                padding: 16px 18px;
+            }
+
+            .vcl-deal-amount {
+                color: var(--vcl-blue);
+                font-size: 1.15rem;
+                font-weight: 800;
+            }
+
+            .vcl-deal-sector {
+                background: rgba(200, 155, 60, 0.14);
+                border: 1px solid rgba(200, 155, 60, 0.4);
+                border-radius: 999px;
+                color: #8A6A25;
+                display: inline-block;
+                font-size: 0.7rem;
+                font-weight: 800;
+                letter-spacing: 0.05em;
+                margin-left: 8px;
+                padding: 2px 10px;
+                text-transform: uppercase;
+                vertical-align: middle;
+            }
+
+            .vcl-deal-name {
+                color: var(--vcl-text);
+                font-size: 1rem;
+                font-weight: 750;
+                margin-bottom: 4px;
+            }
+
+            .vcl-deal-body {
+                color: var(--vcl-muted);
+                font-size: 0.88rem;
+                line-height: 1.55;
+            }
+
+            .vcl-deal-body strong {
+                color: var(--vcl-text);
             }
 
             .vcl-hero-inner {
@@ -313,15 +410,15 @@ def apply_theme() -> None:
                 background: var(--vcl-card);
                 border: 1px solid var(--vcl-border);
                 border-radius: 8px;
-                box-shadow: 0 18px 45px rgba(0, 0, 0, 0.22);
+                box-shadow: 0 10px 30px rgba(17, 24, 39, 0.06);
                 height: 100%;
                 padding: 22px;
                 transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
             }
 
             .vcl-card:hover {
-                border-color: #334155;
-                box-shadow: 0 22px 55px rgba(0, 0, 0, 0.28);
+                border-color: var(--vcl-gold);
+                box-shadow: 0 14px 38px rgba(17, 24, 39, 0.1);
                 transform: translateY(-2px);
             }
 
@@ -357,7 +454,7 @@ def apply_theme() -> None:
             }
 
             .vcl-deal-dot {
-                color: #334155;
+                color: #C9C1B2;
             }
 
             .vcl-deal-score {
@@ -418,10 +515,10 @@ def apply_theme() -> None:
 
             .vcl-icon {
                 align-items: center;
-                background: rgba(37, 99, 235, 0.13);
-                border: 1px solid rgba(37, 99, 235, 0.32);
+                background: rgba(30, 58, 95, 0.08);
+                border: 1px solid rgba(30, 58, 95, 0.25);
                 border-radius: 8px;
-                color: #93C5FD;
+                color: var(--vcl-blue);
                 display: inline-flex;
                 height: 38px;
                 justify-content: center;
@@ -473,39 +570,6 @@ def apply_theme() -> None:
                 margin-bottom: 10px;
             }
 
-            .vcl-preview {
-                background:
-                    linear-gradient(90deg, rgba(31, 41, 55, 0.95) 1px, transparent 1px),
-                    linear-gradient(0deg, rgba(31, 41, 55, 0.95) 1px, transparent 1px),
-                    #0D1320;
-                background-size: 28px 28px;
-                border: 1px solid var(--vcl-border);
-                border-radius: 8px;
-                min-height: 168px;
-                padding: 18px;
-            }
-
-            .vcl-preview-bar {
-                background: #1F2937;
-                border-radius: 999px;
-                height: 8px;
-                margin-bottom: 10px;
-            }
-
-            .vcl-preview-bar.short {
-                width: 56%;
-            }
-
-            .vcl-preview-bar.long {
-                width: 84%;
-            }
-
-            .vcl-preview-chart {
-                border: 1px solid rgba(37, 99, 235, 0.38);
-                border-radius: 8px;
-                height: 78px;
-                margin-top: 18px;
-            }
 
             .vcl-pill {
                 border: 1px solid var(--vcl-border);
@@ -530,7 +594,7 @@ def apply_theme() -> None:
             }
 
             .vcl-sidebar-label {
-                color: #64748B;
+                color: #8A6A25;
                 font-size: 0.7rem;
                 font-weight: 800;
                 letter-spacing: 0.08em;
@@ -580,12 +644,8 @@ def landing_header() -> None:
             <div class="vcl-hero-inner">
                 <div class="vcl-eyebrow">{TAGLINE}</div>
                 <div class="vcl-page-title">{APP_NAME}</div>
-                <div class="vcl-subtitle">{SUBTITLE}</div>
-                <div class="vcl-copy" style="color:#CBD5E1;">
-                    One place to stay on top of venture capital — a live feed of VC news, deals,
-                    and analysis, plus an interactive simulator where you can screen startups,
-                    value companies, model dilution, and write investment memos the way
-                    professional investors do.
+                <div class="vcl-subtitle">
+                    Read today's funding news. Analyze any startup. Write an investment memo.
                 </div>
             </div>
         </div>

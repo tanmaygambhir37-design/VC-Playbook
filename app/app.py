@@ -1,3 +1,4 @@
+import html
 import os
 import sys
 
@@ -7,7 +8,6 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
-from components.cards import feature_card, workflow_step
 from components.footer import footer
 from components.theme import (
     GITHUB_URL,
@@ -18,89 +18,129 @@ from components.theme import (
     landing_header,
     section_title,
 )
+from services.news import extract_deals, fetch_all_feeds, interleave, load_weekly_picks
 
 st.set_page_config(page_title="VC Playbook", page_icon="📗", layout="wide", initial_sidebar_state="collapsed")
 apply_theme()
 hide_sidebar()
 
 
-def landing_page() -> None:
-    st.markdown(
-        f"""
-        <div class="vcl-topbar">
-            <span class="vcl-topbar-bio"><strong style="color:#F8FAFC;">Tanmay Gambhir</strong> · Bocconi x ESSEC · Graduating 2028</span>
-            <a href="{LINKEDIN_URL}" target="_blank">LinkedIn</a>
-            <a href="{GITHUB_URL}" target="_blank">GitHub</a>
-            <a href="{SUBSTACK_URL}" target="_blank">Substack</a>
+def news_line(item: dict) -> str:
+    return f"""
+        <a class="vcl-news-card" href="{html.escape(item['link'])}" target="_blank">
+            <div class="vcl-news-source">{html.escape(item['source'])}</div>
+            <div class="vcl-news-title">{html.escape(item['title'])}</div>
+        </a>
+    """
+
+
+def deal_card_html(deal: dict) -> str:
+    return f"""
+        <a class="vcl-deal-card" style="display:block; text-decoration:none;" href="{html.escape(deal['link'])}" target="_blank">
+            <div class="vcl-deal-name">{html.escape(deal['company'])}
+                <span class="vcl-deal-sector">{html.escape(deal['sector'])}</span></div>
+            <div class="vcl-deal-amount">{html.escape(deal['amount'])}</div>
+            <div class="vcl-deal-body">{html.escape(deal['title'])}</div>
+        </a>
+    """
+
+
+def weekly_deal_html(deal: dict) -> str:
+    lead = f"<strong>Lead:</strong> {html.escape(deal['lead'])}<br>" if deal.get("lead") else ""
+    investors = f"<strong>Investors:</strong> {html.escape(deal['investors'])}<br>" if deal.get("investors") else ""
+    return f"""
+        <div class="vcl-deal-card">
+            <div class="vcl-news-source">{html.escape(deal.get('category', 'Venture'))}</div>
+            <div class="vcl-deal-name">{html.escape(deal['company'])}
+                <span class="vcl-deal-sector">{html.escape(deal.get('sector', ''))}</span></div>
+            <div class="vcl-deal-amount">{html.escape(deal.get('amount', ''))} <span style="font-size:0.8rem; color:#6B7280; font-weight:600;">{html.escape(deal.get('round', ''))}</span></div>
+            <div class="vcl-deal-body">{lead}{investors}{html.escape(deal.get('note', ''))}</div>
         </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    """
 
-    landing_header()
 
-    c1, c2, c3, _ = st.columns([1.15, 1.15, 1, 2.4])
-    with c1:
-        if st.button("Open the Simulator", type="primary", use_container_width=True):
-            st.switch_page("pages/0_Dashboard.py")
-    with c2:
-        if st.button("Read VC News", use_container_width=True):
-            st.switch_page("pages/7_VC_Pulse.py")
-    with c3:
-        st.link_button("View GitHub", GITHUB_URL, use_container_width=True)
+def simulator_invite(company: str, key: str) -> None:
+    c1, c2 = st.columns([2.6, 1.4])
+    c1.caption(f"Interested in analyzing {company}? Try your own due diligence in the simulator.")
+    if c2.button("Try the simulator →", key=key, use_container_width=True):
+        st.session_state["prefill_company"] = company
+        st.switch_page("pages/1_Startup_Screening.py")
 
-    section_title("What is VC Playbook?", "Two things, honestly labeled — no fake metrics.")
-    w1, w2 = st.columns(2)
-    with w1:
-        feature_card(
-            "A VC news hub",
-            "A live feed pulling the latest venture capital news from TechCrunch, Crunchbase News, "
-            "Axios, and more — plus curated videos and articles. Built for students, analysts, and "
-            "juniors who want one place to stay current on the industry.",
-            "bar-chart",
-        )
-    with w2:
-        feature_card(
-            "A due diligence simulator",
-            "An interactive sandbox that walks you through how professional investors evaluate "
-            "startups: weighted scorecards, three valuation methods, cap table dilution, fund "
-            "returns, and auto-drafted investment memos. Try your own diligence — on the sample "
-            "dataset or your own numbers.",
-            "target",
-        )
 
-    section_title("Workflow", "Move from first-pass screen to investment committee memo in one connected flow.")
-    workflow = [
-        ("Startup Screening", "Score traction, team, market, and efficiency.", "search"),
-        ("Market Analysis", "Compare sectors, stages, and competitive intensity.", "bar-chart"),
-        ("Valuation", "Triangulate early-stage valuation ranges.", "circle-dollar"),
-        ("Cap Table", "Model priced rounds and ownership dilution.", "network"),
-        ("Portfolio Returns", "Stress-test MOIC and IRR outcomes.", "line-chart"),
-        ("Investment Memo", "Generate a structured diligence memo.", "clipboard"),
-    ]
-    for row_start in range(0, len(workflow), 3):
+# ---------------------------------------------------------------- page
+
+st.markdown(
+    f"""
+    <div class="vcl-topbar">
+        <span class="vcl-topbar-bio"><strong style="color:#111827;">Tanmay Gambhir</strong> · Bocconi x ESSEC · Graduating 2028</span>
+        <a href="{LINKEDIN_URL}" target="_blank">LinkedIn</a>
+        <a href="{GITHUB_URL}" target="_blank">GitHub</a>
+        <a href="{SUBSTACK_URL}" target="_blank">Substack</a>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+
+landing_header()
+
+c1, c2, _ = st.columns([1.3, 1.1, 3])
+with c1:
+    if st.button("Open the Simulator", type="primary", use_container_width=True):
+        st.switch_page("pages/0_Dashboard.py")
+with c2:
+    if st.button("All VC News", use_container_width=True):
+        st.switch_page("pages/7_VC_Pulse.py")
+
+with st.spinner("Pulling today's headlines..."):
+    groups, _dead = fetch_all_feeds()
+mixed = interleave(groups)
+deals = extract_deals([item for group in groups for item in group])
+
+section_title("Today's VC Brief", "The latest from TechCrunch, Crunchbase, Axios, Sifted, and EU-Startups.")
+if mixed:
+    for row_start in range(0, 6, 3):
         cols = st.columns(3)
-        for offset, col in enumerate(cols):
-            title, description, icon_name = workflow[row_start + offset]
+        for col, item in zip(cols, mixed[row_start:row_start + 3]):
             with col:
-                workflow_step(row_start + offset + 1, title, description, icon_name)
+                st.markdown(news_line(item), unsafe_allow_html=True)
+else:
+    st.caption("Feeds are unreachable right now — try again in a minute.")
 
-    section_title("Analysis Modules", "Each module behaves like a workspace surface, not a detached calculator.")
-    features = [
-        ("Startup Screening", "Weighted VC scorecard across unit economics, growth, market, team, and efficiency.", "target"),
-        ("Market Sizing", "Sector and stage views that help frame opportunity quality before deeper modeling.", "bar-chart"),
-        ("Valuation Engine", "Run VC Method, comparable multiples, and scorecard valuation side by side.", "calculator"),
-        ("Cap Table Simulator", "Model founder, ESOP, and investor ownership through sequential rounds.", "network"),
-        ("Portfolio Returns", "Translate investment size, ownership, exit value, and hold period into fund returns.", "line-chart"),
-        ("Investment Memo Generator", "Turn screened companies into concise, downloadable investment committee notes.", "file-text"),
-    ]
-    for row_start in range(0, len(features), 3):
+if deals:
+    section_title("Deal Radar", "Funding rounds detected in today's news.")
+    show = deals[:6]
+    for row_start in range(0, len(show), 3):
         cols = st.columns(3)
-        for offset, col in enumerate(cols):
+        for col, deal in zip(cols, show[row_start:row_start + 3]):
             with col:
-                feature_card(*features[row_start + offset])
+                st.markdown(deal_card_html(deal), unsafe_allow_html=True)
+    simulator_invite(show[0]["company"], "radar_sim")
 
-    footer()
+picks = load_weekly_picks()
+if picks.get("deals"):
+    section_title("This Week's Picks", f"Hand-picked deals worth studying · Week of {picks.get('week_of', '')}")
+    weekly = picks["deals"]
+    for row_start in range(0, len(weekly), 2):
+        cols = st.columns(2)
+        for col, deal in zip(cols, weekly[row_start:row_start + 2]):
+            with col:
+                st.markdown(weekly_deal_html(deal), unsafe_allow_html=True)
+    simulator_invite(weekly[0]["company"], "weekly_sim")
 
+if picks.get("videos") or picks.get("articles"):
+    section_title("Spotlight of the Week", "One video and one read, refreshed weekly.")
+    s1, s2 = st.columns(2)
+    with s1:
+        st.markdown('<div class="vcl-card-kicker">Video of the Week</div>', unsafe_allow_html=True)
+        for video in picks.get("videos", []):
+            st.markdown(f"**[{video['title']}]({video['url']})**  \n{video.get('why', '')}")
+        if not picks.get("videos"):
+            st.caption("Coming this week.")
+    with s2:
+        st.markdown('<div class="vcl-card-kicker">Article of the Week</div>', unsafe_allow_html=True)
+        for article in picks.get("articles", []):
+            st.markdown(f"**[{article['title']}]({article['url']})**  \n{article.get('why', '')}")
+        if not picks.get("articles"):
+            st.caption("Coming this week.")
 
-landing_page()
+footer()

@@ -211,11 +211,16 @@ def render_company_form(company_defaults: dict, screening: dict, expand_assumpti
     }
 
 
+prefill_company = st.session_state.pop("prefill_company", None)
+if prefill_company:
+    st.info(f"Analyzing **{prefill_company}** from the news — enter what you know about it below. Public numbers are often in the funding article itself.")
+
 section_title("Choose Startup Source", "Start from the sample dataset, enter details manually, or upload your own CSV.")
 source = st.radio(
     "Startup source",
     ["Existing Dataset", "Manual Entry", "Upload CSV"],
     horizontal=True,
+    index=1 if prefill_company else 0,
 )
 
 if source == "Existing Dataset":
@@ -225,6 +230,8 @@ if source == "Existing Dataset":
     screening = {key: dataset_row.get(key, value) for key, value in DEFAULT_SCREENING.items()}
 elif source == "Manual Entry":
     company_defaults = DEFAULT_COMPANY.copy()
+    if prefill_company:
+        company_defaults["company"] = prefill_company
     screening = DEFAULT_SCREENING.copy()
 else:
     st.download_button(
@@ -296,20 +303,20 @@ with right:
             theta=labels + [labels[0]],
             fill="toself",
             name=row.get("company", "Startup"),
-            line=dict(color="#2563EB", width=2),
-            fillcolor="rgba(37, 99, 235, 0.22)",
+            line=dict(color="#1E3A5F", width=2),
+            fillcolor="rgba(200, 155, 60, 0.30)",
             hovertemplate="%{theta}: %{r:.0f}/100<extra></extra>",
         )
     )
     fig.update_layout(
-        title=dict(text="VC Scorecard Breakdown", font=dict(size=15, color="#F8FAFC"), x=0),
-        paper_bgcolor="#0B0F17",
-        plot_bgcolor="#0B0F17",
-        font=dict(color="#F8FAFC"),
+        title=dict(text="VC Scorecard Breakdown", font=dict(size=15, color="#111827"), x=0),
+        paper_bgcolor="#FFFFFF",
+        plot_bgcolor="#FFFFFF",
+        font=dict(color="#111827"),
         polar=dict(
-            bgcolor="#111827",
-            radialaxis=dict(visible=True, range=[0, 100], gridcolor="#1F2937"),
-            angularaxis=dict(gridcolor="#1F2937"),
+            bgcolor="#FDFBF7",
+            radialaxis=dict(visible=True, range=[0, 100], gridcolor="#E5DFD3"),
+            angularaxis=dict(gridcolor="#E5DFD3"),
         ),
         showlegend=False,
         margin=dict(t=48, b=20, l=40, r=40),

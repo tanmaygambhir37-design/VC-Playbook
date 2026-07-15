@@ -8,7 +8,7 @@ APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
-from components.cards import metric_card, text_card
+from components.cards import metric_card, text_card, workflow_step
 from components.navigation import nav_link, sidebar
 from components.theme import apply_theme, page_header, section_title
 from models.scoring import score_startup
@@ -44,6 +44,22 @@ dashboard_metrics = [
 for col, item in zip(cols, dashboard_metrics):
     with col:
         metric_card(*item)
+
+section_title("Workflow", "Move from first-pass screen to investment committee memo in one connected flow.")
+workflow = [
+    ("Startup Screening", "Score traction, team, market, and efficiency.", "search"),
+    ("Market Analysis", "Compare sectors, stages, and competitive intensity.", "bar-chart"),
+    ("Valuation", "Triangulate early-stage valuation ranges.", "circle-dollar"),
+    ("Cap Table", "Model priced rounds and ownership dilution.", "network"),
+    ("Portfolio Returns", "Stress-test MOIC and IRR outcomes.", "line-chart"),
+    ("Investment Memo", "Generate a structured diligence memo.", "clipboard"),
+]
+for row_start in range(0, len(workflow), 3):
+    wcols = st.columns(3)
+    for offset, wcol in enumerate(wcols):
+        wtitle, wdesc, wicon = workflow[row_start + offset]
+        with wcol:
+            workflow_step(row_start + offset + 1, wtitle, wdesc, wicon)
 
 section_title("Pipeline", "Recent companies, reports, and models in one operating view.")
 left, middle, right = st.columns([1.3, 1, 1])

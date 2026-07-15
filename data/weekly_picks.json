@@ -1,0 +1,48 @@
+{
+  "_how_to_edit": "Update this file weekly (GitHub web editor works). 'deals': the funding rounds you want to highlight, in your own words. 'category' is one of: Venture, Private Equity, Funds, People. 'videos'/'articles': your picks of the week. Save = site auto-redeploys.",
+  "week_of": "July 14, 2026",
+  "deals": [
+    {
+      "category": "Venture",
+      "company": "Flex",
+      "sector": "Fintech",
+      "round": "Series B1",
+      "amount": "$70M",
+      "lead": "Halo Fund",
+      "investors": "Portage, Wellington, Crosslink Capital, 53 Stations, Titanium Ventures",
+      "note": "SF-based AI-native private bank."
+    },
+    {
+      "category": "Venture",
+      "company": "SONATA",
+      "sector": "Health",
+      "round": "Early stage",
+      "amount": "$7M",
+      "lead": "Lux Capital",
+      "investors": "BoxGroup, Sunflower Capital",
+      "note": "Membership-based preventive-care provider (NYC / SF / LA)."
+    },
+    {
+      "category": "Venture",
+      "company": "Prolo",
+      "sector": "AI",
+      "round": "Seed",
+      "amount": "$5.6M",
+      "lead": "Triple Point Ventures",
+      "investors": "Anamcara, Concrete VC, Love Ventures, Portfolio Ventures",
+      "note": "London-based AI procurement platform for construction firms."
+    },
+    {
+      "category": "Funds",
+      "company": "Citation Capital",
+      "sector": "Private Equity",
+      "round": "Fund I",
+      "amount": "$1.1B",
+      "lead": "",
+      "investors": "",
+      "note": "First fund, focused on middle-market services, industrials, and consumer."
+    }
+  ],
+  "videos": [],
+  "articles": []
+}

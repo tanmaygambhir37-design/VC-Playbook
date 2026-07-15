@@ -79,12 +79,12 @@ with tab1:
 
     cap_table_fig = px.bar(chart_df, x="Round", y="Ownership %", color="Holder", barmode="stack")
     cap_table_fig.update_layout(
-        paper_bgcolor="#0B0F17",
-        plot_bgcolor="#0B0F17",
-        font=dict(color="#F8FAFC"),
-        xaxis=dict(gridcolor="#1F2937"),
-        yaxis=dict(gridcolor="#1F2937"),
-        legend=dict(bgcolor="#0B0F17"),
+        paper_bgcolor="#FFFFFF",
+        plot_bgcolor="#FFFFFF",
+        font=dict(color="#111827"),
+        xaxis=dict(gridcolor="#E5DFD3"),
+        yaxis=dict(gridcolor="#E5DFD3"),
+        legend=dict(bgcolor="#FFFFFF"),
         margin=dict(t=20, b=20),
     )
     st.plotly_chart(cap_table_fig, use_container_width=True)
@@ -136,11 +136,11 @@ with tab2:
     returns_fig.update_layout(
         xaxis_title="Holding Period",
         yaxis_title="Exit Valuation",
-        paper_bgcolor="#0B0F17",
-        plot_bgcolor="#0B0F17",
-        font=dict(color="#F8FAFC"),
-        xaxis=dict(gridcolor="#1F2937"),
-        yaxis=dict(gridcolor="#1F2937"),
+        paper_bgcolor="#FFFFFF",
+        plot_bgcolor="#FFFFFF",
+        font=dict(color="#111827"),
+        xaxis=dict(gridcolor="#E5DFD3"),
+        yaxis=dict(gridcolor="#E5DFD3"),
         margin=dict(t=20, b=20),
     )
     st.plotly_chart(returns_fig, use_container_width=True)
