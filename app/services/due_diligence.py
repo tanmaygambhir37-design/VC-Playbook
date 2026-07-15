@@ -173,12 +173,22 @@ def generate_recommendation(row: dict, parsed: dict | None = None) -> DueDiligen
 
 
 def generate_confidence_score(row: dict, parsed: dict | None = None) -> DueDiligenceSection:
-    confidence = "78/100" if parsed else "62/100"
+    from models.scoring import score_startup
+
+    try:
+        score = score_startup(row).total
+    except (KeyError, TypeError):
+        score = None
+    body = (
+        f"The weighted scorecard for this profile is {score}/100, computed live from the intake metrics (unit economics, growth, market, team, efficiency). Narrative sections are template drafts — validate every figure against the data room before relying on this memo."
+        if score is not None
+        else "Scorecard could not be computed from the current profile. Narrative sections are template drafts — validate every figure against the data room."
+    )
     return DueDiligenceSection(
-        "Confidence Score",
-        f"Mock diligence confidence is {confidence}. Confidence is higher when a website analysis is available, but this remains a non-LLM demo output until a live parser is connected.",
-        "High" if parsed else "Medium",
-        _sources("Website", "Company Profile", "Mock Parser"),
+        "Scorecard & Confidence",
+        body,
+        "High" if score is not None and score >= 75 else "Medium",
+        _sources("Company Profile", "VC Playbook Scorecard"),
     )
 
 

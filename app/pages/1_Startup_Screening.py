@@ -285,7 +285,7 @@ if active_row and active_row.get("company") == row.get("company"):
     n1, n2, n3 = st.columns(3)
     nav_link("pages/2_Valuation.py", label="Continue to Valuation", icon=":material/attach_money:", use_container_width=True, container=n1)
     nav_link("pages/3_Cap_Table_Returns.py", label="Continue to Cap Table", icon=":material/account_tree:", use_container_width=True, container=n2)
-    nav_link("pages/5_Investment_Memo.py", label="Generate Memo", icon=":material/description:", use_container_width=True, container=n3)
+    nav_link("pages/4_Investment_Memo.py", label="Generate Memo", icon=":material/description:", use_container_width=True, container=n3)
 
 left, right = st.columns([1, 1.8])
 with left:

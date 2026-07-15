@@ -60,10 +60,14 @@ def score_team(founder_experience_score: int, team_size: int) -> float:
     return _clip(exp_component * 0.8 + size_component)
 
 
-def score_efficiency(monthly_burn_usd_k: float, runway_months: float, revenue_usd_k: float) -> float:
-    # Burn multiple: how much cash burned per dollar of net new revenue proxy
-    burn_multiple = monthly_burn_usd_k / max(revenue_usd_k, 1)
-    burn_score = _clip(100 - burn_multiple * 8)
+def score_efficiency(monthly_burn_usd_k: float, runway_months: float, revenue_usd_k: float,
+                     mom_growth_pct: float = 10.0) -> float:
+    # Burn multiple (Sacks): net burn / net new ARR.
+    # Net new ARR per month ~= current ARR * MoM growth rate.
+    net_new_arr_usd_k = revenue_usd_k * (mom_growth_pct / 100)
+    burn_multiple = monthly_burn_usd_k / max(net_new_arr_usd_k, 1)
+    # Sacks bands: <1x amazing, 1-2x good, 2-3x suboptimal, >3x concerning
+    burn_score = _clip(100 - burn_multiple * 25)
     runway_score = _clip(runway_months * 5)
     return _clip((burn_score + runway_score) / 2)
 
@@ -75,7 +79,8 @@ def score_startup(row: dict) -> ScoreResult:
         "market": score_market(row["competition"]),
         "team": score_team(row["founder_experience_score"], row["team_size"]),
         "efficiency": score_efficiency(
-            row["monthly_burn_usd_k"], row["runway_months"], row["revenue_usd_k"]
+            row["monthly_burn_usd_k"], row["runway_months"], row["revenue_usd_k"],
+            row.get("mom_growth_pct", 10.0),
         ),
     }
 

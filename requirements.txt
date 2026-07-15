@@ -1,7 +1,7 @@
-streamlit>=1.35.0
-pandas>=2.0.0
-plotly>=5.20.0
-numpy>=1.26.0
-reportlab>=4.0.0
-feedparser>=6.0.0
-requests>=2.31.0
+streamlit==1.58.0
+pandas==3.0.3
+plotly==6.8.0
+numpy==2.5.0
+reportlab==5.0.0
+feedparser==6.0.12
+requests==2.34.2

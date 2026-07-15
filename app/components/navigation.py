@@ -30,18 +30,18 @@ def sidebar() -> None:
         nav_link("pages/0_Dashboard.py", label="Dashboard", icon=":material/dashboard:")
 
         st.markdown('<div class="vcl-sidebar-label">News</div>', unsafe_allow_html=True)
-        nav_link("pages/7_VC_Pulse.py", label="VC Pulse", icon=":material/newspaper:")
+        nav_link("pages/6_VC_Pulse.py", label="VC Pulse", icon=":material/newspaper:")
 
         st.markdown('<div class="vcl-sidebar-label">Analysis</div>', unsafe_allow_html=True)
         nav_link("pages/1_Startup_Screening.py", label="Startup Screening", icon=":material/troubleshoot:")
-        nav_link("pages/6_Market_Analysis.py", label="Market Analysis", icon=":material/query_stats:")
+        nav_link("pages/5_Market_Analysis.py", label="Market Analysis", icon=":material/query_stats:")
         nav_link("pages/2_Valuation.py", label="Valuation", icon=":material/attach_money:")
 
         st.markdown('<div class="vcl-sidebar-label">Models</div>', unsafe_allow_html=True)
         nav_link("pages/3_Cap_Table_Returns.py", label="Cap Table & Returns", icon=":material/account_tree:")
 
         st.markdown('<div class="vcl-sidebar-label">Reports</div>', unsafe_allow_html=True)
-        nav_link("pages/5_Investment_Memo.py", label="Investment Memo", icon=":material/description:")
+        nav_link("pages/4_Investment_Memo.py", label="Investment Memo", icon=":material/description:")
 
         st.markdown('<div class="vcl-sidebar-label">Settings</div>', unsafe_allow_html=True)
-        nav_link("pages/8_About_VC_Lab.py", label="About VC Playbook", icon=":material/settings:")
+        nav_link("pages/7_About.py", label="About VC Playbook", icon=":material/settings:")

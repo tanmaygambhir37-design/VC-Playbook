@@ -90,7 +90,7 @@ with c1:
         st.switch_page("pages/0_Dashboard.py")
 with c2:
     if st.button("All VC News", use_container_width=True):
-        st.switch_page("pages/7_VC_Pulse.py")
+        st.switch_page("pages/6_VC_Pulse.py")
 
 with st.spinner("Pulling today's headlines..."):
     groups, _dead = fetch_all_feeds()

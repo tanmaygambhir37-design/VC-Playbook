@@ -20,15 +20,21 @@ class VCMethodResult:
 
 
 def vc_method(exit_value_usd_m: float, target_return_multiple: float,
-              investment_usd_m: float) -> VCMethodResult:
+              investment_usd_m: float, retention_ratio: float = 0.6) -> VCMethodResult:
     """
-    Classic VC Method:
-      Post-money (future) = Exit Value / Target Return Multiple
-      Investor ownership  = Investment / Post-money (future)
-      Pre-money (today)   = Post-money (today) - Investment
+    Classic VC Method with future-dilution adjustment:
+      Post-money (future)  = Exit Value / Target Return Multiple
+      Ownership at exit    = Investment / Post-money (future)
+      Ownership today      = Ownership at exit / retention_ratio
+                             (retention_ratio = share of ownership the investor
+                             keeps through future rounds; ~0.5-0.7 is typical
+                             for a seed investor holding to exit)
+      Post-money (today)   = Investment / Ownership today
+      Pre-money (today)    = Post-money (today) - Investment
     """
     post_money_future = exit_value_usd_m / target_return_multiple
-    ownership_pct = (investment_usd_m / post_money_future) * 100
+    ownership_at_exit_pct = (investment_usd_m / post_money_future) * 100
+    ownership_pct = ownership_at_exit_pct / max(retention_ratio, 0.01)
     post_money_today = investment_usd_m / (ownership_pct / 100)
     pre_money_today = post_money_today - investment_usd_m
 

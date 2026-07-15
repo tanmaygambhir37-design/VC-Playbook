@@ -47,10 +47,9 @@ _SECTOR_KEYWORDS = {
 }
 
 
-@st.cache_data(ttl=1800, show_spinner=False)
 def fetch_feed(source: str, url: str) -> list[dict]:
     try:
-        response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=10)
+        response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=6)
         parsed = feedparser.parse(response.content)
         return [
             {
@@ -65,13 +64,17 @@ def fetch_feed(source: str, url: str) -> list[dict]:
         return []
 
 
+@st.cache_data(ttl=1800, show_spinner=False)
 def fetch_all_feeds() -> tuple[list[list[dict]], list[str]]:
-    """Returns (list of per-source item lists, list of unavailable source names)."""
-    groups, dead = [], []
-    for source, url in FEEDS.items():
-        items = fetch_feed(source, url)
-        (groups if items else dead).append(items if items else source)
-    return [g for g in groups if isinstance(g, list)], [d for d in dead if isinstance(d, str)]
+    """Returns (list of per-source item lists, list of unavailable source names).
+    Feeds are fetched in parallel so a slow source doesn't block the page."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    with ThreadPoolExecutor(max_workers=len(FEEDS)) as pool:
+        results = list(pool.map(lambda kv: (kv[0], fetch_feed(*kv)), FEEDS.items()))
+    groups = [items for _, items in results if items]
+    dead = [source for source, items in results if not items]
+    return groups, dead
 
 
 def interleave(groups: list[list[dict]]) -> list[dict]:
