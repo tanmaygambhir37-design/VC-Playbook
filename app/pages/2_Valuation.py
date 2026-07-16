@@ -51,7 +51,7 @@ with tab1:
     hold_years = st.slider("Holding Period (years)", 3, 12, 7)
     implied_irr = irr_from_moic(target_multiple, hold_years)
     st.caption(
-        f"Sanity check: ${investment}M in at ${res.pre_money}M pre, exiting at ${exit_value}M "
+        f"Sanity check: \${investment}M in at \${res.pre_money}M pre, exiting at \${exit_value}M "
         f"in {hold_years} years returns your {target_multiple}x target — a {implied_irr}% IRR."
     )
     m1, m2, m3 = st.columns(3)
