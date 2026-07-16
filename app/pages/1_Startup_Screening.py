@@ -161,12 +161,12 @@ def render_company_form(company_defaults: dict, screening: dict, expand_assumpti
     with st.expander("Adjust Screening Assumptions", expanded=expand_assumptions):
         s1, s2, s3 = st.columns(3)
         with s1:
-            revenue_usd_k = st.number_input("Revenue ($'000 ARR)", 0.0, 1000.0, float(screening["revenue_usd_k"]))
+            revenue_usd_k = st.number_input("Revenue ($'000 ARR)", 0.0, 5_000_000.0, float(screening["revenue_usd_k"]))
             mom_growth_pct = st.number_input("MoM Growth (%)", 0.0, 100.0, float(screening["mom_growth_pct"]))
             cac_usd = st.number_input("CAC ($)", 1.0, 5000.0, float(screening["cac_usd"]))
         with s2:
             ltv_usd = st.number_input("LTV ($)", 1.0, 20000.0, float(screening["ltv_usd"]))
-            monthly_burn_usd_k = st.number_input("Monthly Burn ($'000)", 1.0, 1000.0, float(screening["monthly_burn_usd_k"]))
+            monthly_burn_usd_k = st.number_input("Monthly Burn ($'000)", 1.0, 500_000.0, float(screening["monthly_burn_usd_k"]))
             runway_months = st.number_input("Runway (months)", 0.0, 48.0, float(screening["runway_months"]))
         with s3:
             competition = st.selectbox(

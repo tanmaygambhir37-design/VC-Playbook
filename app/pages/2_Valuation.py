@@ -28,7 +28,7 @@ active_deal = get_active_deal_row()
 if active_deal:
     deal_score = score_startup(active_deal)
     deal_banner(active_deal["company"], active_deal["sector"], active_deal["stage"], deal_score.total, deal_score.recommendation)
-    default_arr = round(min(max(active_deal.get("revenue_usd_k", 2000) / 1000, 0.1), 50.0), 2)
+    default_arr = round(min(max(active_deal.get("revenue_usd_k", 2000) / 1000, 0.1), 5000.0), 2)
     default_multiple = int(round(min(max(active_deal.get("sector_median_arr_multiple", 8), 2), 25)))
     default_retention = STAGE_RETENTION.get(active_deal.get("stage"), 60)
 else:
@@ -39,7 +39,7 @@ tab1, tab2, tab3 = st.tabs(["VC Method", "Comparable Multiples", "Scorecard Meth
 with tab1:
     section_title("VC Method", "Back-solves today's valuation from a target exit outcome and required return.")
     c1, c2, c3, c4 = st.columns(4)
-    exit_value = c1.slider("Projected Exit Value ($M)", 10, 2000, 300, step=10)
+    exit_value = c1.slider("Projected Exit Value ($M)", 10, 50_000, 300, step=10)
     target_multiple = c2.slider("Required Return Multiple (x)", 2, 30, 10)
     investment = c3.slider("Investment Amount ($M)", 0.1, 20.0, 2.0, step=0.1)
     retention = c4.slider(
@@ -65,7 +65,7 @@ with tab1:
 with tab2:
     section_title("Comparable Multiples", "Values the company as a multiple of ARR, benchmarked to sector comparables.")
     c1, c2, c3 = st.columns(3)
-    arr = c1.slider("Current ARR ($M)", 0.1, 50.0, default_arr, step=0.1, key=deal_widget_key("arr"))
+    arr = c1.slider("Current ARR ($M)", 0.1, 5000.0, default_arr, step=0.1, key=deal_widget_key("arr"))
     multiple = c2.slider("Sector ARR Multiple (x)", 2, 25, default_multiple, key=deal_widget_key("multiple"))
     discount = c3.slider("Illiquidity Discount (%)", 0, 50, 20)
 

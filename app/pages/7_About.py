@@ -53,6 +53,18 @@ text_card(
     "Technical Note",
 )
 
+section_title("Case Study: Bending Spoons", "A real IPO run through the simulator, end to end.")
+text_card(
+    "The $18.4B sanity check",
+    "When Bending Spoons listed on Nasdaq (July 2026, $18.4B), I ran its disclosed numbers through this "
+    "simulator: $2.4B run-rate revenue, +132% YoY, EBITDA-profitable, 4,418 people. The comps module priced "
+    "it at $19.2B — within 4% of the actual IPO pricing. The seed-stage scorecard said 71/100 'Watch', which "
+    "is the more interesting result: frameworks encode a stage, and watching one strain on a growth-stage "
+    "profile teaches you when its assumptions apply. Full walkthrough with screenshots and the generated IC "
+    "memo lives in the GitHub repo under reports/case-study-bending-spoons.md.",
+    "Real-World Test",
+)
+
 section_title("Built By", "")
 text_card(
     "Tanmay Gambhir",

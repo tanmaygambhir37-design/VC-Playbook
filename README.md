@@ -11,6 +11,8 @@ VC Playbook is two things in one Streamlit app:
 
 Built for VC-curious students, analysts, and juniors — get your industry news in one place, and practice real diligence on the sample dataset or your own numbers (manual entry or CSV upload).
 
+**Real-world test:** when Bending Spoons IPO'd at $18.4B (July 2026), the simulator's comps module priced its disclosed numbers at $19.2B — within 4% — while the seed-stage scorecard honestly said "Watch." Full walkthrough: [Case study](reports/case-study-bending-spoons.md).
+
 **Where this fits:** VC Playbook is not a replacement for professional tooling like Affinity, Harmonic, or Tactyc — those manage real deal flow with real data. This is a learning tool that shows the *shape* of the work: what a scorecard, a valuation triangulation, a dilution model, and an IC memo actually look like, with every formula open-source and every assumption exposed.
 
 ---
