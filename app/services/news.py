@@ -53,15 +53,19 @@ def fetch_feed(source: str, url: str) -> list[dict]:
     try:
         response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=6)
         parsed = feedparser.parse(response.content)
-        return [
+        items = [
             {
                 "source": source,
                 "title": entry.get("title", "Untitled"),
                 "link": entry.get("link", "#"),
                 "published": entry.get("published", entry.get("updated", "")),
             }
-            for entry in parsed.entries[:10]
+            for entry in parsed.entries[:25]
         ]
+        # Axios is a general-news feed — keep only VC/business headlines
+        if source == "Axios":
+            items = [i for i in items if is_vc_relevant(i["title"])]
+        return items[:10]
     except Exception:
         return []
 
@@ -98,15 +102,35 @@ def guess_sector(title: str) -> str:
 
 
 # Headlines often lead with descriptors: "Crypto VC firm Paradigm raises...",
-# "London-based Prolo secures..." — strip them so only the name remains.
+# "London-based Prolo secures...", "EQT-backed Syntetica lands...",
+# "Robotics startup Monumental raises..." — strip them so only the name remains.
 _DESCRIPTOR_WORDS = {"crypto", "vc", "firm", "startup", "company", "platform", "fintech", "app", "maker"}
+_DESCRIPTOR_NEXT = {"startup", "company", "firm", "platform", "maker", "app"}
 
 
 def _clean_company(name: str) -> str:
     tokens = name.split()
-    while len(tokens) > 1 and (tokens[0].lower() in _DESCRIPTOR_WORDS or tokens[0].lower().endswith("-based")):
-        tokens.pop(0)
+    while len(tokens) > 1:
+        head = tokens[0].lower()
+        if head in _DESCRIPTOR_WORDS or head.endswith("-based") or head.endswith("-backed"):
+            tokens.pop(0)
+        elif len(tokens) > 2 and tokens[1].lower() in _DESCRIPTOR_NEXT:
+            tokens.pop(0)  # e.g. "Robotics startup Monumental" -> drop "Robotics"
+        else:
+            break
     return " ".join(tokens)
+
+
+# Keywords that make a headline VC/business-relevant. Used to keep general-news
+# feeds (Axios) from putting geopolitics in a "VC Brief".
+_RELEVANT_RE = re.compile(
+    r"(?i)\b(rais|fund|venture|vc|startup|seed|series [a-e]|ipo|acqui|valuation|"
+    r"invest|exit|m&a|round|capital|unicorn|founder|deal|backs|merger|spac|stake)\w*",
+)
+
+
+def is_vc_relevant(title: str) -> bool:
+    return bool(_RELEVANT_RE.search(title))
 
 
 def extract_deals(items: list[dict]) -> list[dict]:
@@ -142,7 +166,27 @@ def load_weekly_picks() -> dict:
         picks["stale"] = (date.today() - week).days > 14
     except ValueError:
         picks["stale"] = False  # unparseable date -> show rather than hide
+    # Auto-title videos: paste just a URL in the JSON and the real YouTube
+    # title is fetched here.
+    for video in picks.get("videos", []):
+        if not video.get("title") or video["title"] == "Video of the Week":
+            video["title"] = youtube_title(video.get("url", "")) or "Video of the Week"
     return picks
+
+
+@st.cache_data(ttl=86400, show_spinner=False)
+def youtube_title(url: str) -> str | None:
+    """Video title via YouTube's public oEmbed endpoint — no API key needed."""
+    try:
+        response = requests.get(
+            "https://www.youtube.com/oembed",
+            params={"url": url, "format": "json"},
+            headers={"User-Agent": USER_AGENT},
+            timeout=6,
+        )
+        return response.json().get("title")
+    except Exception:
+        return None
 
 
 SUBSTACK_FEED = "https://tanmaydiary.substack.com/feed"

@@ -54,7 +54,7 @@ def weekly_deal_html(deal: dict) -> str:
             <div class="vcl-news-source">{html.escape(deal.get('category', 'Venture'))}</div>
             <div class="vcl-deal-name">{html.escape(deal['company'])}
                 <span class="vcl-deal-sector">{html.escape(deal.get('sector', ''))}</span></div>
-            <div class="vcl-deal-amount">{html.escape(deal.get('amount', ''))} <span style="font-size:0.8rem; color:#6B7280; font-weight:600;">{html.escape(deal.get('round', ''))}</span></div>
+            <div class="vcl-deal-amount">{html.escape(deal.get('amount', ''))} <span style="font-size:0.8rem; color:#4B5164; font-weight:600;">{html.escape(deal.get('round', ''))}</span></div>
             <div class="vcl-deal-body">{lead}{investors}{html.escape(deal.get('note', ''))}</div>
         </div>
     """
@@ -73,7 +73,7 @@ def simulator_invite(company: str, key: str) -> None:
 st.markdown(
     f"""
     <div class="vcl-topbar">
-        <span class="vcl-topbar-bio"><strong style="color:#111827;">Tanmay Gambhir</strong> · Bocconi x ESSEC · Graduating 2028</span>
+        <span class="vcl-topbar-bio"><strong style="color:#14171F;">Tanmay Gambhir</strong> · Bocconi x ESSEC · Graduating 2028</span>
         <a href="{LINKEDIN_URL}" target="_blank">LinkedIn</a>
         <a href="{GITHUB_URL}" target="_blank">GitHub</a>
         <a href="{SUBSTACK_URL}" target="_blank">Substack</a>
@@ -136,7 +136,7 @@ section_title("Spotlight of the Week", "One video and one read, hand-picked ever
 def spotlight_row(kicker: str, entries: list[dict]) -> None:
     items = "".join(
         f'<div class="vcl-card-title"><a href="{html.escape(e["url"])}" target="_blank" '
-        f'style="color:#1E3A5F; text-decoration:none;">{html.escape(e["title"])}</a></div>'
+        f'style="color:#141B2E; text-decoration:none;">{html.escape(e["title"])}</a></div>'
         f'<div class="vcl-card-body">{html.escape(e.get("why", ""))}</div>'
         for e in entries
     ) or '<div class="vcl-card-body">Coming this week.</div>'
@@ -152,5 +152,14 @@ spotlight_row("📄 Article of the Week", picks.get("articles", []))
 latest_post = latest_substack_post()
 if latest_post:
     spotlight_row("✍️ Latest from my Substack", [{"title": latest_post["title"], "url": latest_post["link"], "why": ""}])
+
+spotlight_row(
+    "📗 Case Study",
+    [{
+        "title": "Bending Spoons' $18.4B IPO, run through this simulator",
+        "url": "https://github.com/tanmaygambhir37-design/VC-Playbook/blob/main/reports/case-study-bending-spoons.md",
+        "why": "The comps module landed within 4% of the actual IPO pricing — and the seed-stage scorecard honestly said 'Watch'.",
+    }],
+)
 
 footer()

@@ -81,9 +81,9 @@ with tab1:
     cap_table_fig.update_layout(
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font=dict(color="#111827"),
-        xaxis=dict(gridcolor="#E5DFD3"),
-        yaxis=dict(gridcolor="#E5DFD3"),
+        font=dict(color="#14171F"),
+        xaxis=dict(gridcolor="#DEDAD0"),
+        yaxis=dict(gridcolor="#DEDAD0"),
         legend=dict(bgcolor="#FFFFFF"),
         margin=dict(t=20, b=20),
     )
@@ -138,9 +138,9 @@ with tab2:
         yaxis_title="Exit Valuation",
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font=dict(color="#111827"),
-        xaxis=dict(gridcolor="#E5DFD3"),
-        yaxis=dict(gridcolor="#E5DFD3"),
+        font=dict(color="#14171F"),
+        xaxis=dict(gridcolor="#DEDAD0"),
+        yaxis=dict(gridcolor="#DEDAD0"),
         margin=dict(t=20, b=20),
     )
     st.plotly_chart(returns_fig, use_container_width=True)

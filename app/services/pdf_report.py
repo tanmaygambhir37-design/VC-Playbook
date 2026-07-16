@@ -16,7 +16,7 @@ from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
 from reportlab.lib.units import inch
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
-NAVY = colors.HexColor("#111827")
+NAVY = colors.HexColor("#14171F")
 BODY_INK = colors.HexColor("#1F2937")
 BLUE = colors.HexColor("#2563EB")
 MUTED = colors.HexColor("#64748B")

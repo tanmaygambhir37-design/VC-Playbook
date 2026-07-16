@@ -52,7 +52,7 @@ def weekly_deal_card(deal: dict) -> str:
             <div class="vcl-news-source">{html.escape(deal.get('category', 'Venture'))}</div>
             <div class="vcl-deal-name">{html.escape(deal['company'])}
                 <span class="vcl-deal-sector">{html.escape(deal.get('sector', ''))}</span></div>
-            <div class="vcl-deal-amount">{html.escape(deal.get('amount', ''))} <span style="font-size:0.8rem; color:#6B7280; font-weight:600;">{html.escape(deal.get('round', ''))}</span></div>
+            <div class="vcl-deal-amount">{html.escape(deal.get('amount', ''))} <span style="font-size:0.8rem; color:#4B5164; font-weight:600;">{html.escape(deal.get('round', ''))}</span></div>
             <div class="vcl-deal-body">{lead}{investors}{html.escape(deal.get('note', ''))}</div>
         </div>
     """

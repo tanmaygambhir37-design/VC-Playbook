@@ -56,7 +56,11 @@ with left:
     st.dataframe(
         df_scored[["company", "sector", "stage", "vc_score", "recommendation"]]
         .sort_values("vc_score", ascending=False)
-        .head(8),
+        .head(8)
+        .rename(columns={
+            "company": "Company", "sector": "Sector", "stage": "Stage",
+            "vc_score": "VC Score", "recommendation": "Call",
+        }),
         use_container_width=True,
         hide_index=True,
     )

@@ -303,20 +303,20 @@ with right:
             theta=labels + [labels[0]],
             fill="toself",
             name=row.get("company", "Startup"),
-            line=dict(color="#1E3A5F", width=2),
-            fillcolor="rgba(200, 155, 60, 0.30)",
+            line=dict(color="#141B2E", width=2),
+            fillcolor="rgba(169, 121, 44, 0.30)",
             hovertemplate="%{theta}: %{r:.0f}/100<extra></extra>",
         )
     )
     fig.update_layout(
-        title=dict(text="VC Scorecard Breakdown", font=dict(size=15, color="#111827"), x=0),
+        title=dict(text="VC Scorecard Breakdown", font=dict(size=15, color="#14171F"), x=0),
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font=dict(color="#111827"),
+        font=dict(color="#14171F"),
         polar=dict(
-            bgcolor="#FDFBF7",
-            radialaxis=dict(visible=True, range=[0, 100], gridcolor="#E5DFD3"),
-            angularaxis=dict(gridcolor="#E5DFD3"),
+            bgcolor="#F1EFE9",
+            radialaxis=dict(visible=True, range=[0, 100], gridcolor="#DEDAD0"),
+            angularaxis=dict(gridcolor="#DEDAD0"),
         ),
         showlegend=False,
         margin=dict(t=48, b=20, l=40, r=40),
@@ -325,8 +325,17 @@ with right:
 
 section_title("Full Portfolio", "All screened companies ranked by VC score.")
 df_scored = df.assign(vc_score=df.apply(lambda r: score_startup(r.to_dict()).total, axis=1))
+display_columns = {
+    "company": "Company", "sector": "Sector", "stage": "Stage",
+    "revenue_usd_k": "Revenue ($k)", "mom_growth_pct": "Growth (% MoM)",
+    "monthly_burn_usd_k": "Burn ($k/mo)", "runway_months": "Runway (mo)",
+    "competition": "Competition", "team_size": "Team", "vc_score": "VC Score",
+}
 st.dataframe(
-    df_scored.sort_values("vc_score", ascending=False),
+    df_scored[list(display_columns)]
+    .sort_values("vc_score", ascending=False)
+    .rename(columns=display_columns)
+    .round(1),
     use_container_width=True,
     hide_index=True,
 )

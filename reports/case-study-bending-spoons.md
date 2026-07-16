@@ -58,38 +58,6 @@ next steps) — downloadable as PDF in `assets/case-study/`.
    forced real numbers into the open — the same exercise on a private company
    would be assumption-stacking.
 
----
-
-## LinkedIn post draft
-
-> **I ran Bending Spoons' IPO numbers through the VC due-diligence simulator I built. It said "Watch."** 🧐
->
-> Bending Spoons listed on Nasdaq this month at $18.4B — Europe's biggest tech
-> listing in years. I fed the disclosed numbers ($2.4B run-rate revenue, +132%
-> YoY, EBITDA-profitable, 4,418 people) into VC Playbook, the open-source
-> diligence simulator I've been building.
->
-> Two results worth sharing:
->
-> 📊 The comps module priced it at $19.2B — within 4% of the actual IPO pricing,
-> from one honest multiple on run-rate ARR.
->
-> ⚠️ The seed-stage scorecard gave it 71/100, a "Watch." Not because the company
-> is weak — because frameworks encode a stage. A seed lens wants 3x-ing revenue
-> and hates crowded markets; an IPO-scale acquirer optimizes for profit and
-> durability. Watching a framework strain teaches you more than watching it
-> flatter.
->
-> Full walkthrough with screenshots and the auto-generated IC memo in the repo
-> (link in comments). All inputs are public IPO disclosures; CAC/LTV are labeled
-> assumptions.
->
-> Built as a first-year at Bocconi x ESSEC, learning VC in public.
->
-> #VentureCapital #IPO #BendingSpoons #BuildInPublic
-
----
-
 ### Screenshots
 
 ![Intake](../assets/case-study/1-intake.png)

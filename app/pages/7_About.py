@@ -61,8 +61,12 @@ text_card(
     "it at $19.2B — within 4% of the actual IPO pricing. The seed-stage scorecard said 71/100 'Watch', which "
     "is the more interesting result: frameworks encode a stage, and watching one strain on a growth-stage "
     "profile teaches you when its assumptions apply. Full walkthrough with screenshots and the generated IC "
-    "memo lives in the GitHub repo under reports/case-study-bending-spoons.md.",
+    "memo is linked below.",
     "Real-World Test",
+)
+st.link_button(
+    "Read the Bending Spoons case study →",
+    "https://github.com/tanmaygambhir37-design/VC-Playbook/blob/main/reports/case-study-bending-spoons.md",
 )
 
 section_title("Built By", "")

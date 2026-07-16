@@ -14,45 +14,60 @@ def apply_theme() -> None:
     st.markdown(
         """
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+            @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
             :root {
-                --vcl-bg: #F8F5EF;
+                --vcl-bg: #FAFAF7;
                 --vcl-card: #FFFFFF;
-                --vcl-card-soft: #FDFBF7;
-                --vcl-border: #E5DFD3;
-                --vcl-text: #111827;
-                --vcl-muted: #6B7280;
-                --vcl-blue: #1E3A5F;
-                --vcl-gold: #C89B3C;
-                --vcl-success: #0F766E;
+                --vcl-card-soft: #F1EFE9;
+                --vcl-border: #DEDAD0;
+                --vcl-text: #14171F;
+                --vcl-muted: #4B5164;
+                --vcl-blue: #141B2E;
+                --vcl-gold: #A9792C;
+                --vcl-success: #3D6B5C;
                 --vcl-warning: #B45309;
                 --vcl-danger: #B91C1C;
             }
 
             html, body, [class*="css"], .stApp {
-                font-family: 'Inter', sans-serif;
+                font-family: 'IBM Plex Sans', sans-serif;
                 background: var(--vcl-bg);
                 color: var(--vcl-text);
             }
+
+            h1, h2, h3, .vcl-page-title, .vcl-section-title, .vcl-card-title, .vcl-deal-name {
+                font-family: 'Fraunces', serif !important;
+            }
+
+            .vcl-eyebrow, .vcl-card-kicker, .vcl-news-source, .vcl-sidebar-label,
+            .vcl-deal-amount, .vcl-deal-sector, .vcl-metric-value, .vcl-step-number,
+            div[data-testid="stMetricValue"] {
+                font-family: 'IBM Plex Mono', monospace !important;
+            }
+
+            /* Equal card heights so grids read as aligned rows */
+            .vcl-news-card { min-height: 155px; }
+            .vcl-deal-card { min-height: 205px; }
+            .vcl-workflow-step { min-height: 215px; }
 
             .stApp {
                 background: var(--vcl-bg);
             }
 
             [data-testid="stSidebar"] {
-                background: #111827;
-                border-right: 1px solid #111827;
+                background: #141B2E;
+                border-right: 1px solid #141B2E;
             }
 
             [data-testid="stSidebar"] * {
-                color: #F8F5EF;
+                color: #FAFAF7;
             }
 
             [data-testid="stSidebar"] div[data-testid="stPageLink"] a {
                 background: transparent;
-                border-color: #2A3648;
-                color: #F8F5EF;
+                border-color: #2A3350;
+                color: #FAFAF7;
             }
 
             [data-testid="stSidebar"] div[data-testid="stPageLink"] a:hover {
@@ -64,15 +79,15 @@ def apply_theme() -> None:
             }
 
             [data-testid="stSidebar"] .vcl-logo-subtitle {
-                color: #B8C0CC;
+                color: #B9BECC;
             }
 
             [data-testid="stSidebar"] .vcl-sidebar-label {
-                color: #C89B3C;
+                color: #A9792C;
             }
 
             [data-testid="stSidebar"] .vcl-brand {
-                border-bottom: 1px solid #2A3648;
+                border-bottom: 1px solid #2A3350;
             }
 
             [data-testid="stSidebarNav"] {
@@ -141,7 +156,7 @@ def apply_theme() -> None:
                 border-color: var(--vcl-gold);
                 color: var(--vcl-blue);
                 transform: translateY(-1px);
-                box-shadow: 0 10px 26px rgba(200, 155, 60, 0.22);
+                box-shadow: 0 10px 26px rgba(169, 121, 44, 0.22);
             }
 
             .stButton > button[kind="primary"] {
@@ -151,7 +166,7 @@ def apply_theme() -> None:
             }
 
             .stButton > button[kind="primary"]:hover {
-                background: #16304F;
+                background: #0F1526;
                 border-color: var(--vcl-gold);
                 color: #FFFFFF;
             }
@@ -224,7 +239,7 @@ def apply_theme() -> None:
 
             .vcl-hero {
                 background:
-                    linear-gradient(100deg, rgba(17, 24, 39, 0.93) 35%, rgba(17, 24, 39, 0.62) 75%, rgba(200, 155, 60, 0.35)),
+                    linear-gradient(100deg, rgba(17, 24, 39, 0.93) 35%, rgba(17, 24, 39, 0.62) 75%, rgba(169, 121, 44, 0.35)),
                     url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1800&q=70');
                 background-position: center;
                 background-size: cover;
@@ -244,7 +259,7 @@ def apply_theme() -> None:
             }
 
             .vcl-hero .vcl-subtitle {
-                color: #F8F5EF;
+                color: #FAFAF7;
             }
 
             .vcl-deal-card {
@@ -263,10 +278,10 @@ def apply_theme() -> None:
             }
 
             .vcl-deal-sector {
-                background: rgba(200, 155, 60, 0.14);
-                border: 1px solid rgba(200, 155, 60, 0.4);
+                background: rgba(169, 121, 44, 0.14);
+                border: 1px solid rgba(169, 121, 44, 0.4);
                 border-radius: 999px;
-                color: #8A6A25;
+                color: #8A6420;
                 display: inline-block;
                 font-size: 0.7rem;
                 font-weight: 800;
@@ -515,8 +530,8 @@ def apply_theme() -> None:
 
             .vcl-icon {
                 align-items: center;
-                background: rgba(30, 58, 95, 0.08);
-                border: 1px solid rgba(30, 58, 95, 0.25);
+                background: rgba(20, 27, 46, 0.08);
+                border: 1px solid rgba(20, 27, 46, 0.25);
                 border-radius: 8px;
                 color: var(--vcl-blue);
                 display: inline-flex;
@@ -594,7 +609,7 @@ def apply_theme() -> None:
             }
 
             .vcl-sidebar-label {
-                color: #8A6A25;
+                color: #8A6420;
                 font-size: 0.7rem;
                 font-weight: 800;
                 letter-spacing: 0.08em;

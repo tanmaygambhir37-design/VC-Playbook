@@ -57,9 +57,9 @@ fig = px.bar(
 fig.update_layout(
     paper_bgcolor="#FFFFFF",
     plot_bgcolor="#FFFFFF",
-    font=dict(color="#111827"),
-    xaxis=dict(gridcolor="#E5DFD3"),
-    yaxis=dict(gridcolor="#E5DFD3", title="Average VC Score"),
+    font=dict(color="#14171F"),
+    xaxis=dict(gridcolor="#DEDAD0"),
+    yaxis=dict(gridcolor="#DEDAD0", title="Average VC Score"),
     coloraxis_showscale=False,
 )
 st.plotly_chart(fig, use_container_width=True)
@@ -77,7 +77,7 @@ with right:
     fig2.update_layout(
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font=dict(color="#111827"),
+        font=dict(color="#14171F"),
         legend=dict(bgcolor="#FFFFFF"),
         margin=dict(t=10, b=10),
     )
