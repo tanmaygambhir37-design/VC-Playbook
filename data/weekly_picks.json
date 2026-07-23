@@ -1,46 +1,46 @@
 {
   "_how_to_edit": "Update this file weekly (GitHub web editor works). 'week_of' must be an ISO date (YYYY-MM-DD) — if it is more than 14 days old the curated sections hide automatically. 'deals': funding rounds in your own words; 'category' is one of: Venture, Private Equity, Funds, People. 'videos'/'articles': your picks of the week. Save = site auto-redeploys.",
-  "week_of": "2026-07-14",
+  "week_of": "2026-07-20",
   "deals": [
     {
       "category": "Venture",
-      "company": "Flex",
-      "sector": "Fintech",
-      "round": "Series B1",
-      "amount": "$70M",
-      "lead": "Halo Fund",
-      "investors": "Portage, Wellington, Crosslink Capital, 53 Stations, Titanium Ventures",
-      "note": "SF-based AI-native private bank."
-    },
-    {
-      "category": "Venture",
-      "company": "SONATA",
-      "sector": "Health",
-      "round": "Early stage",
-      "amount": "$7M",
-      "lead": "Lux Capital",
-      "investors": "BoxGroup, Sunflower Capital",
-      "note": "Membership-based preventive-care provider (NYC / SF / LA)."
-    },
-    {
-      "category": "Venture",
-      "company": "Prolo",
+      "company": "Natural",
       "sector": "AI",
-      "round": "Seed",
-      "amount": "$5.6M",
-      "lead": "Triple Point Ventures",
-      "investors": "Anamcara, Concrete VC, Love Ventures, Portfolio Ventures",
-      "note": "London-based AI procurement platform for construction firms."
-    },
-    {
-      "category": "Funds",
-      "company": "Citation Capital",
-      "sector": "Private Equity",
-      "round": "Fund I",
-      "amount": "$1.1B",
+      "round": "Early stage",
+      "amount": "$30M",
       "lead": "",
       "investors": "",
-      "note": "First fund, focused on middle-market services, industrials, and consumer."
+      "note": "Reinventing payments for AI agents — taking on Stripe."
+    },
+    {
+      "category": "Venture",
+      "company": "Infinity",
+      "sector": "AI",
+      "round": "Seed",
+      "amount": "$15M",
+      "lead": "Touring Capital",
+      "investors": "OpenAI",
+      "note": "Inference startup building faster model serving."
+    },
+    {
+      "category": "Venture",
+      "company": "telli",
+      "sector": "AI",
+      "round": "Seed",
+      "amount": "€13.1M",
+      "lead": "",
+      "investors": "Y Combinator",
+      "note": "AI for B2C customer operations (YC-backed)."
+    },
+    {
+      "category": "Venture",
+      "company": "Bluecore Energy",
+      "sector": "Climate",
+      "round": "Seed",
+      "amount": "$10M",
+      "lead": "",
+      "investors": "",
+      "note": "Portable nuclear reactors on barges."
     }
   ],
   "videos": [

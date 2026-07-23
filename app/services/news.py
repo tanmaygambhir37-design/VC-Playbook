@@ -105,27 +105,40 @@ def guess_sector(title: str) -> str:
 # "London-based Prolo secures...", "EQT-backed Syntetica lands...",
 # "Robotics startup Monumental raises..." — strip them so only the name remains.
 _DESCRIPTOR_WORDS = {"crypto", "vc", "firm", "startup", "company", "platform", "fintech", "app", "maker"}
-_DESCRIPTOR_NEXT = {"startup", "company", "firm", "platform", "maker", "app"}
+# Words that describe a company category — the real name usually follows them.
+_DESCRIPTOR_ANYWHERE = {"startup", "platform", "firm", "company", "maker", "app", "provider", "developer"}
 
 
 def _clean_company(name: str) -> str:
     tokens = name.split()
-    while len(tokens) > 1:
-        head = tokens[0].lower()
-        if head in _DESCRIPTOR_WORDS or head.endswith("-based") or head.endswith("-backed"):
+    # If a category word appears with a name after it, keep only the tail:
+    # "German DeepTech startup kausable" -> "kausable", "Crypto VC firm Paradigm" -> "Paradigm"
+    idxs = [i for i, t in enumerate(tokens) if t.lower().strip(",.") in _DESCRIPTOR_ANYWHERE]
+    if idxs and idxs[-1] < len(tokens) - 1:
+        tokens = tokens[idxs[-1] + 1:]
+    else:
+        while len(tokens) > 1 and (
+            tokens[0].lower() in _DESCRIPTOR_WORDS
+            or tokens[0].lower().endswith(("-based", "-backed"))
+        ):
             tokens.pop(0)
-        elif len(tokens) > 2 and tokens[1].lower() in _DESCRIPTOR_NEXT:
-            tokens.pop(0)  # e.g. "Robotics startup Monumental" -> drop "Robotics"
-        else:
-            break
     return " ".join(tokens)
+
+
+def _looks_like_name(name: str) -> bool:
+    """Reject extractions that are still generic descriptions, not a company name."""
+    words = name.split()
+    return bool(words) and len(words) <= 4 and not any(
+        w.lower().strip(",.") in _DESCRIPTOR_ANYWHERE for w in words
+    )
 
 
 # Keywords that make a headline VC/business-relevant. Used to keep general-news
 # feeds (Axios) from putting geopolitics in a "VC Brief".
 _RELEVANT_RE = re.compile(
-    r"(?i)\b(rais|fund|venture|vc|startup|seed|series [a-e]|ipo|acqui|valuation|"
-    r"invest|exit|m&a|round|capital|unicorn|founder|deal|backs|merger|spac|stake)\w*",
+    r"(?i)(\brais(e|es|ed|ing)\b|\bfunding\b|\bventure\b|\bseed\b|\bseries [a-e]\b|"
+    r"\bipo\b|\bacqui(re|red|sition)\b|\bvaluation\b|\binvest(s|ed|ment|or)?\b|"
+    r"\bfunding round\b|\bunicorn\b|\bvc\b|\bstartup\b|\bmerger\b|\bspac\b)",
 )
 
 
@@ -140,10 +153,13 @@ def extract_deals(items: list[dict]) -> list[dict]:
         match = _DEAL_RE.match(item["title"].strip())
         if not match:
             continue
+        company = _clean_company(match.group("company"))
+        if not _looks_like_name(company):
+            continue  # skip headlines that don't cleanly name the company
         deals.append(
             {
                 **item,
-                "company": _clean_company(match.group("company")),
+                "company": company,
                 "amount": re.sub(r"\s+", "", match.group("amount")).replace("million", "M").replace("billion", "B"),
                 "sector": guess_sector(item["title"]),
             }

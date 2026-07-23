@@ -8,6 +8,8 @@ TAGLINE = "Read the news. Think like an investor."
 GITHUB_URL = "https://github.com/tanmaygambhir37-design/VC-Playbook"
 LINKEDIN_URL = "https://www.linkedin.com/in/tanmay-g-5432ba203/"
 SUBSTACK_URL = "https://substack.com/@tanmaydiary/posts"
+PORTFOLIO_URL = "https://tanmaygambhir37-design.github.io/#top"
+RESEARCH_URL = "https://tanmaygambhir37-design.github.io/investment-research/"
 
 
 def apply_theme() -> None:
@@ -47,9 +49,9 @@ def apply_theme() -> None:
             }
 
             /* Equal card heights so grids read as aligned rows */
-            .vcl-news-card { min-height: 155px; }
-            .vcl-deal-card { min-height: 205px; }
-            .vcl-workflow-step { min-height: 215px; }
+            .vcl-news-card { min-height: 112px; display: flex; flex-direction: column; }
+            .vcl-news-card .vcl-news-meta { margin-top: auto; }
+            .vcl-deal-card { min-height: 172px; }
 
             .stApp {
                 background: var(--vcl-bg);
@@ -103,8 +105,8 @@ def apply_theme() -> None:
             }
 
             .block-container {
-                padding-top: 2.25rem;
-                padding-bottom: 4rem;
+                padding-top: 1.1rem;
+                padding-bottom: 3rem;
                 max-width: 1220px;
             }
 
@@ -557,8 +559,8 @@ def apply_theme() -> None:
 
             .vcl-section {
                 border-top: 1px solid var(--vcl-border);
-                margin-top: 42px;
-                padding-top: 34px;
+                margin-top: 26px;
+                padding-top: 20px;
             }
 
             .vcl-section-title {

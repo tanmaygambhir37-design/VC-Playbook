@@ -1,6 +1,6 @@
 import streamlit as st
 
-from .theme import GITHUB_URL, LINKEDIN_URL, SUBSTACK_URL
+from .theme import GITHUB_URL, LINKEDIN_URL, PORTFOLIO_URL, RESEARCH_URL, SUBSTACK_URL
 
 
 def footer() -> None:
@@ -13,7 +13,9 @@ def footer() -> None:
         """,
         unsafe_allow_html=True,
     )
-    c1, c2, c3 = st.columns(3)
-    c1.link_button("LinkedIn", LINKEDIN_URL, use_container_width=True)
-    c2.link_button("GitHub", GITHUB_URL, use_container_width=True)
-    c3.link_button("Substack", SUBSTACK_URL, use_container_width=True)
+    cols = st.columns(5)
+    cols[0].link_button("Portfolio", PORTFOLIO_URL, use_container_width=True)
+    cols[1].link_button("Research", RESEARCH_URL, use_container_width=True)
+    cols[2].link_button("LinkedIn", LINKEDIN_URL, use_container_width=True)
+    cols[3].link_button("GitHub", GITHUB_URL, use_container_width=True)
+    cols[4].link_button("Substack", SUBSTACK_URL, use_container_width=True)

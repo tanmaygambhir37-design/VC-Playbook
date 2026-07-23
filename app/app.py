@@ -12,6 +12,8 @@ from components.footer import footer
 from components.theme import (
     GITHUB_URL,
     LINKEDIN_URL,
+    PORTFOLIO_URL,
+    RESEARCH_URL,
     SUBSTACK_URL,
     apply_theme,
     hide_sidebar,
@@ -74,6 +76,8 @@ st.markdown(
     f"""
     <div class="vcl-topbar">
         <span class="vcl-topbar-bio"><strong style="color:#14171F;">Tanmay Gambhir</strong> · Bocconi x ESSEC · Graduating 2028</span>
+        <a href="{PORTFOLIO_URL}" target="_blank">Portfolio</a>
+        <a href="{RESEARCH_URL}" target="_blank">Research</a>
         <a href="{LINKEDIN_URL}" target="_blank">LinkedIn</a>
         <a href="{GITHUB_URL}" target="_blank">GitHub</a>
         <a href="{SUBSTACK_URL}" target="_blank">Substack</a>
