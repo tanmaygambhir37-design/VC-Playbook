@@ -17,6 +17,7 @@ import streamlit as st
 
 PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 WEEKLY_PICKS_PATH = os.path.join(PROJECT_ROOT, "data", "weekly_picks.json")
+PREDICTIONS_PATH = os.path.join(PROJECT_ROOT, "data", "predictions.json")
 
 FEEDS = {
     "TechCrunch Venture": "https://techcrunch.com/category/venture/feed/",
@@ -218,3 +219,26 @@ def latest_substack_post() -> dict | None:
         return {"title": entry.get("title", ""), "link": entry.get("link", "#")}
     except Exception:
         return None
+
+
+def load_predictions() -> list[dict]:
+    """Public track record, newest call first."""
+    try:
+        with open(PREDICTIONS_PATH) as fh:
+            preds = json.load(fh).get("predictions", [])
+    except Exception:
+        return []
+    return sorted(preds, key=lambda p: p.get("date", ""), reverse=True)
+
+
+def prediction_scorecard(preds: list[dict]) -> dict:
+    """Hit rate over resolved calls; partial counts as half."""
+    resolved = [p for p in preds if p.get("status") in {"correct", "wrong", "partial"}]
+    score = sum({"correct": 1.0, "partial": 0.5}.get(p["status"], 0.0) for p in resolved)
+    hit_rate = round(100 * score / len(resolved)) if resolved else None
+    return {
+        "total": len(preds),
+        "open": sum(1 for p in preds if p.get("status") == "open"),
+        "resolved": len(resolved),
+        "hit_rate": hit_rate,
+    }

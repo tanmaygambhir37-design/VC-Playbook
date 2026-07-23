@@ -1,0 +1,38 @@
+{
+  "_how_to_edit": "Your public track record. Add a call when you make it, resolve it when the outcome is known. Honesty is the whole point — log the misses too. Fields: date (YYYY-MM-DD made), subject, claim (what you predicted), reasoning (why), conviction (Low/Medium/High), resolve_by (YYYY-MM-DD), status (open/correct/wrong/partial), resolution + resolved_date (fill on resolution). Save = site auto-redeploys.",
+  "predictions": [
+    {
+      "date": "2026-07-01",
+      "subject": "Bending Spoons (Nasdaq: BSP)",
+      "claim": "The IPO prices near the simulator's comps output of ~$19B, not the lower end of the marketed $26-28 range.",
+      "reasoning": "Running the disclosed run-rate revenue through an 8x ARR comp lands at $19.2B. Profitable + doubling EBITDA guidance means the book should clear above range.",
+      "conviction": "Medium",
+      "resolve_by": "2026-07-02",
+      "status": "correct",
+      "resolution": "Priced at $29/share ($18.4B), above the $26-28 range; closed day one near $25B. Comps call was within ~4%.",
+      "resolved_date": "2026-07-02"
+    },
+    {
+      "date": "2026-07-20",
+      "subject": "AI-agent payment infrastructure",
+      "claim": "The agent-payments category (Natural and peers) sees at least one $1B+ round or acquisition before mid-2027.",
+      "reasoning": "Agent commerce is a clear where-the-puck-is-going bet; incumbents (Stripe, Visa) are already responding. Capital tends to concentrate fast once a category is validated.",
+      "conviction": "Medium",
+      "resolve_by": "2027-06-30",
+      "status": "open",
+      "resolution": "",
+      "resolved_date": ""
+    },
+    {
+      "date": "2026-07-20",
+      "subject": "2021-vintage late-stage unicorns",
+      "claim": "At least one visible 2021-vintage unicorn posts a down round, structured raise, or shutdown each quarter through end-2026.",
+      "reasoning": "Late-stage repricing from the 2021 peak is still working through the system; runway raised at zero-rate valuations is expiring.",
+      "conviction": "High",
+      "resolve_by": "2026-12-31",
+      "status": "open",
+      "resolution": "",
+      "resolved_date": ""
+    }
+  ]
+}

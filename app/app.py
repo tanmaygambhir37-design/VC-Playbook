@@ -20,7 +20,15 @@ from components.theme import (
     landing_header,
     section_title,
 )
-from services.news import extract_deals, fetch_all_feeds, interleave, latest_substack_post, load_weekly_picks
+from services.news import (
+    extract_deals,
+    fetch_all_feeds,
+    interleave,
+    latest_substack_post,
+    load_predictions,
+    load_weekly_picks,
+    prediction_scorecard,
+)
 
 st.set_page_config(page_title="VC Playbook", page_icon="📗", layout="wide", initial_sidebar_state="collapsed")
 apply_theme()
@@ -165,5 +173,13 @@ spotlight_row(
         "why": "The comps module landed within 4% of the actual IPO pricing — and the seed-stage scorecard honestly said 'Watch'.",
     }],
 )
+
+_preds = load_predictions()
+if _preds:
+    _s = prediction_scorecard(_preds)
+    _hit = f"{_s['hit_rate']}% hit rate" if _s["hit_rate"] is not None else "tracking"
+    section_title("Track Record", f"{_s['total']} public calls · {_s['resolved']} resolved · {_hit}")
+    if st.button("See the Predictions Ledger →", key="preds_cta"):
+        st.switch_page("pages/8_Predictions.py")
 
 footer()
