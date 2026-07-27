@@ -4,51 +4,96 @@
   "deals": [
     {
       "category": "Venture",
-      "company": "Natural",
+      "company": "Multiverse Computing",
+      "sector": "AI",
+      "round": "Series C",
+      "amount": "$570M",
+      "lead": "Forgepoint Capital, Bullhound Capital",
+      "investors": "BNP Paribas (Solar Impulse), HP, Orange, Santander, Qatar Development Bank",
+      "note": "Spanish AI model-compression startup, raising at a $1.7B pre-money valuation."
+    },
+    {
+      "category": "Venture",
+      "company": "Antares",
+      "sector": "Climate",
+      "round": "Series C",
+      "amount": "$470M",
+      "lead": "Paradigm, Caffeinated Capital",
+      "investors": "Point72 Ventures, Shine Capital, Industrious Ventures",
+      "note": "Torrance, CA nuclear reactor startup — one of the largest climate rounds of the week."
+    },
+    {
+      "category": "Venture",
+      "company": "Prentis",
       "sector": "AI",
       "round": "Early stage",
-      "amount": "$30M",
+      "amount": "$100M",
       "lead": "",
       "investors": "",
-      "note": "Reinventing payments for AI agents — taking on Stripe."
+      "note": "AI research lab co-founded by Reid Hoffman, raising at a $1B valuation."
     },
     {
       "category": "Venture",
-      "company": "Infinity",
+      "company": "AegisAI",
       "sector": "AI",
-      "round": "Seed",
-      "amount": "$15M",
-      "lead": "Touring Capital",
-      "investors": "OpenAI",
-      "note": "Inference startup building faster model serving."
+      "round": "Series A",
+      "amount": "$36M",
+      "lead": "Battery Ventures",
+      "investors": "Accel, Foundation Capital",
+      "note": "SF-based email security company — a clean tier-1 Series A."
     },
     {
-      "category": "Venture",
-      "company": "telli",
-      "sector": "AI",
-      "round": "Seed",
-      "amount": "€13.1M",
-      "lead": "",
-      "investors": "Y Combinator",
-      "note": "AI for B2C customer operations (YC-backed)."
+      "category": "IPO",
+      "company": "Scribe Therapeutics",
+      "sector": "Health",
+      "round": "IPO",
+      "amount": "$129M",
+      "lead": "Nasdaq: SCTX",
+      "investors": "prior backers: a16z, Eli Lilly, T. Rowe Price, OrbiMed",
+      "note": "CRISPR medicines, co-founded by Jennifer Doudna. Priced high end at $15; closed the first Friday at $21.65 (+44%)."
     },
     {
-      "category": "Venture",
-      "company": "Bluecore Energy",
+      "category": "Private Equity",
+      "company": "Aypa Power",
       "sector": "Climate",
-      "round": "Seed",
-      "amount": "$10M",
+      "round": "Acquisition",
+      "amount": "$7B",
+      "lead": "Brookfield",
+      "investors": "sold by Blackstone",
+      "note": "Austin-based battery-storage firm — one of the year's biggest energy-infra buyouts (incl. debt)."
+    },
+    {
+      "category": "Private Equity",
+      "company": "DCC Energy",
+      "sector": "Energy",
+      "round": "Acquisition",
+      "amount": "£5.7B",
+      "lead": "KKR, Energy Capital Partners",
+      "investors": "",
+      "note": "UK energy distributor taken private by a KKR-led consortium."
+    },
+    {
+      "category": "Funds",
+      "company": "Clayton, Dubilier & Rice",
+      "sector": "Private Equity",
+      "round": "Fund XIII",
+      "amount": "Flagship",
       "lead": "",
       "investors": "",
-      "note": "Portable nuclear reactors on barges."
+      "note": "CD&R is raising its 13th flagship buyout fund (per SEC filing)."
     }
   ],
   "videos": [
     {
-      "title": "Video of the Week",
-      "url": "https://www.youtube.com/watch?v=zOmdvfkE-iY",
+      "url": "https://www.youtube.com/watch?v=9-elbuGzT4U",
       "why": ""
     }
   ],
-  "articles": []
+  "articles": [
+    {
+      "title": "Europe's Private Capital: AUM & Dry Powder 2025 (Invest Europe)",
+      "url": "https://www.investeurope.eu/news/video-hub/2026/capital-under-management-dry-powder-2025-summary-video/",
+      "why": "How much capital European PE/VC is sitting on heading into 2026 — the dry-powder picture in one summary."
+    }
+  ]
 }
