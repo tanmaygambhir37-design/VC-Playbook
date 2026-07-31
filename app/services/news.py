@@ -52,7 +52,10 @@ _SECTOR_KEYWORDS = {
 
 def fetch_feed(source: str, url: str) -> list[dict]:
     try:
-        response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=6)
+        # Short timeout on purpose: five feeds are fetched in parallel on a
+        # cold container, and a first paint held hostage by the slowest wire
+        # costs more visitors than one missing source does.
+        response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=4)
         parsed = feedparser.parse(response.content)
         items = [
             {
@@ -168,21 +171,50 @@ def extract_deals(items: list[dict]) -> list[dict]:
     return deals
 
 
+def _freshness_label(days_old: int | None) -> str:
+    if days_old is None:
+        return "updated regularly"
+    if days_old <= 1:
+        return "updated today"
+    if days_old <= 9:
+        return "updated this week"
+    if days_old <= 31:
+        return f"last updated {days_old} days ago"
+    months = max(1, round(days_old / 30))
+    return f"last updated {months} month{'s' if months > 1 else ''} ago"
+
+
 def load_weekly_picks() -> dict:
-    """Weekly picks, with a staleness guard: if week_of (ISO date) is more
-    than 14 days old, the curated sections hide so the site never looks
-    abandoned. `stale` is set on the returned dict."""
-    empty = {"week_of": "", "deals": [], "videos": [], "articles": [], "stale": True}
+    """Weekly picks, with an honest freshness label.
+
+    This used to hide the curated sections once `week_of` aged past 14 days,
+    so the site would never look abandoned. But those picks are the only
+    content here that nobody else has — hiding them left a page made entirely
+    of other people's headlines. Now they stay up and the page says how old
+    they are, which is the honest version and keeps the best material working
+    between updates.
+
+    `days_old` and `stale` are still returned for callers that want to nudge
+    the owner to refresh.
+    """
+    empty = {"week_of": "", "deals": [], "videos": [], "articles": [],
+             "stale": True, "days_old": None, "as_of_label": "updated regularly"}
     try:
         with open(WEEKLY_PICKS_PATH) as fh:
             picks = json.load(fh)
     except Exception:
         return empty
+
+    days_old = None
     try:
         week = datetime.strptime(picks.get("week_of", ""), "%Y-%m-%d").date()
-        picks["stale"] = (date.today() - week).days > 14
+        days_old = (date.today() - week).days
     except ValueError:
-        picks["stale"] = False  # unparseable date -> show rather than hide
+        pass
+    picks["days_old"] = days_old
+    picks["stale"] = days_old is not None and days_old > 14
+    picks["as_of_label"] = _freshness_label(days_old)
+
     # Auto-title videos: paste just a URL in the JSON and the real YouTube
     # title is fetched here.
     for video in picks.get("videos", []):

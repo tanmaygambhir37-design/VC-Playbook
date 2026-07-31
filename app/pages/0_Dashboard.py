@@ -1,7 +1,6 @@
 import os
 import sys
 
-import pandas as pd
 import streamlit as st
 
 APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -9,26 +8,20 @@ PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
 from components.cards import text_card, workflow_step
+from components.footer import footer
 from components.navigation import nav_link, sidebar
-from components.theme import apply_theme, page_header, section_title
+from components.theme import CASE_STUDY_URL, apply_theme, page_header, section_title
+from services.analytics import track_page
+from services.dataset import scored_dataset
 from models.scoring import score_startup
+from state import get_active_deal_row
 
 st.set_page_config(page_title="Dashboard | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
+track_page("dashboard", "Dashboard")
 
-DATA_PATH = os.path.join(PROJECT_ROOT, "data", "startups.csv")
-
-
-@st.cache_data
-def load_data():
-    return pd.read_csv(DATA_PATH)
-
-
-df = load_data()
-scores = df.apply(lambda r: score_startup(r.to_dict()).total, axis=1)
-recommendations = df.apply(lambda r: score_startup(r.to_dict()).recommendation, axis=1)
-df_scored = df.assign(vc_score=scores, recommendation=recommendations)
+df_scored = scored_dataset()
 recommended = int((df_scored["vc_score"] >= 75).sum())
 
 page_header("Dashboard", "Your due diligence simulator workspace — screen a company, value it, model dilution, and generate a memo. Practice on the sample dataset or bring your own numbers.")
@@ -65,21 +58,39 @@ with left:
         hide_index=True,
     )
 with middle:
-    text_card(
-        "Recent Reports",
-        "Investment memo drafts, valuation notes, and sector snapshots prepared from the workspace.",
-        "Reports",
-    )
-    text_card(
-        "Recent Models",
-        "VC Method, ARR multiple, cap table, and returns sensitivity models ready for review.",
-        "Models",
-    )
+    # This column used to describe reports and models that did not exist. It
+    # now shows the one piece of real state the workspace has: the deal the
+    # visitor is actually carrying through the flow.
+    active = get_active_deal_row()
+    if active:
+        active_result = score_startup(active)
+        text_card(
+            f"Active Deal — {active['company']}",
+            f"{active.get('sector', '')} · {active.get('stage', '')}<br>"
+            f"VC Score <strong>{active_result.total}/100</strong> · {active_result.recommendation}<br>"
+            "Carry it into valuation, cap table, or the memo below.",
+            "In Progress",
+        )
+    else:
+        text_card(
+            "No Active Deal Yet",
+            "Screen a company — from the sample dataset, your own numbers, or a deal from "
+            "the news — and it carries through valuation, cap table, and the memo without "
+            "re-entering anything.",
+            "Start Here",
+        )
 with right:
     text_card(
         "Investment Pipeline",
-        f"{recommended} companies currently clear the Proceed threshold. Use screening before moving to valuation or memo generation.",
+        f"{recommended} of {len(df_scored)} sample companies clear the Proceed threshold "
+        "(VC Score 75+). Screening comes before valuation or memo generation.",
         "Status",
+    )
+    text_card(
+        "Checked Against A Real Outcome",
+        "The comps module priced Bending Spoons' IPO within 4% of its actual $18.4B pricing. "
+        f'<a href="{CASE_STUDY_URL}" target="_blank" style="color:#8A6420;">Read the walkthrough →</a>',
+        "Case Study",
     )
 
 section_title("Quick Actions", "Jump into the most common diligence tasks.")
@@ -88,3 +99,5 @@ nav_link("pages/1_Startup_Screening.py", label="New Startup", icon=":material/ad
 nav_link("pages/2_Valuation.py", label="Run Valuation", icon=":material/attach_money:", use_container_width=True, container=q2)
 nav_link("pages/3_Cap_Table_Returns.py", label="Cap Table & Returns", icon=":material/account_tree:", use_container_width=True, container=q3)
 nav_link("pages/4_Investment_Memo.py", label="Generate Memo", icon=":material/description:", use_container_width=True, container=q4)
+
+footer()

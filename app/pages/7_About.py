@@ -8,13 +8,15 @@ PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
 from components.cards import feature_card, text_card
-from components.footer import footer
+from components.footer import email_capture, footer
 from components.navigation import sidebar
-from components.theme import SUBTITLE, TAGLINE, apply_theme, page_header, section_title
+from components.theme import CASE_STUDY_URL, SUBTITLE, TAGLINE, apply_theme, page_header, section_title
+from services.analytics import track_page
 
 st.set_page_config(page_title="About | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
+track_page("about", "About")
 
 page_header("About VC Playbook", SUBTITLE, "Settings")
 
@@ -64,10 +66,7 @@ text_card(
     "memo is linked below.",
     "Real-World Test",
 )
-st.link_button(
-    "Read the Bending Spoons case study →",
-    "https://github.com/tanmaygambhir37-design/VC-Playbook/blob/main/reports/case-study-bending-spoons.md",
-)
+st.link_button("Read the Bending Spoons case study →", CASE_STUDY_URL)
 
 section_title("Built By", "")
 text_card(
@@ -77,4 +76,5 @@ text_card(
     "Author",
 )
 
+email_capture()
 footer()

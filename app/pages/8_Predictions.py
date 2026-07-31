@@ -12,14 +12,16 @@ PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
 from components.cards import metric_card
-from components.footer import footer
+from components.footer import email_capture, footer
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
+from services.analytics import track_page
 from services.news import load_predictions, prediction_scorecard
 
 st.set_page_config(page_title="Predictions | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
+track_page("predictions", "Predictions Ledger")
 
 page_header(
     "Predictions Ledger",
@@ -99,4 +101,5 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+email_capture()
 footer()

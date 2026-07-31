@@ -8,8 +8,11 @@ TAGLINE = "Read the news. Think like an investor."
 GITHUB_URL = "https://github.com/tanmaygambhir37-design/VC-Playbook"
 LINKEDIN_URL = "https://www.linkedin.com/in/tanmay-g-5432ba203/"
 SUBSTACK_URL = "https://substack.com/@tanmaydiary/posts"
+SUBSTACK_SUBSCRIBE_URL = "https://tanmaydiary.substack.com/subscribe"
 PORTFOLIO_URL = "https://tanmaygambhir37-design.github.io/#top"
 RESEARCH_URL = "https://tanmaygambhir37-design.github.io/investment-research/"
+CASE_STUDY_URL = f"{GITHUB_URL}/blob/main/reports/case-study-bending-spoons.md"
+ISSUES_URL = f"{GITHUB_URL}/issues/new"
 
 
 def apply_theme() -> None:
@@ -621,6 +624,92 @@ def apply_theme() -> None:
 
             .vcl-muted {
                 color: var(--vcl-muted);
+            }
+
+            /* Side-by-side cards whose text lengths differ; without a floor
+               the shorter one leaves its button hanging mid-air. */
+            .vcl-card-equal { min-height: 232px; }
+
+            .vcl-deal-sector-plain {
+                color: var(--vcl-muted);
+                font-family: 'IBM Plex Mono', monospace;
+                font-size: 0.78rem;
+                font-weight: 600;
+                margin-left: 6px;
+            }
+
+            .vcl-capture {
+                background: var(--vcl-blue);
+                border-radius: 12px;
+                margin-top: 34px;
+                padding: 26px 30px;
+            }
+
+            .vcl-capture .vcl-card-kicker { color: var(--vcl-gold); }
+            .vcl-capture .vcl-capture-title {
+                color: #FFFFFF;
+                font-family: 'Fraunces', serif;
+                font-size: 1.4rem;
+                font-weight: 700;
+                margin-bottom: 6px;
+            }
+            .vcl-capture .vcl-card-body { color: #C7CBD6; }
+
+            /* Most of this app's traffic arrives from a LinkedIn post, which
+               means a phone. Streamlit's wide layout and three-across grids
+               need explicit help below tablet width. */
+            @media (max-width: 768px) {
+                .block-container {
+                    padding-left: 0.9rem;
+                    padding-right: 0.9rem;
+                }
+
+                [data-testid="stHorizontalBlock"] {
+                    flex-direction: column;
+                    gap: 10px;
+                }
+
+                [data-testid="stHorizontalBlock"] > div,
+                [data-testid="stColumn"],
+                [data-testid="column"] {
+                    flex: 1 1 100% !important;
+                    min-width: 100% !important;
+                    width: 100% !important;
+                }
+
+                .vcl-hero {
+                    border-radius: 10px;
+                    padding: 24px 20px;
+                }
+
+                .vcl-topbar {
+                    flex-wrap: wrap;
+                    gap: 8px;
+                    justify-content: flex-start;
+                }
+
+                .vcl-topbar-bio {
+                    flex-basis: 100%;
+                    margin-bottom: 4px;
+                    margin-right: 0;
+                }
+
+                .vcl-topbar a {
+                    font-size: 0.76rem;
+                    padding: 6px 12px;
+                }
+
+                /* Fixed heights that align desktop grids just add dead space
+                   once the cards are stacked. */
+                .vcl-news-card, .vcl-deal-card, .vcl-workflow-step {
+                    min-height: 0;
+                }
+
+                .vcl-card { padding: 18px; }
+                .vcl-capture { padding: 20px 18px; }
+                .vcl-metric-value { font-size: 1.7rem; }
+                .vcl-subtitle { font-size: 1.05rem; }
+                .vcl-section-title { font-size: 1.25rem; }
             }
         </style>
         """,

@@ -1,7 +1,6 @@
 import os
 import sys
 
-import pandas as pd
 import streamlit as st
 
 APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -10,10 +9,13 @@ sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
 from components.cards import metric_card, recommendation_banner, text_card
 from components.due_diligence import render_due_diligence_section
+from components.footer import email_capture, footer
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
 from models.scoring import score_startup
 from models.valuation import comparable_multiples
+from services.analytics import track_event, track_page
+from services.dataset import load_data
 from services.due_diligence import (
     generate_business_model,
     generate_competition,
@@ -29,11 +31,11 @@ from state import get_active_deal_parsed, get_active_deal_row
 st.set_page_config(page_title="Investment Memo | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
+track_page("investment-memo", "Investment Memo")
 
 page_header("Investment Memo", "One click turns a screened startup into a structured investment memo.", "Reports")
 
-DATA_PATH = os.path.join(PROJECT_ROOT, "data", "startups.csv")
-df = pd.read_csv(DATA_PATH)
+df = load_data()
 
 active_row = get_active_deal_row()
 active_parsed = get_active_deal_parsed()
@@ -84,6 +86,8 @@ def build_next_steps(result, risk_bullets: list) -> list:
 
 if st.button("Generate Investment Memo", type="primary"):
     result = score_startup(row)
+    track_event("memo_generated", company=row.get("company"), sector=row.get("sector"),
+                stage=row.get("stage"), score=result.total, recommendation=result.recommendation)
     val = comparable_multiples(row.get("revenue_usd_k", 0) / 1000, row.get("sector_median_arr_multiple", 8))
     ltv_cac = round(row["ltv_usd"] / row["cac_usd"], 2) if row["cac_usd"] else 0
 
@@ -158,3 +162,6 @@ else:
         "Select a company and generate a memo to view thesis, risks, valuation range, recommendation, and a downloadable PDF.",
         "Ready",
     )
+
+email_capture()
+footer()

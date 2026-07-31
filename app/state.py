@@ -10,6 +10,22 @@ design — this is a demo workspace, not a multi-user product).
 import streamlit as st
 
 _KEY = "active_deal"
+_PREFILL_KEY = "prefill_deal"
+
+
+def set_prefill_deal(deal: dict) -> None:
+    """Hand a news/curated deal to the screening page.
+
+    Carries the whole deal — sector, round, amount, lead, source link — not
+    just the company name, so screening can open on a filled scorecard.
+    """
+    st.session_state[_PREFILL_KEY] = dict(deal)
+
+
+def pop_prefill_deal() -> dict | None:
+    """Read and clear the pending prefill, so a rerun doesn't re-apply it
+    over edits the user has since made."""
+    return st.session_state.pop(_PREFILL_KEY, None)
 
 
 def set_active_deal(row: dict, parsed: dict | None = None) -> None:

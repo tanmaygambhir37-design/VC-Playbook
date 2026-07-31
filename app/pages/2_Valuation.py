@@ -8,8 +8,10 @@ PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
 from components.cards import deal_banner, metric_card, text_card
+from components.footer import footer
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
+from services.analytics import track_page
 from models.scoring import score_startup
 from models.returns import irr_from_moic
 from models.valuation import SCORECARD_FACTORS, comparable_multiples, scorecard_method, vc_method
@@ -21,6 +23,7 @@ STAGE_RETENTION = {"Pre-Seed": 40, "Seed": 50, "Series A": 65, "Series B": 80, "
 st.set_page_config(page_title="Valuation | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
+track_page("valuation", "Valuation")
 
 page_header("Valuation", "Three complementary early-stage valuation methods, side by side.", "Analysis")
 
@@ -50,8 +53,11 @@ with tab1:
     res = vc_method(exit_value, target_multiple, investment, retention / 100)
     hold_years = st.slider("Holding Period (years)", 3, 12, 7)
     implied_irr = irr_from_moic(target_multiple, hold_years)
+    # The backslashes reach Streamlit's markdown, where they stop a bare $ from
+    # opening a LaTeX span. They have to be escaped in the Python literal too —
+    # "\$" is an invalid escape sequence that newer Python turns into an error.
     st.caption(
-        f"Sanity check: \${investment}M in at \${res.pre_money}M pre, exiting at \${exit_value}M "
+        f"Sanity check: \\${investment}M in at \\${res.pre_money}M pre, exiting at \\${exit_value}M "
         f"in {hold_years} years returns your {target_multiple}x target — a {implied_irr}% IRR."
     )
     m1, m2, m3 = st.columns(3)
@@ -100,3 +106,5 @@ text_card(
     "In practice, VCs triangulate across all three methods: the VC Method anchors to expected fund returns, comparables ground the number in the current market, and the Scorecard Method captures qualitative diligence.",
     "Methodology",
 )
+
+footer()

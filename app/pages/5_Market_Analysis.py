@@ -1,7 +1,6 @@
 import os
 import sys
 
-import pandas as pd
 import plotly.express as px
 import streamlit as st
 
@@ -10,19 +9,20 @@ PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
 from components.cards import metric_card, text_card
+from components.footer import footer
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
-from models.scoring import score_startup
+from services.analytics import track_page
+from services.dataset import scored_dataset
 
 st.set_page_config(page_title="Market Analysis | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
+track_page("market-analysis", "Market Analysis")
 
 page_header("Market Analysis", "Sector, stage, and competitive pattern views for diligence context.", "Analysis")
 
-DATA_PATH = os.path.join(PROJECT_ROOT, "data", "startups.csv")
-df = pd.read_csv(DATA_PATH)
-df_scored = df.assign(vc_score=df.apply(lambda r: score_startup(r.to_dict()).total, axis=1))
+df_scored = scored_dataset()
 
 section_title("Market Snapshot", "Compare opportunity quality across sectors and funding stages.")
 c1, c2, c3, c4 = st.columns(4)
@@ -88,3 +88,5 @@ text_card(
     "This module summarizes the existing dataset for diligence orientation. It does not add or modify the underlying financial scoring, valuation, cap table, or returns formulas.",
     "Scope",
 )
+
+footer()

@@ -44,13 +44,32 @@ Built for VC-curious students, analysts, and juniors — get your industry news 
 
 ## The Simulator Workflow
 
-1. **Screen** a startup against a weighted scorecard — from the sample dataset, manual entry, or your own CSV
+1. **Screen** a startup against a weighted scorecard — from the sample dataset, manual entry, your own CSV, or a deal straight off the news wall
 2. **Value** it using three standard methodologies (VC Method, comparable multiples, scorecard method)
 3. **Model** ownership dilution across funding rounds
 4. **Project** portfolio returns and stress-test exit scenarios
 5. **Generate** a structured investment memo — downloadable as PDF
 
 A beginner glossary explains every term (ARR, LTV, CAC, MOIC, IRR, dilution…) along the way.
+
+### News → scorecard in one click
+
+Every deal card in VC Pulse and on the homepage has an **Analyze** button. A
+headline reports three things — company, sector, round — and the scorecard
+needs fifteen, so [`models/prefill.py`](models/prefill.py) fills the gap from a
+stage benchmark table: the round label and size pick an entry stage, the sector
+picks an ARR multiple, and the stage supplies typical operating metrics.
+
+The page then says exactly which fields were assumed and invites you to
+overwrite them. That disclosure is the point — the tool is for learning what a
+Series C profile looks like and where your own estimate differs, not for
+pretending a press release contained a CAC figure.
+
+### Shareable analyses
+
+**Create share link** packs every screening input into the URL
+(zlib + base64, no database, no expiry). Send it and the other person opens
+your exact scorecard — same numbers, same score — and can edit and re-share it.
 
 ---
 
@@ -88,8 +107,14 @@ VC-Playbook/
 ├── requirements.txt
 ├── runtime.txt                         # Pins Python for Streamlit Cloud
 ├── app/
-│   ├── app.py                          # Landing page (news + deal radar)
-│   ├── services/                       # News aggregation, memo drafting, PDF
+│   ├── app.py                          # Landing page (case study, track record, deals)
+│   ├── services/
+│   │   ├── analytics.py                # Pageviews + funnel events (opt-in)
+│   │   ├── dataset.py                  # Cached sample data + scores
+│   │   ├── news.py                     # RSS aggregation, deal extraction
+│   │   ├── share.py                    # Analysis <-> share-link codec
+│   │   ├── due_diligence.py            # Memo narrative sections
+│   │   └── pdf_report.py               # PDF export
 │   └── pages/
 │       ├── 0_Dashboard.py
 │       ├── 1_Startup_Screening.py
@@ -107,9 +132,12 @@ VC-Playbook/
 │   ├── scoring.py                      # VC scorecard model
 │   ├── valuation.py                    # VC Method / Comps / Scorecard
 │   ├── cap_table.py                    # Round-by-round dilution engine
-│   └── returns.py                      # MOIC / IRR / sensitivity
+│   ├── returns.py                      # MOIC / IRR / sensitivity
+│   └── prefill.py                      # News deal -> screenable profile
 ├── tests/
-│   └── test_models.py                  # Pytest suite for the model layer
+│   ├── test_models.py                  # Model layer
+│   ├── test_prefill_share.py           # Prefill benchmarks + share codec
+│   └── test_pages.py                   # Every page renders without raising
 ├── reports/
 │   └── VC-Playbook-Whitepaper.md       # Methodology writeup
 └── assets/
@@ -133,7 +161,37 @@ The app opens at `http://localhost:8501`. To regenerate the synthetic dataset wi
 python data/generate_data.py
 ```
 
-Optional: to get an email whenever someone runs a screening, create a free [Formspree](https://formspree.io) form and add its endpoint to Streamlit secrets as `FORMSPREE_URL`.
+Run the tests — the model math plus a render check on all ten pages:
+
+```bash
+pytest
+```
+
+---
+
+## Analytics
+
+The app ships uninstrumented by design and stays that way until you configure
+it. Copy [`.streamlit/secrets.toml.example`](.streamlit/secrets.toml.example)
+to `.streamlit/secrets.toml` (or paste it into the Streamlit Cloud app's
+Secrets box) and fill in whichever provider you use.
+
+| Secret | What it does |
+|---|---|
+| `GOATCOUNTER_CODE` / `PLAUSIBLE_DOMAIN` / `UMAMI_URL` + `UMAMI_WEBSITE_ID` | Pageviews |
+| `EVENT_WEBHOOK_URL` | Funnel events, POSTed as JSON |
+| `EMAIL_SIGNUP_URL` | Turns the footer's Substack link into an inline email field |
+
+With nothing set, funnel events still print to stdout as `[vcl-event] {...}`,
+which the Streamlit Cloud log viewer shows — enough to see whether anyone gets
+past the landing page without signing up for anything.
+
+The funnel worth watching: `pageview` → `analyze_deal_clicked` →
+`scorecard_viewed` → `deal_activated` → `memo_generated`, with
+`share_link_created` and `email_signup` as the two events that compound.
+
+Submitted email addresses go to `EMAIL_SIGNUP_URL` only and are deliberately
+never attached to an analytics event.
 
 ---
 
@@ -160,6 +218,9 @@ The scoring, valuation, and returns logic isn't arbitrary — it's documented in
 - [x] VC Pulse news hub (RSS)
 - [x] Manual entry + CSV upload for screening
 - [x] Beginner glossary
+- [x] One-click news → prefilled scorecard
+- [x] Shareable analysis links
+- [x] Opt-in analytics and funnel instrumentation
 - [ ] Curated YouTube / Substack learning library
 - [ ] LLM-powered company research
 - [ ] Multi-Company Portfolio View

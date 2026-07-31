@@ -4,37 +4,27 @@ import sys
 
 import pandas as pd
 import plotly.graph_objects as go
-import requests
 import streamlit as st
 
 APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
-from components.cards import metric_card, text_card, workflow_step
+from components.cards import metric_card, prefill_banner, text_card, workflow_step
 from components.navigation import nav_link, sidebar
 from components.theme import apply_theme, page_header, section_title
+from services.analytics import track_event, track_page
+from services.share import decode_row, encode_row
+from models.prefill import build_prefill_row
 from models.scoring import score_startup
-from state import get_active_deal_row, set_active_deal
+from state import get_active_deal_row, pop_prefill_deal, set_active_deal
 
 st.set_page_config(page_title="Startup Screening | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
+track_page("startup-screening", "Startup Screening")
 
 page_header("Startup Screening", "Score a startup with the VC scorecard — from the sample dataset, your own inputs, or a CSV upload.", "Analysis")
-
-
-def notify_usage(event: str) -> None:
-    """Ping Formspree so the site owner knows someone ran an analysis.
-    No-op unless FORMSPREE_URL is set in Streamlit secrets."""
-    url = st.secrets.get("FORMSPREE_URL", "")
-    if not url or st.session_state.get("usage_notified"):
-        return
-    try:
-        requests.post(url, data={"event": event}, timeout=3)
-        st.session_state["usage_notified"] = True
-    except Exception:
-        pass
 
 
 GLOSSARY = {
@@ -72,7 +62,22 @@ for i, (col, (title, desc, icon_name)) in enumerate(zip((h1, h2, h3, h4), steps)
         workflow_step(i, title, desc, icon_name)
 
 DATA_PATH = os.path.join(PROJECT_ROOT, "data", "startups.csv")
-df = pd.read_csv(DATA_PATH)
+
+
+@st.cache_data
+def load_data() -> pd.DataFrame:
+    return pd.read_csv(DATA_PATH)
+
+
+@st.cache_data
+def scored_dataset() -> pd.DataFrame:
+    """Scores for all 28 sample companies. Cached because this page reruns on
+    every slider drag and the scorecard does not depend on any of them."""
+    frame = load_data()
+    return frame.assign(vc_score=frame.apply(lambda r: score_startup(r.to_dict()).total, axis=1))
+
+
+df = load_data()
 
 DEFAULT_COMPANY = {
     "company": "New Startup",
@@ -211,17 +216,51 @@ def render_company_form(company_defaults: dict, screening: dict, expand_assumpti
     }
 
 
-prefill_company = st.session_state.pop("prefill_company", None)
-if prefill_company:
-    st.info(f"Analyzing **{prefill_company}** from the news — enter what you know about it below. Public numbers are often in the funding article itself.")
+SOURCE_OPTIONS = ["Existing Dataset", "Manual Entry", "Upload CSV"]
+
+# A deal handed over from the news wall — or an analysis someone opened from a
+# shared link — becomes this page's starting point, and has to survive reruns.
+# Reading it once into a persistent slot is what stops the first slider drag
+# from throwing the whole prefill away.
+pending_deal = pop_prefill_deal()
+if pending_deal:
+    prefill_row, assumed_fields = build_prefill_row(pending_deal)
+    st.session_state["screening_prefill"] = {
+        "row": prefill_row, "assumed": assumed_fields, "deal": pending_deal, "origin": "news",
+    }
+    st.session_state["screening_source"] = "Manual Entry"
+    track_event(
+        "prefill_from_news",
+        company=pending_deal.get("company"),
+        sector=pending_deal.get("sector"),
+        stage=prefill_row["stage"],
+    )
+
+shared_token = st.query_params.get("d")
+if shared_token and st.session_state.get("_shared_token") != shared_token:
+    st.session_state["_shared_token"] = shared_token
+    shared_row = decode_row(shared_token)
+    if shared_row:
+        st.session_state["screening_prefill"] = {
+            "row": shared_row, "assumed": [], "deal": {}, "origin": "link",
+        }
+        st.session_state["screening_source"] = "Manual Entry"
+        track_event("opened_shared_analysis", company=shared_row.get("company"))
+
+prefill = st.session_state.get("screening_prefill")
 
 section_title("Choose Startup Source", "Start from the sample dataset, enter details manually, or upload your own CSV.")
-source = st.radio(
-    "Startup source",
-    ["Existing Dataset", "Manual Entry", "Upload CSV"],
-    horizontal=True,
-    index=1 if prefill_company else 0,
-)
+st.session_state.setdefault("screening_source", SOURCE_OPTIONS[0])
+source = st.radio("Startup source", SOURCE_OPTIONS, horizontal=True, key="screening_source")
+
+if prefill and source == "Manual Entry":
+    if prefill["origin"] == "news":
+        prefill_banner(prefill["deal"], prefill["assumed"])
+    else:
+        st.info("Opened from a shared link — these are the numbers whoever sent it used. Change anything you disagree with.")
+    if st.button("Start from a blank profile instead"):
+        del st.session_state["screening_prefill"]
+        st.rerun()
 
 if source == "Existing Dataset":
     company = st.selectbox("Company", df["company"])
@@ -229,10 +268,9 @@ if source == "Existing Dataset":
     company_defaults = to_company_payload(dataset_row)
     screening = {key: dataset_row.get(key, value) for key, value in DEFAULT_SCREENING.items()}
 elif source == "Manual Entry":
-    company_defaults = DEFAULT_COMPANY.copy()
-    if prefill_company:
-        company_defaults["company"] = prefill_company
-    screening = DEFAULT_SCREENING.copy()
+    base = prefill["row"] if prefill else (DEFAULT_COMPANY | DEFAULT_SCREENING)
+    company_defaults = to_company_payload(base)
+    screening = {key: base.get(key, value) for key, value in DEFAULT_SCREENING.items()}
 else:
     st.download_button(
         "Download CSV template",
@@ -255,6 +293,7 @@ else:
                 user_row = (user_df[user_df["company"] == pick].iloc[0] if pick else user_df.iloc[0]).to_dict()
                 company_defaults = to_company_payload(user_row)
                 screening = {key: user_row.get(key, value) for key, value in DEFAULT_SCREENING.items()}
+                track_event("csv_uploaded", once_per_session=True, rows=len(user_df))
                 st.success(f"Loaded {company_defaults['company']} from your CSV.")
         except Exception as exc:
             st.error(f"Could not read that CSV: {exc}")
@@ -264,6 +303,7 @@ row = render_company_form(company_defaults, screening, expand_assumptions=source
 
 section_title("Scorecard Result", "The score_startup engine runs unchanged on the intake profile.")
 result = score_startup(row)
+track_event("scorecard_viewed", once_per_session=True, source=source)
 
 c1, c2, c3 = st.columns(3)
 with c1:
@@ -274,10 +314,21 @@ with c3:
     ltv_cac = round(row["ltv_usd"] / row["cac_usd"], 2) if row["cac_usd"] else 0
     metric_card("LTV:CAC", f"{ltv_cac}x", "Unit economics signal used by the scorecard.", "activity")
 
+section_title("Share This Analysis", "Every input above packs into the link — send it and the other person opens this exact scorecard.")
+share_col, hint_col = st.columns([1.2, 2.8])
+if share_col.button("Create share link", use_container_width=True):
+    st.query_params["d"] = encode_row(row)
+    st.session_state["_shared_token"] = st.query_params.get("d")
+    track_event("share_link_created", company=row.get("company"), score=result.total)
+    st.session_state["_share_ready"] = True
+if st.session_state.get("_share_ready"):
+    hint_col.success("Your address bar is now a link to this analysis — copy it and send it.")
+
 section_title("Continue the Workflow", "Carry this company into valuation, cap table, and memo without re-entering data.")
 if st.button("Use This Deal →", type="primary"):
     set_active_deal(row)
-    notify_usage(f"Screening run: {row['company']} ({row['sector']}, {row['stage']})")
+    track_event("deal_activated", company=row.get("company"), sector=row.get("sector"),
+                stage=row.get("stage"), score=result.total)
     st.toast(f"Active deal set: {row['company']}", icon="🎯")
 
 active_row = get_active_deal_row()
@@ -324,7 +375,7 @@ with right:
     st.plotly_chart(fig, use_container_width=True)
 
 section_title("Full Portfolio", "All screened companies ranked by VC score.")
-df_scored = df.assign(vc_score=df.apply(lambda r: score_startup(r.to_dict()).total, axis=1))
+df_scored = scored_dataset()
 display_columns = {
     "company": "Company", "sector": "Sector", "stage": "Stage",
     "revenue_usd_k": "Revenue ($k)", "mom_growth_pct": "Growth (% MoM)",

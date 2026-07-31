@@ -12,8 +12,10 @@ PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
 from components.cards import deal_banner, metric_card, text_card
+from components.footer import footer
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
+from services.analytics import track_page
 from models.cap_table import simulate_rounds
 from models.returns import exit_proceeds, irr_from_moic, moic, sensitivity_grid
 from models.scoring import score_startup
@@ -22,6 +24,7 @@ from state import get_active_deal_row
 st.set_page_config(page_title="Cap Table & Returns | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
+track_page("cap-table-returns", "Cap Table & Returns")
 
 page_header("Cap Table & Returns", "Model ownership dilution across priced rounds, then translate it into fund-level MOIC and IRR.", "Models")
 
@@ -150,3 +153,5 @@ with tab2:
         "Read this like a fund LP would: stronger cells show which combinations of exit outcome and hold period clear a fund's target IRR hurdle.",
         "Interpretation",
     )
+
+footer()

@@ -10,14 +10,17 @@ APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
-from components.footer import footer
+from components.footer import email_capture, footer
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
+from services.analytics import track_event, track_page
 from services.news import extract_deals, fetch_all_feeds, interleave, load_weekly_picks
+from state import set_prefill_deal
 
 st.set_page_config(page_title="VC Pulse | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
 sidebar()
+track_page("vc-pulse", "VC Pulse")
 
 page_header("VC Pulse", "The latest venture capital news, deals, and analysis — refreshed automatically.", "News")
 
@@ -72,21 +75,36 @@ with st.spinner("Pulling the latest VC headlines..."):
 all_items = [item for group in groups for item in group]
 deals = extract_deals(all_items)
 
+def analyze_row(items: list[dict], per_row: int, key_prefix: str, render) -> None:
+    """Render cards with an Analyze button under each — every deal on this
+    page is one click from a filled scorecard, not just the first one."""
+    for row_start in range(0, len(items), per_row):
+        cols = st.columns(per_row)
+        for offset, (col, deal) in enumerate(zip(cols, items[row_start:row_start + per_row])):
+            with col:
+                st.markdown(render(deal), unsafe_allow_html=True)
+                if st.button(
+                    f"Analyze {deal['company']} →",
+                    key=f"{key_prefix}_{row_start + offset}",
+                    use_container_width=True,
+                ):
+                    set_prefill_deal(deal)
+                    track_event("analyze_deal_clicked", company=deal.get("company"),
+                                sector=deal.get("sector"), placement=key_prefix)
+                    st.switch_page("pages/1_Startup_Screening.py")
+
+
 if deals:
-    section_title("Deal Radar", "Funding rounds detected in today's news, with sector tags.")
-    grid([deal_card(d) for d in deals[:9]])
-    c1, c2 = st.columns([2.6, 1.4])
-    c1.caption(f"Interested in analyzing {deals[0]['company']}? Try your own due diligence in the simulator.")
-    if c2.button("Try the simulator →", use_container_width=True):
-        st.session_state["prefill_company"] = deals[0]["company"]
-        st.switch_page("pages/1_Startup_Screening.py")
+    section_title("Deal Radar", "Funding rounds detected in today's news — analyze any of them in the simulator.")
+    analyze_row(deals[:9], 3, "radar", deal_card)
 
 picks = load_weekly_picks()
-if picks.get("stale"):
-    picks = {**picks, "deals": [], "videos": [], "articles": []}
 if picks.get("deals"):
-    section_title("This Week's Picks", f"Hand-picked deals worth studying · Week of {picks.get('week_of', '')}")
-    grid([weekly_deal_card(d) for d in picks["deals"]], per_row=2)
+    section_title(
+        "This Week's Picks",
+        f"Hand-picked deals worth studying · Week of {picks.get('week_of', '')} · {picks.get('as_of_label', '')}",
+    )
+    analyze_row(picks["deals"], 2, "weekly", weekly_deal_card)
 
 section_title("All Headlines", "Everything from the wire, by source.")
 if not groups:
@@ -118,4 +136,5 @@ with s2:
     if not picks.get("articles"):
         st.caption("Coming this week.")
 
+email_capture()
 footer()
