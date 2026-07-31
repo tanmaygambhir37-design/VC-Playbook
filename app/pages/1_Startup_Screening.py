@@ -12,7 +12,7 @@ sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
 from components.cards import metric_card, prefill_banner, text_card, workflow_step
 from components.navigation import nav_link, sidebar
-from components.theme import apply_theme, page_header, section_title
+from components.theme import CHART_FONT, CHART_TITLE_FONT, apply_theme, page_header, section_title
 from services.analytics import track_event, track_page
 from services.share import decode_row, encode_row
 from models.prefill import build_prefill_row
@@ -47,7 +47,13 @@ with st.expander("📖 New to these terms? Open the beginner glossary"):
     for col, chunk in ((g1, terms[:5]), (g2, terms[5:])):
         with col:
             for term, definition in chunk:
-                st.markdown(f"**{term}**  \n{definition}")
+                # Streamlit's markdown reads a pair of $ as inline LaTeX, so
+                # "invest $1M, return $4M" rendered as math with both dollar
+                # signs swallowed. Escaping here keeps GLOSSARY readable and
+                # protects any entry added later. Kept out of the f-string
+                # because expressions there can't hold a backslash before 3.12.
+                safe_definition = definition.replace("$", r"\$")
+                st.markdown(f"**{term}**  \n{safe_definition}")
 
 section_title("How It Works", "Four steps from raw numbers to a committee-ready memo.")
 h1, h2, h3, h4 = st.columns(4)
@@ -360,10 +366,10 @@ with right:
         )
     )
     fig.update_layout(
-        title=dict(text="VC Scorecard Breakdown", font=dict(size=15, color="#14171F"), x=0),
+        title=dict(text="VC Scorecard Breakdown", font=CHART_TITLE_FONT, x=0),
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font=dict(color="#14171F"),
+        font=CHART_FONT,
         polar=dict(
             bgcolor="#F1EFE9",
             radialaxis=dict(visible=True, range=[0, 100], gridcolor="#DEDAD0"),

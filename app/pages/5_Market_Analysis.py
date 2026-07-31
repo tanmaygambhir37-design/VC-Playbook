@@ -11,7 +11,7 @@ sys.path.append(PROJECT_ROOT)
 from components.cards import metric_card, text_card
 from components.footer import footer
 from components.navigation import sidebar
-from components.theme import apply_theme, page_header, section_title
+from components.theme import CHART_FONT, apply_theme, page_header, section_title
 from services.analytics import track_page
 from services.dataset import scored_dataset
 
@@ -57,7 +57,7 @@ fig = px.bar(
 fig.update_layout(
     paper_bgcolor="#FFFFFF",
     plot_bgcolor="#FFFFFF",
-    font=dict(color="#14171F"),
+    font=CHART_FONT,
     xaxis=dict(gridcolor="#DEDAD0"),
     yaxis=dict(gridcolor="#DEDAD0", title="Average VC Score"),
     coloraxis_showscale=False,
@@ -77,7 +77,7 @@ with right:
     fig2.update_layout(
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font=dict(color="#14171F"),
+        font=CHART_FONT,
         legend=dict(bgcolor="#FFFFFF"),
         margin=dict(t=10, b=10),
     )

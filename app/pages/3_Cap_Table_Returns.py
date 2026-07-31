@@ -14,7 +14,7 @@ sys.path.append(PROJECT_ROOT)
 from components.cards import deal_banner, metric_card, text_card
 from components.footer import footer
 from components.navigation import sidebar
-from components.theme import apply_theme, page_header, section_title
+from components.theme import CHART_FONT, apply_theme, page_header, section_title
 from services.analytics import track_page
 from models.cap_table import simulate_rounds
 from models.returns import exit_proceeds, irr_from_moic, moic, sensitivity_grid
@@ -84,7 +84,7 @@ with tab1:
     cap_table_fig.update_layout(
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font=dict(color="#14171F"),
+        font=CHART_FONT,
         xaxis=dict(gridcolor="#DEDAD0"),
         yaxis=dict(gridcolor="#DEDAD0"),
         legend=dict(bgcolor="#FFFFFF"),
@@ -141,7 +141,7 @@ with tab2:
         yaxis_title="Exit Valuation",
         paper_bgcolor="#FFFFFF",
         plot_bgcolor="#FFFFFF",
-        font=dict(color="#14171F"),
+        font=CHART_FONT,
         xaxis=dict(gridcolor="#DEDAD0"),
         yaxis=dict(gridcolor="#DEDAD0"),
         margin=dict(t=20, b=20),

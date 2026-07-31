@@ -46,20 +46,20 @@ def prediction_card(p: dict) -> str:
     if p.get("resolution"):
         resolution = (
             f'<div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--vcl-border);'
-            f' color:var(--vcl-muted); font-size:0.9rem;"><strong>Resolved {html.escape(p.get("resolved_date",""))}:</strong> '
+            f' color:var(--vcl-muted); font-size:var(--fs-sm);"><strong>Resolved {html.escape(p.get("resolved_date",""))}:</strong> '
             f'{html.escape(p["resolution"])}</div>'
         )
     return f"""
         <div class="vcl-card" style="margin-bottom:14px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                 <span class="vcl-news-source">{html.escape(p.get('date',''))} · {html.escape(p.get('conviction',''))} conviction</span>
-                <span style="background:{color}; color:#fff; font-size:0.72rem; font-weight:700;
+                <span style="background:{color}; color:#fff; font-size:var(--fs-2xs); font-weight:700;
                     padding:3px 10px; border-radius:999px; font-family:'IBM Plex Mono',monospace;">{label}</span>
             </div>
             <div class="vcl-card-title">{html.escape(p.get('subject',''))}</div>
             <div class="vcl-card-body" style="margin-top:4px;"><strong>{html.escape(p.get('claim',''))}</strong></div>
             <div class="vcl-card-body" style="margin-top:8px;">{html.escape(p.get('reasoning',''))}</div>
-            <div style="color:var(--vcl-muted); font-size:0.82rem; margin-top:8px;">Resolve by {html.escape(p.get('resolve_by',''))}</div>
+            <div style="color:var(--vcl-muted); font-size:var(--fs-xs); margin-top:8px;">Resolve by {html.escape(p.get('resolve_by',''))}</div>
             {resolution}
         </div>
     """

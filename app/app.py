@@ -61,7 +61,7 @@ def deal_card_html(deal: dict) -> str:
     note = html.escape(deal.get("note") or deal.get("title", ""))
     source = (
         f'<a href="{html.escape(deal["link"])}" target="_blank" '
-        'style="color:#8A6420; font-size:0.82rem;">Source →</a>'
+        'style="color:#8A6420; font-size:var(--fs-xs);">Source →</a>'
         if deal.get("link") else ""
     )
     return f"""
