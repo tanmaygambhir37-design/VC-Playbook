@@ -1,13 +1,9 @@
 import os
-import sys
 
 import pandas as pd
 import streamlit as st
 
-APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_ROOT = os.path.dirname(APP_DIR)
-sys.path.append(APP_DIR)
-sys.path.append(PROJECT_ROOT)
+from _paths import PROJECT_ROOT  # also puts the repo root on sys.path
 from components.cards import metric_card, recommendation_banner, text_card
 from components.due_diligence import render_due_diligence_section
 from components.navigation import sidebar

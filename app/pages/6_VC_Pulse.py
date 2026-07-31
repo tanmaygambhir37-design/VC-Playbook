@@ -1,15 +1,10 @@
 """VC Pulse — full news wall, deal radar, and weekly picks."""
 
 import html
-import os
-import sys
 
 import streamlit as st
 
-APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_ROOT = os.path.dirname(APP_DIR)
-sys.path.append(APP_DIR)
-sys.path.append(PROJECT_ROOT)
+import _paths  # noqa: F401  — puts the repo root on sys.path
 from components.footer import footer
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
@@ -61,7 +56,7 @@ def weekly_deal_card(deal: dict) -> str:
 def grid(cards: list[str], per_row: int = 3) -> None:
     for row_start in range(0, len(cards), per_row):
         cols = st.columns(per_row)
-        for col, card in zip(cols, cards[row_start:row_start + per_row]):
+        for col, card in zip(cols, cards[row_start:row_start + per_row], strict=False):
             with col:
                 st.markdown(card, unsafe_allow_html=True)
 
@@ -96,7 +91,7 @@ else:
     tabs = st.tabs(["All"] + sources)
     with tabs[0]:
         grid([news_card(i) for i in interleave(groups)[:18]])
-    for tab, group in zip(tabs[1:], groups):
+    for tab, group in zip(tabs[1:], groups, strict=False):
         with tab:
             grid([news_card(i) for i in group])
 

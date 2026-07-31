@@ -18,7 +18,12 @@ class CapTableState:
 
 def initialize_cap_table(founder_pct: float, esop_pct: float) -> dict:
     """Start with 100% split between founders and an initial ESOP pool."""
-    assert abs((founder_pct + esop_pct) - 100) < 1e-6, "Founder + ESOP must equal 100%"
+    # Not an assert: `python -O` strips those, and this invariant is what keeps
+    # every downstream ownership number meaningful.
+    if abs((founder_pct + esop_pct) - 100) >= 1e-6:
+        raise ValueError(
+            f"Founder + ESOP must equal 100% (got {founder_pct} + {esop_pct} = {founder_pct + esop_pct})"
+        )
     return {"Founders": founder_pct, "ESOP Pool": esop_pct}
 
 

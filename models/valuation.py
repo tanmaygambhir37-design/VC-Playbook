@@ -31,7 +31,18 @@ def vc_method(exit_value_usd_m: float, target_return_multiple: float,
                              for a seed investor holding to exit)
       Post-money (today)   = Investment / Ownership today
       Pre-money (today)    = Post-money (today) - Investment
+
+    Raises ValueError on inputs that have no meaningful answer. The app's
+    sliders cannot produce them, but the models are documented as reusable on
+    their own, and a silent ZeroDivisionError is a poor way to find that out.
     """
+    if exit_value_usd_m <= 0:
+        raise ValueError("exit_value_usd_m must be positive")
+    if target_return_multiple <= 0:
+        raise ValueError("target_return_multiple must be positive")
+    if investment_usd_m <= 0:
+        raise ValueError("investment_usd_m must be positive")
+
     post_money_future = exit_value_usd_m / target_return_multiple
     ownership_at_exit_pct = (investment_usd_m / post_money_future) * 100
     ownership_pct = ownership_at_exit_pct / max(retention_ratio, 0.01)

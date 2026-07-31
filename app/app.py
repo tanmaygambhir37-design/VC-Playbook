@@ -1,13 +1,8 @@
 import html
-import os
-import sys
 
 import streamlit as st
 
-APP_DIR = os.path.dirname(os.path.abspath(__file__))
-PROJECT_ROOT = os.path.dirname(APP_DIR)
-sys.path.append(APP_DIR)
-sys.path.append(PROJECT_ROOT)
+import _paths  # noqa: F401  — puts the repo root on sys.path
 from components.footer import footer
 from components.theme import (
     GITHUB_URL,
@@ -113,7 +108,7 @@ section_title("Today's VC Brief", "The latest from TechCrunch, Crunchbase, Axios
 if mixed:
     for row_start in range(0, 6, 3):
         cols = st.columns(3)
-        for col, item in zip(cols, mixed[row_start:row_start + 3]):
+        for col, item in zip(cols, mixed[row_start:row_start + 3], strict=False):
             with col:
                 st.markdown(news_line(item), unsafe_allow_html=True)
 else:
@@ -124,7 +119,7 @@ if deals:
     show = deals[:6]
     for row_start in range(0, len(show), 3):
         cols = st.columns(3)
-        for col, deal in zip(cols, show[row_start:row_start + 3]):
+        for col, deal in zip(cols, show[row_start:row_start + 3], strict=False):
             with col:
                 st.markdown(deal_card_html(deal), unsafe_allow_html=True)
     simulator_invite(show[0]["company"], "radar_sim")
@@ -137,7 +132,7 @@ if picks.get("deals"):
     weekly = picks["deals"]
     for row_start in range(0, len(weekly), 2):
         cols = st.columns(2)
-        for col, deal in zip(cols, weekly[row_start:row_start + 2]):
+        for col, deal in zip(cols, weekly[row_start:row_start + 2], strict=False):
             with col:
                 st.markdown(weekly_deal_html(deal), unsafe_allow_html=True)
     simulator_invite(weekly[0]["company"], "weekly_sim")

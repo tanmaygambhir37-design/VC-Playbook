@@ -1,9 +1,13 @@
 """
 returns.py — Portfolio Returns Model
 
-Computes MOIC, IRR (via Newton's method — no external solver dependency),
-proceeds at exit for a given ownership stake, and a sensitivity grid across
-exit valuation and holding period assumptions.
+Computes MOIC, IRR, proceeds at exit for a given ownership stake, and a
+sensitivity grid across exit valuation and holding period assumptions.
+
+A venture stake is modeled as a single cash flow out and a single cash flow
+back, so the IRR has a closed form — MOIC^(1/years) - 1 — and needs no
+iterative solver. Interim cash flows (dividends, secondaries, follow-ons)
+are out of scope; a fund modeling those would need a real XIRR.
 """
 
 import numpy as np
@@ -62,7 +66,11 @@ def portfolio_summary(investments: list) -> dict:
     """
     investments: list of dicts with keys invested_usd_m, exit_proceeds_usd_m
     (use 0 for unrealized/written-off positions).
-    Returns aggregate MOIC and a naive blended IRR assuming equal holding periods.
+
+    Returns totals and the blended MOIC. No IRR: the positions carry no dates,
+    so any portfolio-level IRR would be an assumption about holding periods
+    rather than a measurement. Call irr_from_moic with an explicit holding
+    period if you want one.
     """
     total_invested = sum(i["invested_usd_m"] for i in investments)
     total_proceeds = sum(i["exit_proceeds_usd_m"] for i in investments)

@@ -1,12 +1,6 @@
-import os
-import sys
-
 import streamlit as st
 
-APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_ROOT = os.path.dirname(APP_DIR)
-sys.path.append(APP_DIR)
-sys.path.append(PROJECT_ROOT)
+import _paths  # noqa: F401  — puts the repo root on sys.path
 from components.cards import deal_banner, metric_card, text_card
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
@@ -51,7 +45,7 @@ with tab1:
     hold_years = st.slider("Holding Period (years)", 3, 12, 7)
     implied_irr = irr_from_moic(target_multiple, hold_years)
     st.caption(
-        f"Sanity check: \${investment}M in at \${res.pre_money}M pre, exiting at \${exit_value}M "
+        rf"Sanity check: \${investment}M in at \${res.pre_money}M pre, exiting at \${exit_value}M "
         f"in {hold_years} years returns your {target_multiple}x target — a {implied_irr}% IRR."
     )
     m1, m2, m3 = st.columns(3)
@@ -83,7 +77,7 @@ with tab3:
     st.markdown("Rate each factor vs. a typical deal, where 100 is average.")
     factor_scores = {}
     cols = st.columns(len(SCORECARD_FACTORS))
-    for col, (key, weight) in zip(cols, SCORECARD_FACTORS.items()):
+    for col, (key, weight) in zip(cols, SCORECARD_FACTORS.items(), strict=False):
         label = key.replace("_", " ").title()
         factor_scores[key] = col.slider(f"{label} ({int(weight*100)}%)", 50, 200, 100, step=5, key=key)
 

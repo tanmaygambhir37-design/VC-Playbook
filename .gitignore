@@ -4,3 +4,10 @@ __pycache__/
 .venv/
 venv/
 .DS_Store
+
+# Repo snapshots / archives — the repo is the source of truth
+*.zip
+.coverage
+htmlcov/
+.pytest_cache/
+.ruff_cache/

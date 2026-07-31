@@ -87,9 +87,15 @@ VC-Playbook/
 ├── README.md
 ├── requirements.txt
 ├── runtime.txt                         # Pins Python for Streamlit Cloud
+├── pyproject.toml                      # ruff + pytest configuration
 ├── app/
 │   ├── app.py                          # Landing page (news + deal radar)
-│   ├── services/                       # News aggregation, memo drafting, PDF
+│   ├── _paths.py                       # Import bootstrap for the entry points
+│   ├── services/
+│   │   ├── news.py                     # RSS aggregation + deal extraction
+│   │   ├── screening_input.py          # Intake contract: bounds and coercion
+│   │   ├── due_diligence.py            # Memo narrative sections
+│   │   └── pdf_report.py               # Memo PDF export
 │   └── pages/
 │       ├── 0_Dashboard.py
 │       ├── 1_Startup_Screening.py
@@ -98,10 +104,12 @@ VC-Playbook/
 │       ├── 4_Investment_Memo.py
 │       ├── 5_Market_Analysis.py
 │       ├── 6_VC_Pulse.py               # News hub
-│       └── 7_About.py
+│       ├── 7_About.py
+│       └── 8_Predictions.py            # Public predictions ledger
 ├── data/
 │   ├── startups.csv                    # Synthetic dataset (28 companies)
 │   ├── weekly_picks.json               # Hand-curated deals & spotlight (edit weekly)
+│   ├── predictions.json                # Public track record
 │   └── generate_data.py                # Regenerate the dataset
 ├── models/
 │   ├── scoring.py                      # VC scorecard model
@@ -109,12 +117,25 @@ VC-Playbook/
 │   ├── cap_table.py                    # Round-by-round dilution engine
 │   └── returns.py                      # MOIC / IRR / sensitivity
 ├── tests/
-│   └── test_models.py                  # Pytest suite for the model layer
+│   ├── test_models.py                  # Scorecard, valuation, cap table, returns
+│   ├── test_news.py                    # Headline parsing, feeds, picks, predictions
+│   ├── test_screening_input.py         # CSV intake coercion
+│   └── test_reporting.py               # Memo narrative + PDF export
 ├── reports/
 │   └── VC-Playbook-Whitepaper.md       # Methodology writeup
 └── assets/
     └── screenshots/
 ```
+
+## Development
+
+```bash
+pip install -r requirements.txt pytest pytest-cov ruff
+pytest tests/ -q                        # 87 tests
+ruff check .
+```
+
+Both run on every push via `.github/workflows/tests.yml`.
 
 ---
 

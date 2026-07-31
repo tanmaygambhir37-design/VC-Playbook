@@ -78,7 +78,7 @@ def _metric_row(pairs: list) -> Table:
     value_style = ParagraphStyle("MValue", fontName="Helvetica-Bold", fontSize=12, textColor=NAVY)
     label_style = ParagraphStyle("MLabel", fontName="Helvetica", fontSize=7.2, textColor=MUTED)
     values = [Paragraph(v, value_style) for _, v in pairs]
-    labels = [Paragraph(l.upper(), label_style) for l, _ in pairs]
+    labels = [Paragraph(label.upper(), label_style) for label, _ in pairs]
     table = Table([values, labels], colWidths=[width] * n)
     table.setStyle(TableStyle([
         ("TOPPADDING", (0, 0), (-1, 0), 10),

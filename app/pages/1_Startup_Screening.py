@@ -1,20 +1,26 @@
 import io
 import os
-import sys
 
 import pandas as pd
 import plotly.graph_objects as go
 import requests
 import streamlit as st
 
-APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_ROOT = os.path.dirname(APP_DIR)
-sys.path.append(APP_DIR)
-sys.path.append(PROJECT_ROOT)
+from _paths import PROJECT_ROOT  # also puts the repo root on sys.path
 from components.cards import metric_card, text_card, workflow_step
 from components.navigation import nav_link, sidebar
 from components.theme import apply_theme, page_header, section_title
 from models.scoring import score_startup
+from services.screening_input import (
+    COMPETITION_OPTIONS,
+    DEFAULT_COMPANY,
+    DEFAULT_SCREENING,
+    SCREENING_BOUNDS,
+    SCREENING_COLUMNS,
+    STAGES,
+    coerce_screening,
+    to_company_payload,
+)
 from state import get_active_deal_row, set_active_deal
 
 st.set_page_config(page_title="Startup Screening | VC Playbook", page_icon="📗", layout="wide")
@@ -67,69 +73,18 @@ steps = [
     ("Read the scorecard", "Get a 0-100 VC Score with strengths, weaknesses, and a Proceed / Watch / Pass call.", "gauge"),
     ("Continue the flow", "Carry the deal into Valuation, Cap Table, and the Investment Memo.", "clipboard"),
 ]
-for i, (col, (title, desc, icon_name)) in enumerate(zip((h1, h2, h3, h4), steps), start=1):
+for i, (col, (title, desc, icon_name)) in enumerate(zip((h1, h2, h3, h4), steps, strict=False), start=1):
     with col:
         workflow_step(i, title, desc, icon_name)
 
 DATA_PATH = os.path.join(PROJECT_ROOT, "data", "startups.csv")
 df = pd.read_csv(DATA_PATH)
 
-DEFAULT_COMPANY = {
-    "company": "New Startup",
-    "sector": "SaaS",
-    "stage": "Seed",
-    "business_model": "Subscription software platform",
-    "customers": "Mid-market companies",
-    "location": "San Francisco, CA",
-    "website": "",
-    "founding_year": "2023",
-    "revenue_model": "Monthly subscription",
-    "description": "Early-stage company building a focused software product for a defined customer segment.",
-}
-
-DEFAULT_SCREENING = {
-    "revenue_usd_k": 20.0,
-    "mom_growth_pct": 10.0,
-    "cac_usd": 150.0,
-    "ltv_usd": 450.0,
-    "monthly_burn_usd_k": 60.0,
-    "runway_months": 12.0,
-    "competition": "Medium",
-    "founder_experience_score": 6,
-    "team_size": 15,
-    "sector_median_arr_multiple": 8.0,
-}
-
 SECTORS = sorted(df["sector"].dropna().unique().tolist())
 if "SaaS" not in SECTORS:
     SECTORS.append("SaaS")
 if "AI" not in SECTORS:
     SECTORS.append("AI")
-STAGES = ["Pre-Seed", "Seed", "Series A", "Growth"]
-
-
-def to_company_payload(row: dict) -> dict:
-    return {
-        "company": row.get("company", DEFAULT_COMPANY["company"]),
-        "sector": row.get("sector", DEFAULT_COMPANY["sector"]),
-        "stage": row.get("stage", DEFAULT_COMPANY["stage"]),
-        "business_model": row.get("business_model", DEFAULT_COMPANY["business_model"]),
-        "customers": row.get("customers", DEFAULT_COMPANY["customers"]),
-        "location": row.get("location", DEFAULT_COMPANY["location"]),
-        "website": row.get("website", DEFAULT_COMPANY["website"]),
-        "founding_year": str(row.get("founding_year", DEFAULT_COMPANY["founding_year"])),
-        "revenue_model": row.get("revenue_model", DEFAULT_COMPANY["revenue_model"]),
-        "description": row.get("description", DEFAULT_COMPANY["description"]),
-    }
-
-
-SCREENING_COLUMNS = [
-    "company", "sector", "stage", "business_model", "customers", "location",
-    "website", "founding_year", "revenue_model", "description",
-    "revenue_usd_k", "mom_growth_pct", "cac_usd", "ltv_usd",
-    "monthly_burn_usd_k", "runway_months", "competition",
-    "founder_experience_score", "team_size", "sector_median_arr_multiple",
-]
 
 
 def csv_template() -> bytes:
@@ -155,35 +110,33 @@ def render_company_form(company_defaults: dict, screening: dict, expand_assumpti
         founding_year = st.text_input("Founding Year", company_defaults["founding_year"])
     with c3:
         revenue_model = st.text_input("Revenue Model", company_defaults["revenue_model"])
-        team_size = st.number_input("Team Size", 1, 20000, int(screening["team_size"]))
+        team_size = st.number_input("Team Size", *SCREENING_BOUNDS["team_size"], int(screening["team_size"]))
         description = st.text_area("Description", company_defaults["description"], height=126)
 
     with st.expander("Adjust Screening Assumptions", expanded=expand_assumptions):
         s1, s2, s3 = st.columns(3)
         with s1:
-            revenue_usd_k = st.number_input("Revenue ($'000 ARR)", 0.0, 5_000_000.0, float(screening["revenue_usd_k"]))
-            mom_growth_pct = st.number_input("MoM Growth (%)", 0.0, 100.0, float(screening["mom_growth_pct"]))
-            cac_usd = st.number_input("CAC ($)", 1.0, 5000.0, float(screening["cac_usd"]))
+            revenue_usd_k = st.number_input("Revenue ($'000 ARR)", *SCREENING_BOUNDS["revenue_usd_k"], float(screening["revenue_usd_k"]))
+            mom_growth_pct = st.number_input("MoM Growth (%)", *SCREENING_BOUNDS["mom_growth_pct"], float(screening["mom_growth_pct"]))
+            cac_usd = st.number_input("CAC ($)", *SCREENING_BOUNDS["cac_usd"], float(screening["cac_usd"]))
         with s2:
-            ltv_usd = st.number_input("LTV ($)", 1.0, 20000.0, float(screening["ltv_usd"]))
-            monthly_burn_usd_k = st.number_input("Monthly Burn ($'000)", 1.0, 500_000.0, float(screening["monthly_burn_usd_k"]))
-            runway_months = st.number_input("Runway (months)", 0.0, 48.0, float(screening["runway_months"]))
+            ltv_usd = st.number_input("LTV ($)", *SCREENING_BOUNDS["ltv_usd"], float(screening["ltv_usd"]))
+            monthly_burn_usd_k = st.number_input("Monthly Burn ($'000)", *SCREENING_BOUNDS["monthly_burn_usd_k"], float(screening["monthly_burn_usd_k"]))
+            runway_months = st.number_input("Runway (months)", *SCREENING_BOUNDS["runway_months"], float(screening["runway_months"]))
         with s3:
             competition = st.selectbox(
                 "Competition",
-                ["Low", "Medium", "High"],
-                index=selectbox_index(["Low", "Medium", "High"], screening["competition"]),
+                COMPETITION_OPTIONS,
+                index=selectbox_index(COMPETITION_OPTIONS, screening["competition"]),
             )
             founder_experience_score = st.slider(
                 "Founder Experience (1-10)",
-                1,
-                10,
+                *SCREENING_BOUNDS["founder_experience_score"],
                 int(screening["founder_experience_score"]),
             )
             sector_median_arr_multiple = st.number_input(
                 "Sector Median ARR Multiple",
-                1.0,
-                50.0,
+                *SCREENING_BOUNDS["sector_median_arr_multiple"],
                 float(screening["sector_median_arr_multiple"]),
             )
 
@@ -227,7 +180,7 @@ if source == "Existing Dataset":
     company = st.selectbox("Company", df["company"])
     dataset_row = df[df["company"] == company].iloc[0].to_dict()
     company_defaults = to_company_payload(dataset_row)
-    screening = {key: dataset_row.get(key, value) for key, value in DEFAULT_SCREENING.items()}
+    screening, _ = coerce_screening(dataset_row)
 elif source == "Manual Entry":
     company_defaults = DEFAULT_COMPANY.copy()
     if prefill_company:
@@ -254,8 +207,13 @@ else:
                 pick = st.selectbox("Company from your CSV", user_df["company"]) if "company" in user_df.columns and len(user_df) > 1 else None
                 user_row = (user_df[user_df["company"] == pick].iloc[0] if pick else user_df.iloc[0]).to_dict()
                 company_defaults = to_company_payload(user_row)
-                screening = {key: user_row.get(key, value) for key, value in DEFAULT_SCREENING.items()}
+                screening, notes = coerce_screening(user_row)
                 st.success(f"Loaded {company_defaults['company']} from your CSV.")
+                if notes:
+                    st.warning(
+                        "Some values needed adjusting before they could be scored:\n\n"
+                        + "\n".join(f"- {note}" for note in notes)
+                    )
         except Exception as exc:
             st.error(f"Could not read that CSV: {exc}")
 

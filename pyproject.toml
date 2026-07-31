@@ -1,0 +1,26 @@
+[tool.ruff]
+line-length = 140
+target-version = "py312"
+
+[tool.ruff.lint]
+# F and B are the ones that catch real defects; E/W/UP/C4 keep the style honest.
+# Import sorting (I) is deliberately off: the Streamlit entry points must import
+# app/_paths before anything from models/, and an alphabetical sort breaks that.
+select = ["E", "F", "W", "B", "UP", "C4"]
+# E501: most long lines here are prose inside st.markdown blocks — wrapping them
+# hurts readability more than it helps.
+# C408: dict(...) is Plotly's own idiom for trace and layout options; rewriting
+# those call sites as literals reads worse than the library's documentation.
+ignore = ["E501", "C408"]
+
+[tool.ruff.lint.per-file-ignores]
+# Streamlit pages run top to bottom; module-level statements before imports are
+# not a thing here, but set_page_config must precede any other st.* call.
+"app/pages/*.py" = ["E402"]
+"app/app.py" = ["E402"]
+
+[tool.pytest.ini_options]
+# Mirrors what Streamlit does at runtime: app/ for components/services/state,
+# repo root for models/ and data/.
+pythonpath = [".", "app"]
+testpaths = ["tests"]

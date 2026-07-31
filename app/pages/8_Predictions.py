@@ -2,15 +2,10 @@
 resolved honestly. Data lives in data/predictions.json."""
 
 import html
-import os
-import sys
 
 import streamlit as st
 
-APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_ROOT = os.path.dirname(APP_DIR)
-sys.path.append(APP_DIR)
-sys.path.append(PROJECT_ROOT)
+import _paths  # noqa: F401  — puts the repo root on sys.path
 from components.cards import metric_card
 from components.footer import footer
 from components.navigation import sidebar

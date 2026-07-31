@@ -30,12 +30,49 @@ FEEDS = {
 USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)"
 
 # "Flex raises $70 million", "Prolo secures £4.2M", "Sonata lands €7m seed" ...
+#
+# The company group is deliberately case-SENSITIVE: publications capitalize
+# company names, so requiring capitals on every word of the name is what stops
+# "Report says Foo raises $10M" from being read as a company called
+# "Report says Foo". Only the verb and unit words are case-insensitive.
 _DEAL_RE = re.compile(
     r"^(?P<company>[A-Z][\w.&'-]*(?:\s+[A-Z][\w.&'-]*){0,3})\s+"
-    r"(?:raises|raised|secures|lands|closes|nabs|gets|bags|scores)\s+"
-    r"(?P<amount>[$€£]\s?\d+(?:[.,]\d+)?\s*(?:million|billion|[MBmbn]{1,2})\b\+?)",
+    r"(?i:raises|raised|secures|lands|closes|nabs|gets|bags|scores)\s+"
+    r"(?P<amount>[$€£]\s?\d+(?:[.,]\d+)?\s*(?i:million|billion|[MBmbn]{1,2})\b\+?)",
+)
+
+# Publications bury the lede behind a section label — "Exclusive: Northwind
+# lands $4M seed", "Analysis: Why Stripe raised $6.5B". The deal regex is
+# anchored at ^, so these have to come off before matching or the round is
+# dropped entirely.
+_LABEL_RE = re.compile(r"^\s*[\w][\w' ]{0,24}?:\s*")
+_FILLER_RE = re.compile(r"^\s*(?:why|how|what|meet|inside|watch|here's how)\s+", re.IGNORECASE)
+# "Report says Foo raises $10M" -> "Foo raises $10M"
+_ATTRIBUTION_RE = re.compile(
+    r"^\s*[\w' ]{0,30}?\b(?:says|say|said|confirms|confirm|reports|reportedly)\s+",
     re.IGNORECASE,
 )
+# "Robotics startup Monumental raises €25M", "Crypto VC firm Paradigm raises
+# $850M" — the category words are lowercase, so the capitalized-name rule stops
+# short. Strip the category lead-in, but only when a capitalized word follows,
+# so a company actually named "<Something> Company" survives intact.
+# The (?=[A-Z]) guard has to stay case-sensitive, so the flag is scoped to the
+# category words rather than applied to the whole pattern.
+_CATEGORY_LEAD_RE = re.compile(
+    r"^\s*(?:[\w&'.-]+\s+){0,3}?"
+    r"(?i:startup|start-up|platform|firm|company|maker|app|provider|developer|"
+    r"business|group|scaleup|scale-up|unicorn|giant|lab|labs)\s+(?=[A-Z])",
+)
+
+
+def strip_lede(title: str) -> str:
+    """Remove section labels, filler openers, attribution clauses, and category
+    lead-ins so the company name lands at the start of the string."""
+    cleaned = _LABEL_RE.sub("", title.strip(), count=1)
+    cleaned = _FILLER_RE.sub("", cleaned, count=1)
+    cleaned = _ATTRIBUTION_RE.sub("", cleaned, count=1)
+    return _CATEGORY_LEAD_RE.sub("", cleaned, count=1).strip()
+
 
 _SECTOR_KEYWORDS = {
     "AI": ["ai ", " ai", "artificial intelligence", "llm", "machine learning", "agent"],
@@ -88,7 +125,7 @@ def interleave(groups: list[list[dict]]) -> list[dict]:
         return []
     if len(groups) == 1:
         return groups[0]
-    mixed = [item for bundle in zip(*groups) for item in bundle]
+    mixed = [item for bundle in zip(*groups, strict=False) for item in bundle]
     seen = {id(i) for i in mixed}
     mixed += [i for g in groups for i in g if id(i) not in seen]
     return mixed
@@ -126,12 +163,27 @@ def _clean_company(name: str) -> str:
     return " ".join(tokens)
 
 
+# Capitalized words that survive the regex but never name a company —
+# "Investors raised $2B for a new fund", "Government secures $500M".
+_NOT_A_COMPANY = {
+    "investor", "investors", "report", "reports", "source", "sources",
+    "exclusive", "analysis", "opinion", "founder", "founders", "fund",
+    "funds", "government", "state", "regulator", "regulators", "court",
+    "police", "study", "survey", "market", "markets", "industry",
+}
+
+
 def _looks_like_name(name: str) -> bool:
     """Reject extractions that are still generic descriptions, not a company name."""
     words = name.split()
-    return bool(words) and len(words) <= 4 and not any(
-        w.lower().strip(",.") in _DESCRIPTOR_ANYWHERE for w in words
-    )
+    if not words or len(words) > 4:
+        return False
+    # A category word before the end means the parse ran past the real name
+    # ("Robotics startup Monumental"). As the final word it is usually part of
+    # the name itself ("Acme Company", "Bright Labs"), so allow it there.
+    if any(w.lower().strip(",.") in _DESCRIPTOR_ANYWHERE for w in words[:-1]):
+        return False
+    return name.lower().strip(",.") not in _NOT_A_COMPANY
 
 
 # Keywords that make a headline VC/business-relevant. Used to keep general-news
@@ -151,7 +203,7 @@ def extract_deals(items: list[dict]) -> list[dict]:
     """Pull structured funding rounds out of headline text."""
     deals = []
     for item in items:
-        match = _DEAL_RE.match(item["title"].strip())
+        match = _DEAL_RE.match(strip_lede(item["title"]))
         if not match:
             continue
         company = _clean_company(match.group("company"))

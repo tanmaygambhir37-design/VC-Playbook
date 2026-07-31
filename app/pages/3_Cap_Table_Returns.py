@@ -1,16 +1,10 @@
-import os
-import sys
-
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
 
-APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROJECT_ROOT = os.path.dirname(APP_DIR)
-sys.path.append(APP_DIR)
-sys.path.append(PROJECT_ROOT)
+import _paths  # noqa: F401  — puts the repo root on sys.path
 from components.cards import deal_banner, metric_card, text_card
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
@@ -49,7 +43,7 @@ with tab1:
 
     rounds = []
     cols = st.columns(3)
-    for col, (name, default_pre, default_inv, default_esop) in zip(cols, round_defs):
+    for col, (name, default_pre, default_inv, default_esop) in zip(cols, round_defs, strict=False):
         with col:
             st.markdown(f"### {name}")
             include = st.checkbox(f"Include {name}", value=True, key=f"inc_{name}")

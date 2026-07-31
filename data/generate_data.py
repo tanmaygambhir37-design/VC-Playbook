@@ -28,7 +28,7 @@ NAME_PARTS_B = ["Labs", "Health", "AI", "Works", "Finance", "Tech",
 STAGES = ["Pre-Seed", "Seed", "Series A"]
 
 rows = []
-for i in range(28):
+for _ in range(28):
     name = f"{random.choice(NAME_PARTS_A)}{random.choice(NAME_PARTS_B)}"
     sector = random.choice(SECTORS)
     stage = random.choices(STAGES, weights=[0.25, 0.5, 0.25])[0]

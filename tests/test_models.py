@@ -1,14 +1,9 @@
 """Core sanity tests for the financial models."""
 
-import os
-import sys
-
 import pytest
 
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
-from models.cap_table import simulate_rounds
-from models.returns import exit_proceeds, irr_from_moic, moic
+from models.cap_table import initialize_cap_table, simulate_rounds
+from models.returns import exit_proceeds, irr_from_moic, moic, portfolio_summary
 from models.scoring import score_startup
 from models.valuation import comparable_multiples, scorecard_method, vc_method
 
@@ -90,3 +85,56 @@ def test_score_startup_bounds_and_recommendation():
     assert 0 <= result.total <= 100
     assert result.recommendation in {"Proceed", "Watch", "Pass"}
     assert set(result.breakdown) == {"unit_economics", "growth", "market", "team", "efficiency"}
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"exit_value_usd_m": 0},
+        {"exit_value_usd_m": -100},
+        {"target_return_multiple": 0},
+        {"investment_usd_m": 0},
+    ],
+)
+def test_vc_method_rejects_degenerate_inputs(kwargs):
+    """These used to raise ZeroDivisionError from inside the arithmetic."""
+    args = {"exit_value_usd_m": 300, "target_return_multiple": 10, "investment_usd_m": 2, **kwargs}
+    with pytest.raises(ValueError):
+        vc_method(**args)
+
+
+def test_initialize_cap_table_rejects_a_split_that_is_not_100():
+    with pytest.raises(ValueError, match="100%"):
+        initialize_cap_table(founder_pct=90, esop_pct=5)
+
+
+def test_initialize_cap_table_validation_survives_optimized_mode():
+    """The check must be a raise, not an assert: `python -O` strips asserts and
+    would let a nonsense cap table through silently."""
+    import os
+    import subprocess
+    import sys
+
+    repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    result = subprocess.run(
+        [sys.executable, "-O", "-c",
+         "from models.cap_table import initialize_cap_table;"
+         "initialize_cap_table(90, 5)"],
+        capture_output=True, text=True,
+        env={**os.environ, "PYTHONPATH": repo_root},
+    )
+    assert result.returncode != 0
+    assert "ValueError" in result.stderr, result.stderr
+
+
+def test_portfolio_summary_aggregates_without_claiming_an_irr():
+    summary = portfolio_summary([
+        {"invested_usd_m": 2, "exit_proceeds_usd_m": 20},
+        {"invested_usd_m": 3, "exit_proceeds_usd_m": 0},   # written off
+    ])
+    assert summary["total_invested_usd_m"] == 5
+    assert summary["total_proceeds_usd_m"] == 20
+    assert summary["blended_moic"] == 4.0
+    assert summary["num_investments"] == 2
+    # Positions carry no dates, so no IRR is reported. The docstring says so.
+    assert not [key for key in summary if "irr" in key.lower()]
