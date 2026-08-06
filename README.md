@@ -1,16 +1,3 @@
----
-title: VC Playbook
-emoji: 📗
-colorFrom: gray
-colorTo: indigo
-sdk: streamlit
-sdk_version: 1.40.0
-app_file: app/app.py
-pinned: true
-python_version: "3.12"
-license: mit
----
-
 # 📗 VC Playbook
 
 **Learn venture capital by reading the news and running the numbers.**
