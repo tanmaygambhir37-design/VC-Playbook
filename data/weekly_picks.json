@@ -1,79 +1,79 @@
 {
-  "_how_to_edit": "Update this file weekly (GitHub web editor works). 'week_of' is an ISO date (YYYY-MM-DD) used to show a freshness label. 'deals': funding rounds in your own words; 'category' is one of: Venture, Private Equity, Funds, People, IPO, Exit. 'videos' need only a URL (YouTube title auto-fetches); 'articles' need a title + url. Save = site auto-redeploys.",
-  "week_of": "2026-08-10",
+  "_how_to_edit": "Update this file weekly (GitHub web editor works). 'week_of' is an ISO date (YYYY-MM-DD) used to show a freshness label. 'deals': funding rounds in your own words; 'category' is one of: Venture, Private Equity, Funds, People, IPO, Exit, M&A. 'videos' need only a URL (YouTube title auto-fetches); 'articles' need a title + url. Save = site auto-redeploys.",
+  "week_of": "2026-08-14",
   "deals": [
     {
       "category": "Venture",
-      "company": "Bios Life",
-      "sector": "Health",
-      "round": "Seed",
-      "amount": "$25M",
-      "lead": "Redmile, Vsquared Ventures, Kindred Capital",
-      "investors": "",
-      "note": "Boston-based AI-powered cancer surveillance company — the largest venture seed of the week."
-    },
-    {
-      "category": "Venture",
-      "company": "Edgify",
+      "company": "Databricks",
       "sector": "AI",
-      "round": "Series A+",
-      "amount": "$9M",
-      "lead": "Rank Ventures, Mangrove Capital Partners",
-      "investors": "",
-      "note": "London AI infrastructure that helps physical retailers cut in-store losses."
+      "round": "Late stage",
+      "amount": "$5B",
+      "lead": "Coatue",
+      "investors": "Blackstone, MGX",
+      "note": "SF data + AI software giant — the mega-round of the week."
     },
     {
       "category": "Venture",
-      "company": "Alloy Robotics",
-      "sector": "Robotics",
-      "round": "Early stage",
-      "amount": "$8M",
-      "lead": "Square Peg",
-      "investors": "Blackbird, Airtree, Skip Capital",
-      "note": "Sydney-based AI tools that help robotics teams find and fix failures."
+      "company": "Silicon Data",
+      "sector": "AI",
+      "round": "Series A",
+      "amount": "$30.5M",
+      "lead": "Valor Atreides AI Fund",
+      "investors": "CME Group, DRW, Samsung, VanEck",
+      "note": "NYC provider of data and benchmarks for AI-computing infrastructure."
+    },
+    {
+      "category": "Venture",
+      "company": "Mindgard",
+      "sector": "AI",
+      "round": "Series A",
+      "amount": "$30M",
+      "lead": "Album VC",
+      "investors": "Karma Ventures",
+      "note": "Boston AI-security software — a fast-growing category as models ship into production."
     },
     {
       "category": "Private Equity",
-      "company": "Bowman Consulting Group",
-      "sector": "Engineering",
+      "company": "Accelerant",
+      "sector": "Insurance",
       "round": "Take-private",
-      "amount": "$1B",
-      "lead": "Bernhard Capital Partners",
+      "amount": "$20.25/sh",
+      "lead": "Thoma Bravo",
       "investors": "",
-      "note": "Reston, VA engineering-services and program-management firm, taken private at ~$1B."
+      "note": "Atlanta insurance-marketplace platform taken private at $20.25 per share in cash."
     },
     {
-      "category": "IPO",
-      "company": "Lyntris",
-      "sector": "Defense",
-      "round": "IPO",
-      "amount": "$528M",
-      "lead": "NYSE",
-      "investors": "Trive Capital-backed",
-      "note": "Defense-tech maker of sensors, hardware, and software for the military. $451M FY sales; pricing 24M shares at $19-22."
+      "category": "M&A",
+      "company": "Arize",
+      "sector": "AI",
+      "round": "Acquisition",
+      "amount": "$915M",
+      "lead": "Dynatrace",
+      "investors": "",
+      "note": "SF AI monitoring & evaluation software — AI-observability consolidation in action."
     },
     {
       "category": "Exit",
-      "company": "Tillamook Country Smoker",
-      "sector": "Consumer",
-      "round": "Acquisition",
+      "company": "Thought Logic Consulting",
+      "sector": "Consulting",
+      "round": "Recap",
       "amount": "Undisclosed",
-      "lead": "Second Nature Brands (CapVest)",
-      "investors": "sold by Insignia Capital",
-      "note": "A clean sponsor-to-sponsor exit of an Oregon meat-snacks brand."
+      "lead": "Braemont Capital",
+      "investors": "sold by Renovus Capital Partners",
+      "note": "Sponsor-to-sponsor recapitalization of an Atlanta tech-consulting firm."
     }
   ],
   "videos": [
     {
-      "url": "https://youtu.be/PujkGebv1Nw",
+      "url": "https://www.youtube.com/watch?v=-tabaM5l3s0",
       "why": ""
     }
   ],
   "articles": [
     {
-      "title": "Inside the AI-Powered Quest to Perfect Pringle-Making (WSJ)",
-      "url": "https://www.wsj.com/tech/ai/inside-the-long-ai-powered-quest-to-perfect-pringle-making-ab37a231",
-      "why": "AI leaving the lab for the factory floor — a concrete, oddly delightful look at where models actually create value."
+      "title": "The AI Spending Supercycle (Axios)",
+      "url": "https://www.axios.com/2026/08/14/ai-spending-tech-capital",
+      "why": "The capex numbers behind the AI boom — how much big tech is actually pouring in, and what it means."
     }
   ]
 }
