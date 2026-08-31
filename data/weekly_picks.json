@@ -1,79 +1,79 @@
 {
   "_how_to_edit": "Update this file weekly (GitHub web editor works). 'week_of' is an ISO date (YYYY-MM-DD) used to show a freshness label. 'deals': funding rounds in your own words; 'category' is one of: Venture, Private Equity, Funds, People, IPO, Exit, M&A. 'videos' need only a URL (YouTube title auto-fetches); 'articles' need a title + url. Save = site auto-redeploys.",
-  "week_of": "2026-08-14",
+  "week_of": "2026-08-31",
   "deals": [
     {
       "category": "Venture",
-      "company": "Databricks",
+      "company": "Owner",
       "sector": "AI",
       "round": "Late stage",
-      "amount": "$5B",
-      "lead": "Coatue",
-      "investors": "Blackstone, MGX",
-      "note": "SF data + AI software giant — the mega-round of the week."
+      "amount": "$240M",
+      "lead": "Goldman Sachs",
+      "investors": "Meritech, Redpoint Ventures, Jack Altman",
+      "note": "AI platform for restaurants and small businesses, raising at a $2.3B valuation."
     },
     {
       "category": "Venture",
-      "company": "Silicon Data",
-      "sector": "AI",
-      "round": "Series A",
-      "amount": "$30.5M",
-      "lead": "Valor Atreides AI Fund",
-      "investors": "CME Group, DRW, Samsung, VanEck",
-      "note": "NYC provider of data and benchmarks for AI-computing infrastructure."
+      "company": "Ajaib",
+      "sector": "Fintech",
+      "round": "Series C",
+      "amount": "$270M",
+      "lead": "SBI Holdings",
+      "investors": "",
+      "note": "Indonesian online stock-trading platform — the largest round of the week."
     },
     {
       "category": "Venture",
-      "company": "Mindgard",
+      "company": "Transfyr",
       "sector": "AI",
-      "round": "Series A",
-      "amount": "$30M",
-      "lead": "Album VC",
-      "investors": "Karma Ventures",
-      "note": "Boston AI-security software — a fast-growing category as models ship into production."
+      "round": "Seed",
+      "amount": "$25M",
+      "lead": "General Catalyst",
+      "investors": "Lux Capital, Breakout Ventures, SV Angel, Underscore VC",
+      "note": "A 'physical AI platform for real-world science' — a big seed for a young thesis."
     },
     {
       "category": "Private Equity",
-      "company": "Accelerant",
-      "sector": "Insurance",
-      "round": "Take-private",
-      "amount": "$20.25/sh",
-      "lead": "Thoma Bravo",
-      "investors": "",
-      "note": "Atlanta insurance-marketplace platform taken private at $20.25 per share in cash."
-    },
-    {
-      "category": "M&A",
-      "company": "Arize",
-      "sector": "AI",
+      "company": "Atlantic Aviation",
+      "sector": "Aviation",
       "round": "Acquisition",
-      "amount": "$915M",
-      "lead": "Dynatrace",
-      "investors": "",
-      "note": "SF AI monitoring & evaluation software — AI-observability consolidation in action."
+      "amount": "$10B",
+      "lead": "Apollo",
+      "investors": "sold by KKR (retains a stake)",
+      "note": "Private-jet fixed-base operator — a mega sponsor-to-sponsor deal at ~$10B."
     },
     {
-      "category": "Exit",
-      "company": "Thought Logic Consulting",
-      "sector": "Consulting",
-      "round": "Recap",
-      "amount": "Undisclosed",
-      "lead": "Braemont Capital",
-      "investors": "sold by Renovus Capital Partners",
-      "note": "Sponsor-to-sponsor recapitalization of an Atlanta tech-consulting firm."
+      "category": "Funds",
+      "company": "Andreessen Horowitz",
+      "sector": "Hardware",
+      "round": "Fund I",
+      "amount": "$1.1B",
+      "lead": "",
+      "investors": "",
+      "note": "a16z's first hardware-infrastructure fund — a notable move into deep tech/atoms."
+    },
+    {
+      "category": "Liquidity",
+      "company": "Linear",
+      "sector": "SaaS",
+      "round": "Tender",
+      "amount": "$99M",
+      "lead": "Salesforce Ventures, S32",
+      "investors": "Accel, 01A",
+      "note": "Employee tender at a $2.5B valuation — how private-company staff get liquidity without an IPO."
     }
   ],
   "videos": [
     {
-      "url": "https://www.youtube.com/watch?v=-tabaM5l3s0",
+      "url": "https://www.youtube.com/watch?v=0zZyEF4Cq9U",
       "why": ""
     }
   ],
   "articles": [
     {
-      "title": "The AI Spending Supercycle (Axios)",
-      "url": "https://www.axios.com/2026/08/14/ai-spending-tech-capital",
-      "why": "The capex numbers behind the AI boom — how much big tech is actually pouring in, and what it means."
+      "title": "The 2 Behaviors That Make You Socially Magnetic (Big Think)",
+      "url": "https://bigthink.com/mind-behavior/the-2-behaviors-that-make-you-socially-magnetic/",
+      "why": "Networking is half the job in VC — a sharp, research-backed read on what actually makes people want to talk to you."
     }
   ]
 }
