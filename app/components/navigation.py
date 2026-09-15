@@ -6,7 +6,11 @@ from .theme import APP_NAME, SUBTITLE
 def nav_link(page: str, label: str, icon: str | None = None, use_container_width: bool = False, container=st) -> None:
     try:
         container.page_link(page, label=label, icon=icon, use_container_width=use_container_width)
-    except KeyError:
+    except Exception:
+        # page_link raises different errors across Streamlit versions when a
+        # target can't be resolved (e.g. the "app.py" entrypoint under AppTest,
+        # which renders a page in isolation). Degrade to a plain pill so a page
+        # still renders — on the live app the entrypoint resolves normally.
         container.markdown(f'<span class="vcl-pill">{label}</span>', unsafe_allow_html=True)
 
 
