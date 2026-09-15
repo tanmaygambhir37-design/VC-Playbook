@@ -1,79 +1,79 @@
 {
   "_how_to_edit": "Update this file weekly (GitHub web editor works). 'week_of' is an ISO date (YYYY-MM-DD) used to show a freshness label. 'deals': funding rounds in your own words; 'category' is one of: Venture, Private Equity, Funds, People, IPO, Exit, M&A. 'videos' need only a URL (YouTube title auto-fetches); 'articles' need a title + url. Save = site auto-redeploys.",
-  "week_of": "2026-08-31",
+  "week_of": "2026-09-15",
   "deals": [
     {
       "category": "Venture",
-      "company": "Owner",
-      "sector": "AI",
+      "company": "Open Cosmos",
+      "sector": "Space",
       "round": "Late stage",
-      "amount": "$240M",
-      "lead": "Goldman Sachs",
-      "investors": "Meritech, Redpoint Ventures, Jack Altman",
-      "note": "AI platform for restaurants and small businesses, raising at a $2.3B valuation."
+      "amount": "£300M",
+      "lead": "Lightrock",
+      "investors": "ETF Partners, Entrepreneurs First, NSSIF, Phoenix Court, Claret Capital",
+      "note": "UK satellite maker — one of Europe's biggest space rounds this year."
     },
     {
       "category": "Venture",
-      "company": "Ajaib",
+      "company": "Tabby",
       "sector": "Fintech",
-      "round": "Series C",
-      "amount": "$270M",
-      "lead": "SBI Holdings",
-      "investors": "",
-      "note": "Indonesian online stock-trading platform — the largest round of the week."
+      "round": "Series F",
+      "amount": "$233M",
+      "lead": "Blue Pool Capital",
+      "investors": "HSG, Wellington Management, Arbor Ventures",
+      "note": "Saudi BNPL company raising at a $6.5B valuation."
     },
     {
       "category": "Venture",
-      "company": "Transfyr",
-      "sector": "AI",
-      "round": "Seed",
-      "amount": "$25M",
-      "lead": "General Catalyst",
-      "investors": "Lux Capital, Breakout Ventures, SV Angel, Underscore VC",
-      "note": "A 'physical AI platform for real-world science' — a big seed for a young thesis."
+      "company": "Tandem Health",
+      "sector": "Health",
+      "round": "Series B",
+      "amount": "$100M",
+      "lead": "Scaleup Europe Fund",
+      "investors": "Kinnevik, Northzone, Amino Collective",
+      "note": "Swedish AI medical-scribe startup — the hot 'AI for clinicians' category."
+    },
+    {
+      "category": "Venture",
+      "company": "Mecka AI",
+      "sector": "Robotics",
+      "round": "Early stage",
+      "amount": "$500M val.",
+      "lead": "Sequoia Capital",
+      "investors": "",
+      "note": "Humanoid-robotics training startup in talks with Sequoia at a $500M valuation."
     },
     {
       "category": "Private Equity",
-      "company": "Atlantic Aviation",
-      "sector": "Aviation",
-      "round": "Acquisition",
-      "amount": "$10B",
+      "company": "DePuy Synthes",
+      "sector": "Health",
+      "round": "Carve-out",
+      "amount": "$20B",
       "lead": "Apollo",
-      "investors": "sold by KKR (retains a stake)",
-      "note": "Private-jet fixed-base operator — a mega sponsor-to-sponsor deal at ~$10B."
+      "investors": "sold by Johnson & Johnson",
+      "note": "J&J's orthopedics business — a mega corporate carve-out in talks."
     },
     {
-      "category": "Funds",
-      "company": "Andreessen Horowitz",
-      "sector": "Hardware",
-      "round": "Fund I",
-      "amount": "$1.1B",
-      "lead": "",
-      "investors": "",
-      "note": "a16z's first hardware-infrastructure fund — a notable move into deep tech/atoms."
-    },
-    {
-      "category": "Liquidity",
-      "company": "Linear",
-      "sector": "SaaS",
-      "round": "Tender",
-      "amount": "$99M",
-      "lead": "Salesforce Ventures, S32",
-      "investors": "Accel, 01A",
-      "note": "Employee tender at a $2.5B valuation — how private-company staff get liquidity without an IPO."
+      "category": "IPO",
+      "company": "Electra Therapeutics",
+      "sector": "Health",
+      "round": "IPO",
+      "amount": "$917M cap",
+      "lead": "Nasdaq: ETRA",
+      "investors": "OrbiMed, Westlake, Redmile, EQT LSP",
+      "note": "SF immunology/cancer biotech pricing 21.67M shares at $14-16; raised $300M pre-IPO."
     }
   ],
   "videos": [
     {
-      "url": "https://www.youtube.com/watch?v=0zZyEF4Cq9U",
+      "url": "https://youtu.be/IJn8cagMW18",
       "why": ""
     }
   ],
   "articles": [
     {
-      "title": "The 2 Behaviors That Make You Socially Magnetic (Big Think)",
-      "url": "https://bigthink.com/mind-behavior/the-2-behaviors-that-make-you-socially-magnetic/",
-      "why": "Networking is half the job in VC — a sharp, research-backed read on what actually makes people want to talk to you."
+      "title": "Should Anthropic press pause on a potential $2trn IPO? (The Economist)",
+      "url": "https://www.economist.com/business/2026/09/14/should-anthropic-press-pause-on-a-potential-2trn-ipo",
+      "why": "The valuation debate at the center of the AI boom — when does a private AI company go public, and at what price?"
     }
   ]
 }
