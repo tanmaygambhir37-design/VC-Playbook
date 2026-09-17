@@ -30,6 +30,11 @@ import streamlit.components.v1 as components
 
 _TIMEOUT = 4
 
+# The GoatCounter site code is public (it's the vcplaybook.goatcounter.com
+# subdomain, visible in every beacon URL), so it lives in code, not secrets.
+# A Streamlit secret of the same name still overrides it if ever needed.
+DEFAULT_GOATCOUNTER = "vcplaybook"
+
 
 def _secret(key: str, default: str = "") -> str:
     """Secrets lookup that survives having no secrets.toml at all."""
@@ -60,7 +65,7 @@ def _pageview_html(path: str, title: str) -> str:
     """Browser-side beacons for whichever providers are configured."""
     beacons = []
 
-    goatcounter = _secret("GOATCOUNTER_CODE")
+    goatcounter = _secret("GOATCOUNTER_CODE", DEFAULT_GOATCOUNTER)
     if goatcounter:
         query = urllib.parse.urlencode({"p": path, "t": title})
         beacons.append(
@@ -139,7 +144,7 @@ def experiment_hit(bucket: str, experiment: str = "") -> None:
     st.session_state[marker] = True
 
     path = f"/exp/{experiment}/{bucket}" if experiment else f"/exp/{bucket}"
-    goatcounter = _secret("GOATCOUNTER_CODE")
+    goatcounter = _secret("GOATCOUNTER_CODE", DEFAULT_GOATCOUNTER)
     if goatcounter:
         query = urllib.parse.urlencode({"p": path, "t": f"exp {bucket}"})
         components.html(
