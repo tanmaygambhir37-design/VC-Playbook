@@ -126,6 +126,30 @@ def _post(url: str, payload: dict) -> None:
         pass
 
 
+def experiment_hit(bucket: str, experiment: str = "") -> None:
+    """Record one A/B funnel milestone, once per session per bucket.
+
+    Emitted as a GoatCounter hit under `/exp/<experiment>/<bucket>` so the free
+    dashboard counts each arm and the CSV export drives the analysis. Falls back
+    to the same stdout/webhook path as any other event when GoatCounter is off.
+    """
+    marker = f"_vcl_exp_{experiment}_{bucket}"
+    if st.session_state.get(marker):
+        return
+    st.session_state[marker] = True
+
+    path = f"/exp/{experiment}/{bucket}" if experiment else f"/exp/{bucket}"
+    goatcounter = _secret("GOATCOUNTER_CODE")
+    if goatcounter:
+        query = urllib.parse.urlencode({"p": path, "t": f"exp {bucket}"})
+        components.html(
+            f'<img src="https://{goatcounter}.goatcounter.com/count?{query}" '
+            'alt="" style="position:absolute;width:1px;height:1px;border:0">',
+            height=0,
+        )
+    track_event("experiment", bucket=bucket, experiment=experiment)
+
+
 def track_event(name: str, once_per_session: bool = False, **props) -> None:
     """Record a funnel event.
 

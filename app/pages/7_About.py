@@ -10,7 +10,7 @@ sys.path.append(PROJECT_ROOT)
 from components.cards import feature_card, text_card
 from components.footer import email_capture, footer
 from components.navigation import sidebar
-from components.theme import CASE_STUDY_URL, SUBTITLE, TAGLINE, apply_theme, page_header, section_title
+from components.theme import CASE_STUDY_URL, GITHUB_URL, SUBTITLE, TAGLINE, apply_theme, page_header, section_title
 from services.analytics import track_page
 
 st.set_page_config(page_title="About | VC Playbook", page_icon="📗", layout="wide")
@@ -67,6 +67,18 @@ text_card(
     "Real-World Test",
 )
 st.link_button("Read the Bending Spoons case study →", CASE_STUDY_URL)
+
+section_title("Running Experiments", "Treating the site like a product, not a portfolio piece.")
+text_card(
+    "Landing A/B test — pre-registered",
+    "One metric: the share of landing visitors who complete a valuation. One live A/B test on the hero CTA "
+    "(\"explore the workspace\" vs \"value a startup in 2 minutes\"), assigned 50/50 and running two weeks. "
+    "The hypothesis, metric, and decision rule were written down <em>before</em> collecting data — and the "
+    "result gets published whatever it says, including \"inconclusive, too little traffic to trust,\" which "
+    "for a young site is the honest and likely outcome. Pre-registration and analysis script are in the repo.",
+    "Product Discipline",
+)
+st.link_button("Read the pre-registered experiment →", f"{GITHUB_URL}/blob/main/reports/experiment-01-landing-cta.md")
 
 section_title("Built By", "")
 text_card(

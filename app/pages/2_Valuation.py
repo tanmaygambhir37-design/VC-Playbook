@@ -12,6 +12,7 @@ from components.footer import footer
 from components.navigation import sidebar
 from components.theme import apply_theme, page_header, section_title
 from services.analytics import track_page
+from services.experiment import record_valuation
 from models.scoring import score_startup
 from models.returns import irr_from_moic
 from models.valuation import SCORECARD_FACTORS, comparable_multiples, scorecard_method, vc_method
@@ -24,6 +25,9 @@ st.set_page_config(page_title="Valuation | VC Playbook", page_icon="📗", layou
 apply_theme()
 sidebar()
 track_page("valuation", "Valuation")
+# Funnel milestone: reaching this page renders a computed valuation, so a
+# home-origin session that lands here has "completed a valuation."
+record_valuation()
 
 page_header("Valuation", "Three complementary early-stage valuation methods, side by side.", "Analysis")
 

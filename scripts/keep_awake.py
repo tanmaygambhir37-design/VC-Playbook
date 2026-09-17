@@ -13,7 +13,9 @@ import sys
 
 from playwright.sync_api import sync_playwright
 
-APP_URL = "https://vc-lab-5mg6vkhrt7uucrxjnowfe3.streamlit.app/"
+# ?keepalive=1 tells the app this is the bot, so it skips analytics and the A/B
+# experiment — automated wake-ups never pollute the funnel data.
+APP_URL = "https://vc-lab-5mg6vkhrt7uucrxjnowfe3.streamlit.app/?keepalive=1"
 WAKE_BUTTON = "Yes, get this app back up!"
 
 

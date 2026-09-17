@@ -22,6 +22,7 @@ from components.theme import (
     section_title,
 )
 from services.analytics import track_event, track_page
+from services.experiment import is_excluded, primary_cta, record_landing, variant
 from services.news import (
     extract_deals,
     fetch_all_feeds,
@@ -36,7 +37,9 @@ from state import set_prefill_deal
 st.set_page_config(page_title="VC Playbook", page_icon="📗", layout="wide", initial_sidebar_state="collapsed")
 apply_theme()
 hide_sidebar()
-track_page("home", "VC Playbook")
+if not is_excluded():  # the keep-awake bot (?keepalive=1) is never counted
+    track_page("home", "VC Playbook")
+    record_landing()
 
 
 def news_line(item: dict) -> str:
@@ -102,9 +105,10 @@ st.markdown(
 landing_header()
 
 nav1, nav2, nav3, nav4 = st.columns(4)
-if nav1.button("Open the Simulator", type="primary", use_container_width=True):
-    track_event("cta_open_simulator", placement="hero")
-    st.switch_page("pages/0_Dashboard.py")
+_cta_label, _cta_target = primary_cta()  # A/B: control -> Dashboard, treatment -> Valuation
+if nav1.button(_cta_label, type="primary", use_container_width=True):
+    track_event("cta_open_simulator", placement="hero", variant=variant(), target=_cta_target)
+    st.switch_page(_cta_target)
 if nav2.button("Today's VC News", use_container_width=True):
     track_event("cta_vc_pulse", placement="hero")
     st.switch_page("pages/6_VC_Pulse.py")
