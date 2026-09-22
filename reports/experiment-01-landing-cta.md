@@ -64,7 +64,28 @@ cleanly aggregatable — GoatCounter is the 2-minute way to make the counts real
 
 ---
 
-## Results — PENDING (fill after 2026-10-01)
+## Amendment — 2026-09-22
+
+Four days in, the site had **zero real sessions** — the only hits were my own
+verification check on Sep 18. So the constraint isn't the CTA, it's
+distribution: nobody has seen either variant. This amendment does three things,
+and no more:
+
+1. **Extends the window** to the Round 2 end date (**2026-10-07**), so the test
+   runs against the traffic Round 2 is designed to bring in.
+2. **Leaves the decision rule unchanged** — two-sided two-proportion z-test,
+   α = 0.05, ship B only if significantly better.
+3. **Notes for the record** that this amendment was made *before any real data
+   arrived* (n = 0 real sessions), so it can't be a reaction to a result.
+   Variant assignment stays random per session, so the new traffic sources
+   (Round 2 channels) split evenly across A and B and do not bias the
+   comparison.
+
+Nothing else in the pre-registration above changes.
+
+---
+
+## Results — PENDING (fill after 2026-10-07)
 
 - Sessions (A / B): _to be filled_
 - Completion rate (A / B): _to be filled_

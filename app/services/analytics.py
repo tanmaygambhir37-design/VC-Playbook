@@ -19,6 +19,7 @@ anyone is getting past the landing page.
 """
 
 import json
+import re
 import threading
 import urllib.parse
 import uuid
@@ -56,6 +57,52 @@ def session_id() -> str:
     if "_vcl_session" not in st.session_state:
         st.session_state["_vcl_session"] = uuid.uuid4().hex[:12]
     return st.session_state["_vcl_session"]
+
+
+# ------------------------------------------------------------------ source
+#
+# This value ends up in PUBLIC analytics paths (/src/<source>/...), so the
+# query param is untrusted input. Accept it only if it is already a clean
+# slug; anything present-but-dirty (e.g. "<script>") collapses to "other",
+# and no param at all is "direct".
+
+_VALID_SOURCE = re.compile(r"^[a-z0-9-]{1,20}$")
+
+
+def _clean_source(raw: object) -> str:
+    if raw is None:
+        return "direct"
+    value = str(raw).strip().lower()
+    if not value:
+        return "direct"
+    return value if _VALID_SOURCE.match(value) else "other"
+
+
+def source() -> str:
+    """Cleaned acquisition source for this session, read once and remembered.
+
+    Query params can drop when Streamlit navigates between pages, so the value
+    is captured into session_state on the first run and reused from there.
+    Reads ?ref= first, then ?utm_source=.
+    """
+    if "_vcl_source" in st.session_state:
+        return st.session_state["_vcl_source"]
+    raw = None
+    try:
+        raw = st.query_params.get("ref") or st.query_params.get("utm_source")
+    except Exception:
+        raw = None
+    st.session_state["_vcl_source"] = _clean_source(raw)
+    return st.session_state["_vcl_source"]
+
+
+def track_source(stage: str) -> None:
+    """Log one per-channel funnel milestone as /src/<source>/<stage>.
+
+    Reuses track_page (same beacon + per-page session guard), so it is not a
+    parallel tracking system — just another path.
+    """
+    track_page(f"src/{source()}/{stage}", f"src {source()} {stage}")
 
 
 # ------------------------------------------------------------------ pageviews

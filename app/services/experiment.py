@@ -17,7 +17,7 @@ import hashlib
 
 import streamlit as st
 
-from services.analytics import experiment_hit, session_id, track_event
+from services.analytics import experiment_hit, session_id, track_event, track_source
 
 EXPERIMENT_ID = "landing-cta-01"
 _SAW_HOME = "_vcl_saw_home"
@@ -53,11 +53,15 @@ def primary_cta() -> tuple[str, str]:
 
 
 def record_landing() -> None:
-    """Denominator: this session saw the landing page (non-bot)."""
+    """Denominator: this session saw the landing page (non-bot).
+
+    Also logs the acquisition channel (Round 2) — same session, same guard.
+    """
     if is_excluded():
         return
     st.session_state[_SAW_HOME] = True
     experiment_hit(f"landing/{variant()}", EXPERIMENT_ID)
+    track_source("landing")
 
 
 def record_valuation() -> None:
@@ -66,3 +70,4 @@ def record_valuation() -> None:
         return
     experiment_hit(f"valuation/{variant()}", EXPERIMENT_ID)
     track_event("valuation_completed", once_per_session=True, variant=variant())
+    track_source("valuation")

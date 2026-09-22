@@ -6,8 +6,11 @@ import sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "app"))
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+import io
+
 from services.experiment import _assign
-from scripts.analyze_experiment import two_proportion_z
+from services.analytics import _clean_source
+from scripts.analyze_experiment import channels_report, parse_channels_csv, two_proportion_z
 
 
 def test_assignment_is_deterministic():
@@ -37,3 +40,52 @@ def test_z_test_calls_a_null_result_inconclusive():
 def test_z_test_handles_empty_arms():
     r = two_proportion_z(c_a=0, n_a=0, c_b=0, n_b=0)
     assert r["verdict"] == "no data"
+
+
+# ---- source attribution (Round 2) -------------------------------------------
+
+def test_clean_source_accepts_clean_slug():
+    assert _clean_source("linkedin") == "linkedin"
+    assert _clean_source("LinkedIn") == "linkedin"
+    assert _clean_source("bocconi-vc") == "bocconi-vc"
+
+
+def test_clean_source_rejects_untrusted_input():
+    assert _clean_source("<script>") == "other"   # no injection into public paths
+    assert _clean_source("a b") == "other"
+    assert _clean_source("x" * 25) == "other"      # over 20 chars
+
+
+def test_clean_source_defaults_to_direct_when_absent():
+    assert _clean_source(None) == "direct"
+    assert _clean_source("") == "direct"
+
+
+# ---- channel analysis (Experiment 02) ---------------------------------------
+
+_FAKE_CSV = (
+    "Path,Count\n"
+    "/src/linkedin/landing,40\n/src/linkedin/valuation,8\n"
+    "/src/bocconi/landing,35\n/src/bocconi/valuation,10\n"
+    "/src/reddit/landing,12\n/src/reddit/valuation,1\n"
+    "/src/test/landing,9\n/src/test/valuation,9\n"
+)
+
+
+def test_parse_channels_sums_and_excludes_test():
+    counts = parse_channels_csv(io.StringIO(_FAKE_CSV))
+    assert counts["linkedin"] == {"landing": 40, "valuation": 8}
+    assert counts["bocconi"]["valuation"] == 10
+    assert "test" not in counts
+
+
+def test_channels_report_picks_most_completions_above_threshold():
+    out = channels_report(parse_channels_csv(io.StringIO(_FAKE_CSV)), min_sessions=30)
+    assert "winner: bocconi" in out            # 10 completions beats linkedin's 8
+    assert "below threshold" in out            # reddit's 12 sessions < 30
+
+
+def test_channels_report_inconclusive_when_no_channel_reaches_threshold():
+    thin = "Path,Count\n/src/linkedin/landing,5\n/src/linkedin/valuation,2\n"
+    out = channels_report(parse_channels_csv(io.StringIO(thin)), min_sessions=30)
+    assert "inconclusive: distribution is still the bottleneck" in out

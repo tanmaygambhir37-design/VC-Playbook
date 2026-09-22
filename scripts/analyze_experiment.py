@@ -1,18 +1,21 @@
-"""Analyze the landing-CTA A/B test.
+"""Analyze the VC Playbook experiments.
 
-Feed it the four counts from GoatCounter (paths /exp/landing-cta-01/landing/A,
-.../valuation/A, and the B equivalents) and it reports each arm's valuation-
-completion rate plus a two-proportion z-test, so "no real difference" is a
-conclusion you can state with numbers rather than a vibe.
+A/B mode (Experiment 01) — four counts, two-proportion z-test:
 
     python scripts/analyze_experiment.py --landing-a 120 --val-a 18 \
                                          --landing-b 115 --val-b 25
+
+Channels mode (Experiment 02) — a GoatCounter CSV export, per-channel funnel:
+
+    python scripts/analyze_experiment.py --channels export.csv
 
 Everything here is stdlib. Phi() is the normal CDF via math.erf.
 """
 
 import argparse
+import csv
 import math
+import re
 
 
 def phi(z: float) -> float:
@@ -48,12 +51,108 @@ def report(c_a: int, n_a: int, c_b: int, n_b: int) -> str:
     )
 
 
+# --------------------------------------------------------------- channels (Exp 02)
+
+_SRC_PATH = re.compile(r"^/?src/([a-z0-9-]{1,20})/(landing|valuation)$")
+_COUNT_HEADERS = {"count", "visits", "hits", "pageviews", "unique", "unique count", "pageview"}
+
+
+def _path_column(fieldnames) -> str | None:
+    for name in fieldnames or []:
+        if name and "path" in name.strip().lower():
+            return name
+    return None
+
+
+def _count_column(fieldnames) -> str | None:
+    for name in fieldnames or []:
+        if name and name.strip().lower() in _COUNT_HEADERS:
+            return name
+    return None
+
+
+def parse_channels_csv(source, exclude=("test",)) -> dict:
+    """Sum /src/<channel>/<stage> counts from a GoatCounter CSV export.
+
+    Accepts a path or a file-like object. If the export has a count column it's
+    summed; otherwise each row counts as one hit (the per-hit export format).
+    `exclude` drops our own check traffic (e.g. ref=test).
+    """
+    close = not hasattr(source, "read")
+    f = open(source, newline="") if close else source
+    try:
+        reader = csv.DictReader(f)
+        path_col = _path_column(reader.fieldnames)
+        count_col = _count_column(reader.fieldnames)
+        counts: dict = {}
+        for row in reader:
+            match = _SRC_PATH.match((row.get(path_col) or "").strip()) if path_col else None
+            if not match:
+                continue
+            channel, stage = match.group(1), match.group(2)
+            if channel in exclude:
+                continue
+            n = 1
+            if count_col:
+                try:
+                    n = int(float(row.get(count_col) or 0))
+                except ValueError:
+                    n = 0
+            bucket = counts.setdefault(channel, {"landing": 0, "valuation": 0})
+            bucket[stage] += n
+        return counts
+    finally:
+        if close:
+            f.close()
+
+
+def channels_report(counts: dict, min_sessions: int = 30) -> str:
+    lines = [f"{'channel':<12}{'sessions':>10}{'completions':>14}{'rate':>9}", "-" * 45]
+    for ch in sorted(counts, key=lambda k: (counts[k]["valuation"], counts[k]["landing"]), reverse=True):
+        landing, val = counts[ch]["landing"], counts[ch]["valuation"]
+        rate = f"{val / landing * 100:.1f}%" if landing else "—"
+        mark = "" if landing >= min_sessions else "   (below threshold)"
+        lines.append(f"{ch:<12}{landing:>10}{val:>14}{rate:>9}{mark}")
+
+    eligible = {c: v for c, v in counts.items() if v["landing"] >= min_sessions}
+    if not eligible:
+        verdict = (f"inconclusive: distribution is still the bottleneck "
+                   f"(no channel reached {min_sessions} landing sessions)")
+    else:
+        winner = max(
+            eligible,
+            key=lambda k: (eligible[k]["valuation"],
+                           eligible[k]["valuation"] / eligible[k]["landing"] if eligible[k]["landing"] else 0),
+        )
+        dropped = sorted(c for c in counts if counts[c]["landing"] < min_sessions)
+        verdict = f"winner: {winner} — most valuation completions among channels with >= {min_sessions} sessions. Double down on {winner}"
+        if dropped:
+            verdict += f"; drop {', '.join(dropped)} (< {min_sessions} sessions)"
+
+    lines += ["", "Verdict: " + verdict]
+    return "\n".join(lines)
+
+
 def _demo() -> None:
-    # A clearly-significant case and a clearly-null case, as a sanity check.
-    big = two_proportion_z(200, 1000, 300, 1000)
-    assert big["p_value"] < 0.05, big
-    null = two_proportion_z(50, 500, 52, 500)
-    assert null["p_value"] > 0.05, null
+    # A/B: a clearly-significant case and a clearly-null case.
+    assert two_proportion_z(200, 1000, 300, 1000)["p_value"] < 0.05
+    assert two_proportion_z(50, 500, 52, 500)["p_value"] > 0.05
+
+    # Channels: a small fake export exercises parsing, exclusion, and the rule.
+    import io
+    fake = (
+        "Path,Count\n"
+        "/src/linkedin/landing,40\n/src/linkedin/valuation,8\n"
+        "/src/bocconi/landing,35\n/src/bocconi/valuation,10\n"
+        "/src/reddit/landing,12\n/src/reddit/valuation,1\n"
+        "/src/test/landing,9\n/src/test/valuation,9\n"
+    )
+    counts = parse_channels_csv(io.StringIO(fake))
+    assert "test" not in counts, counts                      # our own checks excluded
+    assert counts["linkedin"] == {"landing": 40, "valuation": 8}, counts
+    out = channels_report(counts, min_sessions=30)
+    assert "winner: bocconi" in out, out                     # 10 completions > 8
+    assert "below threshold" in out                          # reddit has 12 < 30
     print("self-check ok")
 
 
@@ -63,9 +162,14 @@ if __name__ == "__main__":
     ap.add_argument("--val-a", type=int)
     ap.add_argument("--landing-b", type=int)
     ap.add_argument("--val-b", type=int)
+    ap.add_argument("--channels", metavar="CSV", help="GoatCounter CSV export for Experiment 02")
     ap.add_argument("--selfcheck", action="store_true")
     args = ap.parse_args()
-    if args.selfcheck or args.landing_a is None:
+    if args.selfcheck:
+        _demo()
+    elif args.channels:
+        print(channels_report(parse_channels_csv(args.channels)))
+    elif args.landing_a is None:
         _demo()
     else:
         print(report(args.val_a, args.landing_a, args.val_b, args.landing_b))
