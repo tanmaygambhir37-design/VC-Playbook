@@ -1,79 +1,139 @@
 {
   "_how_to_edit": "Update this file weekly (GitHub web editor works). 'week_of' is an ISO date (YYYY-MM-DD) used to show a freshness label. 'deals': funding rounds in your own words; 'category' is one of: Venture, Private Equity, Funds, People, IPO, Exit, M&A. 'videos' need only a URL (YouTube title auto-fetches); 'articles' need a title + url. Save = site auto-redeploys.",
-  "week_of": "2026-09-15",
+  "week_of": "2026-09-22",
   "deals": [
     {
       "category": "Venture",
-      "company": "Open Cosmos",
-      "sector": "Space",
+      "company": "Tekever",
+      "sector": "Defense",
+      "round": "Series D",
+      "amount": "$580M",
+      "lead": "UC Investments, Baillie Gifford",
+      "investors": "Crescent Cove, Ventura Capital, Iberis Capital",
+      "note": "Portuguese military-drone maker now valued at $6.3B. European defence tech keeps pulling in late-stage money."
+    },
+    {
+      "category": "Venture",
+      "company": "Snorkel AI",
+      "sector": "AI",
       "round": "Late stage",
-      "amount": "£300M",
-      "lead": "Lightrock",
-      "investors": "ETF Partners, Entrepreneurs First, NSSIF, Phoenix Court, Claret Capital",
-      "note": "UK satellite maker — one of Europe's biggest space rounds this year."
+      "amount": "$350M",
+      "lead": "Insight Partners, S32",
+      "investors": "Addition, March Capital, Greylock, Lightspeed, GV",
+      "note": "AI data-development platform at a $3.5B post-money valuation. The data layer behind AI models is still being funded."
     },
     {
       "category": "Venture",
-      "company": "Tabby",
-      "sector": "Fintech",
-      "round": "Series F",
-      "amount": "$233M",
-      "lead": "Blue Pool Capital",
-      "investors": "HSG, Wellington Management, Arbor Ventures",
-      "note": "Saudi BNPL company raising at a $6.5B valuation."
-    },
-    {
-      "category": "Venture",
-      "company": "Tandem Health",
+      "company": "Enveda",
       "sector": "Health",
-      "round": "Series B",
-      "amount": "$100M",
-      "lead": "Scaleup Europe Fund",
-      "investors": "Kinnevik, Northzone, Amino Collective",
-      "note": "Swedish AI medical-scribe startup — the hot 'AI for clinicians' category."
+      "round": "Series E",
+      "amount": "$311M",
+      "lead": "Catalio",
+      "investors": "Durable Capital, Iconiq, T. Rowe Price, Baillie Gifford, Lux Capital",
+      "note": "Colorado drug-discovery startup working from medicinal plants, now valued at $2B."
     },
     {
       "category": "Venture",
-      "company": "Mecka AI",
-      "sector": "Robotics",
-      "round": "Early stage",
-      "amount": "$500M val.",
-      "lead": "Sequoia Capital",
+      "company": "Baseten",
+      "sector": "AI",
+      "round": "Series G (in talks)",
+      "amount": "$26B val.",
+      "lead": "",
       "investors": "",
-      "note": "Humanoid-robotics training startup in talks with Sequoia at a $500M valuation."
+      "note": "AI inference startup reportedly raising at a $26B valuation. Running models, not just training them, is where the spend is moving."
+    },
+    {
+      "category": "Venture",
+      "company": "Hubble Network",
+      "sector": "Space",
+      "round": "Series C",
+      "amount": "$200M",
+      "lead": "Smith Point Capital",
+      "investors": "Seraphim, Earthshot Ventures, RPM Ventures, YC",
+      "note": "Seattle startup connecting Bluetooth devices via satellites, valued at $1.6B."
+    },
+    {
+      "category": "Venture",
+      "company": "Terasi",
+      "sector": "Defense",
+      "round": "Early stage",
+      "amount": "€11M",
+      "lead": "NATO Innovation Fund, Join Capital",
+      "investors": "In-Q-Tel, D3, KTH Ventures",
+      "note": "Swedish battlefield-communications startup; backers include the NATO Innovation Fund and In-Q-Tel, the US intelligence community's venture arm."
+    },
+    {
+      "category": "Venture",
+      "company": "Dialybrid",
+      "sector": "Health",
+      "round": "Series A",
+      "amount": "€15M",
+      "lead": "XGEN Venture",
+      "investors": "CDP Venture Capital",
+      "note": "Italian medical-device startup; Italy's state-backed CDP Venture Capital co-invests."
     },
     {
       "category": "Private Equity",
-      "company": "DePuy Synthes",
-      "sector": "Health",
-      "round": "Carve-out",
-      "amount": "$20B",
-      "lead": "Apollo",
-      "investors": "sold by Johnson & Johnson",
-      "note": "J&J's orthopedics business — a mega corporate carve-out in talks."
+      "company": "Urbaser",
+      "sector": "Industrials",
+      "round": "Buyout",
+      "amount": "$6.6B",
+      "lead": "Blackstone, EQT",
+      "investors": "sold by Platinum Equity",
+      "note": "Spanish waste-management group changes PE hands: a secondary buyout, one fund selling to others."
     },
     {
       "category": "IPO",
-      "company": "Electra Therapeutics",
+      "company": "Oura",
       "sector": "Health",
       "round": "IPO",
-      "amount": "$917M cap",
-      "lead": "Nasdaq: ETRA",
-      "investors": "OrbiMed, Westlake, Redmile, EQT LSP",
-      "note": "SF immunology/cancer biotech pricing 21.67M shares at $14-16; raised $300M pre-IPO."
+      "amount": "$12.8–14.1B range",
+      "lead": "Nasdaq: OURA",
+      "investors": "sold mostly by existing investors",
+      "note": "Finnish smart-ring maker on its roadshow at $40–44 a share. Our pre-registered call: $12.95B. See the case study."
+    },
+    {
+      "category": "IPO",
+      "company": "Airtel Money",
+      "sector": "Fintech",
+      "round": "IPO (planned)",
+      "amount": "$8–9B val.",
+      "lead": "LSE",
+      "investors": "",
+      "note": "Africa-focused mobile-money business plans to float at least $800M of existing shares in London."
+    },
+    {
+      "category": "IPO",
+      "company": "Sensofusion",
+      "sector": "Defense",
+      "round": "IPO (planned)",
+      "amount": "€300M raise",
+      "lead": "Helsinki",
+      "investors": "",
+      "note": "Finnish counter-drone company planning a Helsinki listing. A second Finnish IPO story this month, after Oura."
+    },
+    {
+      "category": "M&A",
+      "company": "Sandals Resorts (50%)",
+      "sector": "Consumer",
+      "round": "Minority stake",
+      "amount": "$3B",
+      "lead": "Royal Caribbean Group",
+      "investors": "",
+      "note": "Cruise giant buys half of the Caribbean resort chain, a strategic (corporate) buyer rather than a fund."
     }
   ],
   "videos": [
     {
-      "url": "https://youtu.be/IJn8cagMW18",
-      "why": ""
+      "url": "https://youtu.be/Q8yFrGwIftE",
+      "why": "Replit's CEO on what young people should learn in the AI era. Directly useful if you're a student deciding which skills to build."
     }
   ],
   "articles": [
     {
-      "title": "Should Anthropic press pause on a potential $2trn IPO? (The Economist)",
-      "url": "https://www.economist.com/business/2026/09/14/should-anthropic-press-pause-on-a-potential-2trn-ipo",
-      "why": "The valuation debate at the center of the AI boom — when does a private AI company go public, and at what price?"
+      "title": "Rate rises should not be 'the only game in town' (Financial Times)",
+      "url": "https://www.ft.com/content/d96c37bb-0b9b-4b2f-a6f7-4dbfce047d81",
+      "why": "Interest rates set the price of venture money: cheaper capital lifts valuations and reopens IPO windows. This piece argues monetary policy isn't the best tool for today's economic challenges."
     }
   ]
 }

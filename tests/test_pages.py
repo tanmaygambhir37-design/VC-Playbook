@@ -84,3 +84,25 @@ def test_shared_link_prefills_screening():
     app.run()
     assert not app.exception
     assert any(w.value == "Linked Co" for w in app.text_input)
+
+
+def test_memo_uses_the_discount_set_on_the_valuation_page():
+    """The memo used to hard-code a 20% illiquidity discount, so an IPO-bound
+    company showed a haircut value no matter what the Valuation page said."""
+    import csv
+    row = next(csv.DictReader(open(os.path.join(ROOT, "data/case_studies/oura.csv"))))
+    for k in ("revenue_usd_k", "mom_growth_pct", "cac_usd", "ltv_usd", "monthly_burn_usd_k",
+              "runway_months", "sector_median_arr_multiple"):
+        row[k] = float(row[k])
+    row["founder_experience_score"] = int(row["founder_experience_score"])
+    row["team_size"] = int(row["team_size"])
+
+    app = AppTest.from_file(os.path.join(APP_DIR, "pages/4_Investment_Memo.py"), default_timeout=60)
+    app.session_state["active_deal"] = {"row": row, "parsed": None}
+    app.session_state["deal_discounts"] = {"Oura": 0}
+    app.run()
+    app.button[0].click().run()
+    assert not app.exception
+    shown = " ".join(c.value for c in app.caption)
+    assert "Discount applied: 0%" in shown, shown
+    assert "$12954.73M" in " ".join(m.value for m in app.markdown)

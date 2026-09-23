@@ -26,7 +26,7 @@ from services.due_diligence import (
     generate_solution,
 )
 from services.pdf_report import build_memo_pdf
-from state import get_active_deal_parsed, get_active_deal_row
+from state import get_active_deal_parsed, get_active_deal_row, get_deal_discount
 
 st.set_page_config(page_title="Investment Memo | VC Playbook", page_icon="📗", layout="wide")
 apply_theme()
@@ -88,7 +88,8 @@ if st.button("Generate Investment Memo", type="primary"):
     result = score_startup(row)
     track_event("memo_generated", company=row.get("company"), sector=row.get("sector"),
                 stage=row.get("stage"), score=result.total, recommendation=result.recommendation)
-    val = comparable_multiples(row.get("revenue_usd_k", 0) / 1000, row.get("sector_median_arr_multiple", 8))
+    discount = get_deal_discount(row.get("company"))
+    val = comparable_multiples(row.get("revenue_usd_k", 0) / 1000, row.get("sector_median_arr_multiple", 8), discount)
     ltv_cac = round(row["ltv_usd"] / row["cac_usd"], 2) if row["cac_usd"] else 0
 
     narrative_sections = [
@@ -114,7 +115,7 @@ if st.button("Generate Investment Memo", type="primary"):
     with c3:
         metric_card("LTV:CAC", f"{ltv_cac}x", "Unit economics signal.", "activity")
     with c4:
-        metric_card("Adjusted Valuation", f"${val['adjusted_valuation']}M", "Comparable ARR multiple after discount.", "circle-dollar")
+        metric_card("Comps Valuation", f"${val['adjusted_valuation']}M", f"ARR multiple, {discount}% illiquidity discount.", "circle-dollar")
 
     for i, section in enumerate(narrative_sections):
         render_due_diligence_section(section, expanded=i == 0)
@@ -138,11 +139,15 @@ if st.button("Generate Investment Memo", type="primary"):
         metric_card("Team Size", f"{row['team_size']}", "Full-time headcount.", "users")
 
     section_title("Valuation Summary", "Comparable ARR-multiple valuation, before and after illiquidity discount.")
+    st.caption(
+        f"Discount applied: {discount}%, as set on the Valuation page (default 20% for a private company; "
+        "set 0% there for a company that is listed or about to list)."
+    )
     v1, v2 = st.columns(2)
     with v1:
         metric_card("Raw ARR-Multiple Valuation", f"${val['raw_valuation']}M", "Revenue multiple before discount.", "bar-chart")
     with v2:
-        metric_card("Illiquidity-Adjusted Valuation", f"${val['adjusted_valuation']}M", "Early-stage adjusted estimate.", "circle-dollar")
+        metric_card("Illiquidity-Adjusted Valuation", f"${val['adjusted_valuation']}M", f"After a {discount}% illiquidity discount.", "circle-dollar")
 
     section_title("Next Steps", "Recommended follow-up actions before an investment committee vote.")
     text_card("Diligence Roadmap", "<br>".join(f"{i + 1}. {s}" for i, s in enumerate(next_steps)), "Action Items")

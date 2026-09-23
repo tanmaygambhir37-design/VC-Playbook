@@ -11,6 +11,7 @@ sys.path.append(PROJECT_ROOT)
 from components.footer import email_capture, footer
 from components.theme import (
     CASE_STUDY_URL,
+    OURA_CASE_STUDY_URL,
     GITHUB_URL,
     LINKEDIN_URL,
     PORTFOLIO_URL,
@@ -129,6 +130,31 @@ if nav4.button("About", use_container_width=True):
 _preds = load_predictions()
 _stats = prediction_scorecard(_preds) if _preds else None
 
+# Featured: the live, pre-registered Oura call. Update the status line and
+# numbers once Oura prices (see reports/case-study-oura.md, Outcome section).
+section_title("Live Call: Oura's IPO", "Written down before the price is set, and scored in public after.")
+st.markdown(
+    """
+    <div class="vcl-card" style="border-left:3px solid var(--vcl-gold);">
+        <div class="vcl-card-kicker">Pre-Registered · Awaiting Pricing</div>
+        <div class="vcl-metric-value">$12.95B · $40.36 a share</div>
+        <div class="vcl-card-title">What VC Playbook says Oura is worth, before its Nasdaq IPO prices. Bankers' range: $40–44.</div>
+        <div class="vcl-card-body">
+            Oura's filing numbers ($1.62B yearly revenue, +74% growth, profitable) run through the exact
+            settings used for Bending Spoons, nothing re-tuned. Scorecard: 66.7/100, "Watch".
+            When Oura prices we publish how far off the model was, hit or miss. New to IPOs? The case study
+            explains every step and term in plain English.
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
+oura_left, oura_right = st.columns(2)
+oura_left.link_button("Read the Oura case study →", OURA_CASE_STUDY_URL, type="primary", use_container_width=True)
+if oura_right.button("See it in the predictions ledger →", key="oura_preds_cta", use_container_width=True):
+    track_event("cta_predictions", placement="oura_feature")
+    st.switch_page("pages/8_Predictions.py")
+
 section_title("Why Trust The Output", "A model is only interesting if someone checks it against reality.")
 proof_left, proof_right = st.columns(2)
 
@@ -140,7 +166,7 @@ with proof_left:
             <div class="vcl-metric-value">Within 4%</div>
             <div class="vcl-card-title">Bending Spoons priced at $18.4B. This simulator said $19.2B.</div>
             <div class="vcl-card-body">
-                Run on the company's disclosed numbers before pricing: $2.4B run-rate revenue,
+                Run on the company's disclosed numbers: $2.4B run-rate revenue,
                 +132% YoY, EBITDA-profitable. The seed-stage scorecard, applied to a growth-stage
                 company, honestly said "Watch" — which is the more useful lesson.
             </div>

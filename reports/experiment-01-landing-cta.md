@@ -88,6 +88,12 @@ landing sessions (A, A, B; logged as `src/direct`) from the deploy check of
 the new `vcplaybook.streamlit.app` domain. Earlier `ref=test` hits are
 excluded by the script already.
 
+**Landing-page change (2026-09-23, before any real traffic):** a featured
+"Live Call: Oura's IPO" card was added above the fold on the landing page.
+Every visitor sees it, whatever their variant or channel, so it can't bias the
+comparison, but it may shift the overall baseline. Recorded here so the
+result is read with that in mind.
+
 ---
 
 ## Results — PENDING (fill after 2026-10-07)

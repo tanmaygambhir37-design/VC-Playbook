@@ -49,6 +49,12 @@ per-session guard as the rest of the analytics. The keep-awake bot
 above (the old `vc-lab-…streamlit.app` URL stopped receiving deploys after the
 repo rename). Nothing about the metric, channels or rule changed.
 
+**Landing-page change (2026-09-23, before any real traffic):** a featured
+"Live Call: Oura's IPO" card was added above the fold on the landing page.
+Every visitor sees it, whatever their variant or channel, so it can't bias the
+comparison, but it may shift the overall baseline. Recorded here so the
+result is read with that in mind.
+
 ## Window
 
 **14 days from the first post.** First post planned 2026-09-23, so the window

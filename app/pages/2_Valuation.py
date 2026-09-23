@@ -16,7 +16,7 @@ from services.experiment import record_valuation
 from models.scoring import score_startup
 from models.returns import irr_from_moic
 from models.valuation import SCORECARD_FACTORS, comparable_multiples, scorecard_method, vc_method
-from state import deal_widget_key, get_active_deal_row
+from state import deal_widget_key, get_active_deal_row, get_deal_discount, set_deal_discount
 
 # Typical share of ownership retained through future dilution, by entry stage
 STAGE_RETENTION = {"Pre-Seed": 40, "Seed": 50, "Series A": 65, "Series B": 80, "Growth": 85}
@@ -77,7 +77,13 @@ with tab2:
     c1, c2, c3 = st.columns(3)
     arr = c1.slider("Current ARR ($M)", 0.1, 5000.0, default_arr, step=0.1, key=deal_widget_key("arr"))
     multiple = c2.slider("Sector ARR Multiple (x)", 2, 25, default_multiple, key=deal_widget_key("multiple"))
-    discount = c3.slider("Illiquidity Discount (%)", 0, 50, 20)
+    deal_name = active_deal["company"] if active_deal else None
+    discount = c3.slider(
+        "Illiquidity Discount (%)", 0, 50, get_deal_discount(deal_name),
+        help="Haircut for shares that are hard to sell. ~20% is typical for a private startup; "
+             "use 0% for a company that is listed or about to list. The memo uses this value.",
+    )
+    set_deal_discount(deal_name, discount)
 
     res2 = comparable_multiples(arr, multiple, discount)
     m1, m2 = st.columns(2)

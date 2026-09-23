@@ -10,7 +10,7 @@ sys.path.append(PROJECT_ROOT)
 from components.cards import text_card, workflow_step
 from components.footer import footer
 from components.navigation import nav_link, sidebar
-from components.theme import CASE_STUDY_URL, apply_theme, page_header, section_title
+from components.theme import CASE_STUDY_URL, OURA_CASE_STUDY_URL, apply_theme, page_header, section_title
 from services.analytics import track_page
 from services.dataset import scored_dataset
 from models.scoring import score_startup
@@ -89,7 +89,9 @@ with right:
     text_card(
         "Checked Against A Real Outcome",
         "The comps module priced Bending Spoons' IPO within 4% of its actual $18.4B pricing. "
-        f'<a href="{CASE_STUDY_URL}" target="_blank" style="color:#8A6420;">Read the walkthrough →</a>',
+        "Next test, called in advance: Oura's IPO at $12.95B, before it prices. "
+        f'<a href="{OURA_CASE_STUDY_URL}" target="_blank" style="color:#8A6420;">Oura case study →</a> · '
+        f'<a href="{CASE_STUDY_URL}" target="_blank" style="color:#8A6420;">Bending Spoons walkthrough →</a>',
         "Case Study",
     )
 

@@ -53,3 +53,18 @@ def deal_widget_key(suffix: str) -> str:
     row = get_active_deal_row()
     ident = row["company"] if row else "default"
     return f"{suffix}_{ident}"
+
+
+# Illiquidity discount chosen on the Valuation page, remembered per company so
+# the memo reuses it. Plain session key, not a widget key: Streamlit drops
+# widget state when you leave the page, and the memo lives on another page.
+_DISCOUNT_KEY = "deal_discounts"
+DEFAULT_ILLIQUIDITY_DISCOUNT = 20
+
+
+def get_deal_discount(company: str | None) -> int:
+    return st.session_state.get(_DISCOUNT_KEY, {}).get(company or "default", DEFAULT_ILLIQUIDITY_DISCOUNT)
+
+
+def set_deal_discount(company: str | None, pct: int) -> None:
+    st.session_state.setdefault(_DISCOUNT_KEY, {})[company or "default"] = pct
