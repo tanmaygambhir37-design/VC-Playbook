@@ -7,7 +7,7 @@ VC Playbook is two things in one Streamlit app:
 1. **VC Pulse** — a live news hub aggregating the latest venture capital headlines from TechCrunch, Crunchbase News, Axios, and more, plus curated videos and articles.
 2. **A due diligence simulator** — an interactive sandbox that walks you through how professional investors evaluate startups: weighted scorecards, three valuation methods, cap table dilution, fund returns, and auto-drafted investment memos.
 
-🚀 **[Live Demo](https://vc-lab-5mg6vkhrt7uucrxjnowfe3.streamlit.app/)**
+🚀 **[Live Demo](https://vcplaybook.streamlit.app/)**
 
 Built for VC-curious students, analysts, and juniors — get your industry news in one place, and practice real diligence on the sample dataset or your own numbers (manual entry or CSV upload).
 

@@ -37,13 +37,17 @@ feed audience is broader and more passive. Reddit and Substack sit in between.
 ## How it's measured
 
 Each channel gets its own tagged link, e.g.
-`https://vc-lab-5mg6vkhrt7uucrxjnowfe3.streamlit.app/?ref=linkedin`. On a
+`https://vcplaybook.streamlit.app/?ref=linkedin`. On a
 session's first run the `ref` value is cleaned (lowercase, `[a-z0-9-]`, ≤20
 chars; anything dirty → `other`, absent → `direct`) and stored for the session.
 The funnel is logged as `/src/<source>/landing` on the landing page and
 `/src/<source>/valuation` when a valuation renders, reusing the same beacon and
 per-session guard as the rest of the analytics. The keep-awake bot
 (`?keepalive=1`) is excluded.
+
+*Note (2026-09-23, before any post):* the app moved to the clean domain
+above (the old `vc-lab-…streamlit.app` URL stopped receiving deploys after the
+repo rename). Nothing about the metric, channels or rule changed.
 
 ## Window
 
