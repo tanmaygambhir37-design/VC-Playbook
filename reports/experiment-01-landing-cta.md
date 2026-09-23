@@ -87,7 +87,7 @@ Nothing else in the pre-registration above changes.
 landing sessions (A, A, B; logged as `src/direct`) from the deploy check of
 the new `vcplaybook.streamlit.app` domain. Earlier `ref=test` hits are
 excluded by the script already.
-Also mine: 2026-09-23 ~21:45 UTC, one landing session logged as `src/old-link`
+Also mine: 2026-09-23 ~21:35 UTC, one landing session logged as `src/old-link`
 from testing the "we've moved" button on the old address.
 
 **Landing-page change (2026-09-23, before any real traffic):** a featured
