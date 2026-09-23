@@ -218,7 +218,7 @@ the headline, not hit/miss.
 ## Try it yourself
 
 1. Open [VC Playbook](https://vcplaybook.streamlit.app) and go to **Startup Screening**.
-2. Upload [`data/case_studies/oura.csv`](../data/case_studies/oura.csv). It holds every input above.
+2. Upload `oura.csv` (download button at the end of this case study). It holds every input above.
 3. Read the scorecard. Then change the LTV:CAC and watch the verdict move.
 4. Go to **Valuation**, set the multiple to 8x and the illiquidity discount to 0% (Oura will be publicly traded, so its shares are easy to sell).
 5. Try other multiples. What multiple would the top of the range ($44) imply? *(Answer: about 8.7x.)*

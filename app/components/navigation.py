@@ -47,6 +47,7 @@ def sidebar() -> None:
 
         st.markdown('<div class="vcl-sidebar-label">Reports</div>', unsafe_allow_html=True)
         nav_link("pages/4_Investment_Memo.py", label="Investment Memo", icon=":material/description:")
+        nav_link("pages/9_Case_Studies.py", label="Case Studies", icon=":material/menu_book:")
 
         st.markdown('<div class="vcl-sidebar-label">Settings</div>', unsafe_allow_html=True)
         nav_link("pages/7_About.py", label="About VC Playbook", icon=":material/settings:")

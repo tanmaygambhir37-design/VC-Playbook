@@ -55,6 +55,11 @@ Every visitor sees it, whatever their variant or channel, so it can't bias the
 comparison, but it may shift the overall baseline. Recorded here so the
 result is read with that in mind.
 
+**New logged source, not a tested channel (2026-09-23):** the old app address
+(still on resumes and portfolio links) now forwards visitors to the new one
+tagged `ref=old-link`. Like `direct` and `other`, it is reported but is not
+one of the five channels under test.
+
 ## Window
 
 **14 days from the first post.** First post planned 2026-09-23, so the window

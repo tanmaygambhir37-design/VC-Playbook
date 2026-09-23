@@ -10,8 +10,7 @@ sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
 from components.footer import email_capture, footer
 from components.theme import (
-    CASE_STUDY_URL,
-    OURA_CASE_STUDY_URL,
+    CASE_STUDY_PAGE,
     GITHUB_URL,
     LINKEDIN_URL,
     PORTFOLIO_URL,
@@ -150,7 +149,9 @@ st.markdown(
     unsafe_allow_html=True,
 )
 oura_left, oura_right = st.columns(2)
-oura_left.link_button("Read the Oura case study →", OURA_CASE_STUDY_URL, type="primary", use_container_width=True)
+if oura_left.button("Read the Oura case study →", key="oura_case_cta", type="primary", use_container_width=True):
+    track_event("cta_case_study", placement="oura_feature", study="oura")
+    st.switch_page(CASE_STUDY_PAGE, query_params={"study": "oura"})
 if oura_right.button("See it in the predictions ledger →", key="oura_preds_cta", use_container_width=True):
     track_event("cta_predictions", placement="oura_feature")
     st.switch_page("pages/8_Predictions.py")
@@ -174,7 +175,9 @@ with proof_left:
         """,
         unsafe_allow_html=True,
     )
-    st.link_button("Read the full walkthrough →", CASE_STUDY_URL, use_container_width=True)
+    if st.button("Read the full walkthrough →", key="bsp_case_cta", use_container_width=True):
+        track_event("cta_case_study", placement="proof", study="bending-spoons")
+        st.switch_page(CASE_STUDY_PAGE, query_params={"study": "bending-spoons"})
 
 with proof_right:
     if _stats:

@@ -10,7 +10,7 @@ sys.path.append(PROJECT_ROOT)
 from components.cards import feature_card, text_card
 from components.footer import email_capture, footer
 from components.navigation import sidebar
-from components.theme import CASE_STUDY_URL, GITHUB_URL, OURA_CASE_STUDY_URL, SUBTITLE, TAGLINE, apply_theme, page_header, section_title
+from components.theme import CASE_STUDY_PAGE, GITHUB_URL, SUBTITLE, TAGLINE, apply_theme, page_header, section_title
 from services.analytics import track_page
 
 st.set_page_config(page_title="About | VC Playbook", page_icon="📗", layout="wide")
@@ -65,7 +65,8 @@ text_card(
     "for beginners too, with a step-by-step IPO explainer and a plain-English glossary.",
     "Pre-Registered Call",
 )
-st.link_button("Read the Oura case study →", OURA_CASE_STUDY_URL)
+if st.button("Read the Oura case study →", key="about_oura_case"):
+    st.switch_page(CASE_STUDY_PAGE, query_params={"study": "oura"})
 
 section_title("Case Study: Bending Spoons", "A real IPO run through the simulator, end to end.")
 text_card(
@@ -78,7 +79,8 @@ text_card(
     "memo is linked below.",
     "Real-World Test",
 )
-st.link_button("Read the Bending Spoons case study →", CASE_STUDY_URL)
+if st.button("Read the Bending Spoons case study →", key="about_bsp_case"):
+    st.switch_page(CASE_STUDY_PAGE, query_params={"study": "bending-spoons"})
 
 section_title("Running Experiments", "Treating the site like a product, not a portfolio piece.")
 text_card(

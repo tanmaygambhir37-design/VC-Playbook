@@ -29,6 +29,7 @@ PAGES = [
     "pages/6_VC_Pulse.py",
     "pages/7_About.py",
     "pages/8_Predictions.py",
+    "pages/9_Case_Studies.py",
 ]
 
 
@@ -106,3 +107,19 @@ def test_memo_uses_the_discount_set_on_the_valuation_page():
     shown = " ".join(c.value for c in app.caption)
     assert "Discount applied: 0%" in shown, shown
     assert "$12954.73M" in " ".join(m.value for m in app.markdown)
+
+
+def test_old_address_shows_moved_page_and_keeps_share_links(monkeypatch):
+    """Resumes still link the old app address. There it must forward people
+    (share-link query kept, tagged ref=old-link) instead of running a stale app."""
+    from components import theme
+
+    monkeypatch.setattr(theme, "_on_legacy_host", lambda: True)
+    app = AppTest.from_file(os.path.join(APP_DIR, "app.py"), default_timeout=60)
+    app.query_params["d"] = "abc"
+    app.run()
+    assert not app.exception
+    page = " ".join(m.value for m in app.markdown)
+    assert "has moved" in page
+    assert "https://vcplaybook.streamlit.app/?d=abc&amp;ref=old-link" in page
+    assert "Live Call" not in page  # the stale app itself never renders

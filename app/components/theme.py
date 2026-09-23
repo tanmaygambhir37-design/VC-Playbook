@@ -1,3 +1,6 @@
+import html
+from urllib.parse import urlencode, urlparse
+
 import streamlit as st
 
 
@@ -11,9 +14,15 @@ SUBSTACK_URL = "https://substack.com/@tanmaydiary/posts"
 SUBSTACK_SUBSCRIBE_URL = "https://tanmaydiary.substack.com/subscribe"
 PORTFOLIO_URL = "https://tanmaygambhir37-design.github.io/#top"
 RESEARCH_URL = "https://tanmaygambhir37-design.github.io/investment-research/"
-CASE_STUDY_URL = f"{GITHUB_URL}/blob/main/reports/case-study-bending-spoons.md"
-OURA_CASE_STUDY_URL = f"{GITHUB_URL}/blob/main/reports/case-study-oura.md"
+# Case studies are rendered in-app (pages/9_Case_Studies.py), not linked on GitHub.
+CASE_STUDY_PAGE = "pages/9_Case_Studies.py"
+CASE_STUDY_URL = "Case_Studies?study=bending-spoons"   # relative, for HTML links
+OURA_CASE_STUDY_URL = "Case_Studies?study=oura"
 ISSUES_URL = f"{GITHUB_URL}/issues/new"
+LIVE_URL = "https://vcplaybook.streamlit.app"
+# The app's first address, still printed on resumes and portfolio links. That
+# deployment no longer auto-updates (repo rename), so it only forwards people.
+LEGACY_HOST = "vc-lab-5mg6vkhrt7uucrxjnowfe3.streamlit.app"
 
 
 def apply_theme() -> None:
@@ -773,6 +782,47 @@ def apply_theme() -> None:
         """,
         unsafe_allow_html=True,
     )
+    _forward_legacy_visitors()
+
+
+def _on_legacy_host() -> bool:
+    try:
+        seen = [st.context.url or ""] + [st.context.headers.get(h) or "" for h in ("Host", "X-Forwarded-Host", "Origin", "Referer")]
+    except Exception:
+        return False
+    return any(LEGACY_HOST in value for value in seen)
+
+
+def _forward_legacy_visitors() -> None:
+    """On the old address, show a one-click 'we've moved' page instead of a
+    stale copy of the app. Keeps the page path and query (share links), and
+    tags the visit ref=old-link so old-link traffic is countable."""
+    if not _on_legacy_host():
+        return
+    params = {k: st.query_params.get(k) for k in st.query_params}
+    is_bot = "keepalive" in params
+    params.pop("keepalive", None)
+    params.setdefault("ref", "old-link")
+    path = urlparse(st.context.url or "").path.lstrip("/")
+    target = html.escape(f"{LIVE_URL}/{path}?{urlencode(params)}")
+    st.markdown(
+        f"""
+        <div class="vcl-card" style="max-width:640px;margin:12vh auto 0;border-left:3px solid var(--vcl-gold);">
+            <div class="vcl-card-kicker">VC Playbook has moved</div>
+            <div class="vcl-card-title">Same app, new address: vcplaybook.streamlit.app</div>
+            <div class="vcl-card-body">This link is the old one. The live version, with this week's deals
+            and the Oura IPO call, is one click away.</div>
+            <p style="margin-top:1rem"><a href="{target}" target="_top"
+               style="background:var(--vcl-blue);color:#fff;padding:.6rem 1.1rem;border-radius:6px;text-decoration:none;">
+               Open VC Playbook →</a></p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    if not is_bot:
+        from services.analytics import track_page
+        track_page("legacy/landing", "Old link")
+    st.stop()
 
 
 # Charts render to SVG and can't read the CSS variables, so the scale is

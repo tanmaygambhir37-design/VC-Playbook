@@ -90,8 +90,8 @@ with right:
         "Checked Against A Real Outcome",
         "The comps module priced Bending Spoons' IPO within 4% of its actual $18.4B pricing. "
         "Next test, called in advance: Oura's IPO at $12.95B, before it prices. "
-        f'<a href="{OURA_CASE_STUDY_URL}" target="_blank" style="color:#8A6420;">Oura case study →</a> · '
-        f'<a href="{CASE_STUDY_URL}" target="_blank" style="color:#8A6420;">Bending Spoons walkthrough →</a>',
+        f'<a href="{OURA_CASE_STUDY_URL}" target="_self" style="color:#8A6420;">Oura case study →</a> · '
+        f'<a href="{CASE_STUDY_URL}" target="_self" style="color:#8A6420;">Bending Spoons walkthrough →</a>',
         "Case Study",
     )
 
