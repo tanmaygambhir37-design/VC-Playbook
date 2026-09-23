@@ -83,6 +83,11 @@ and no more:
 
 Nothing else in the pre-registration above changes.
 
+**Known own traffic (subtract before analysis):** 2026-09-23 ~12:30 UTC, three
+landing sessions (A, A, B; logged as `src/direct`) from the deploy check of
+the new `vcplaybook.streamlit.app` domain. Earlier `ref=test` hits are
+excluded by the script already.
+
 ---
 
 ## Results — PENDING (fill after 2026-10-07)

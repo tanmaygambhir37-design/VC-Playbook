@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>VC Playbook: User Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  @page { size: A4; margin: 0; }
+  :root { --paper:#FAFAF7; --ink:#14171F; --navy:#141B2E; --gold:#A9792C; --green:#3D6B5C; --rule:#E4E1D8; --muted:#5A5F6B; }
+  * { box-sizing: border-box; }
+  html, body { margin:0; background:var(--paper); color:var(--ink);
+    font: 10.5pt/1.55 "IBM Plex Sans", "Helvetica Neue", Arial, sans-serif;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .page { width:210mm; height:297mm; padding:22mm 20mm 18mm; position:relative; page-break-after:always; overflow:hidden; }
+  .page:last-child { page-break-after:auto; }
+  h1, h2, h3 { font-family:"Fraunces", Georgia, serif; color:var(--navy); margin:0; }
+  h2 { font-size:22pt; line-height:1.15; margin:2mm 0 5mm; }
+  h3 { font-size:12.5pt; margin:0 0 1.5mm; }
+  p { margin:0 0 3.2mm; }
+  .label { font:500 7.5pt/1 "IBM Plex Mono", Menlo, monospace; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); }
+  .foot { position:absolute; left:20mm; right:20mm; bottom:10mm; display:flex; justify-content:space-between;
+    font:500 7pt "IBM Plex Mono", monospace; letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+    border-top:1px solid var(--rule); padding-top:3mm; }
+  .card { background:#fff; border:1px solid var(--rule); border-left:3px solid var(--gold); padding:4mm 5mm; margin-bottom:4mm; }
+  .card.green { border-left-color:var(--green); }
+  .grid2 { display:grid; grid-template-columns:1fr 1fr; gap:4mm; }
+  .lede { font-size:12pt; line-height:1.5; color:#2A2F3A; }
+  ol.steps { list-style:none; padding:0; margin:0; counter-reset:s; }
+  ol.steps li { counter-increment:s; position:relative; padding:0 0 3.2mm 11mm; }
+  ol.steps li::before { content:counter(s, decimal-leading-zero); position:absolute; left:0; top:.5mm;
+    font:500 8.5pt "IBM Plex Mono", monospace; color:var(--gold); }
+  ol.steps b { color:var(--navy); }
+  ul.plain { padding-left:4.5mm; margin:0 0 3mm; }
+  ul.plain li { margin-bottom:1.6mm; }
+  .stat { font-family:"Fraunces", serif; font-size:20pt; color:var(--navy); line-height:1.1; }
+  a { color:var(--navy); text-decoration:none; border-bottom:1px solid var(--gold); }
+
+  /* cover */
+  .cover { background:var(--navy); color:var(--paper); padding:0; }
+  .cover .inner { padding:30mm 22mm; height:100%; display:flex; flex-direction:column; }
+  .cover .label { color:var(--gold); }
+  .cover h1 { color:var(--paper); font-size:52pt; line-height:1; margin:8mm 0 6mm; }
+  .cover .sub { font-size:14pt; line-height:1.45; max-width:130mm; color:#D9D6CC; }
+  .cover .rule { width:28mm; height:2px; background:var(--gold); margin:12mm 0; }
+  .cover .mission { font-family:"Fraunces", serif; font-size:15pt; line-height:1.4; max-width:140mm; }
+  .cover .meta { margin-top:auto; font:500 8pt/1.8 "IBM Plex Mono", monospace; letter-spacing:.1em; text-transform:uppercase; color:#A9AEBB; }
+  .cover .meta b { color:var(--paper); font-weight:500; }
+</style>
+</head>
+<body>
+
+<!-- 1. Cover -->
+<section class="page cover"><div class="inner">
+  <div class="label">User Guide · Aim &amp; Mission</div>
+  <h1>VC Playbook</h1>
+  <div class="sub">Read the news. Think like an investor. A free, open-source workspace for learning how early-stage investors actually do the work.</div>
+  <div class="rule"></div>
+  <div class="mission">Our mission: make the analytical work of venture capital visible and practicable for anyone curious enough to try it, with every formula open and every assumption exposed.</div>
+  <div class="meta">
+    <b>vcplaybook.streamlit.app</b><br>
+    github.com/tanmaygambhir37-design/VC-Playbook<br>
+    Built by Tanmay Gambhir · Bocconi × ESSEC · September 2026
+  </div>
+</div></section>
+
+<!-- 2. Aim & mission -->
+<section class="page">
+  <div class="label">01 · Why this exists</div>
+  <h2>Venture capital is learned by doing. Most people never get to do it.</h2>
+  <p class="lede">The mechanics of early-stage investing (how a startup gets screened, valued, diluted and argued for in an investment memo) usually stay inside funds. Students read about them; very few get to practise them on a real deal with real numbers.</p>
+  <p>VC Playbook closes that gap. It pairs a live venture news feed with a due-diligence simulator, so you can read about a funding round in the morning and run it through the same frameworks an analyst would use that afternoon.</p>
+
+  <div class="card">
+    <div class="label">The aim</div>
+    <h3>Show the shape of the work, honestly</h3>
+    <p style="margin:0">It is a learning tool that shows what a scorecard, a valuation triangulation, a dilution model and an IC memo look like, and why each number is what it is. It does not pretend to be a deal platform.</p>
+  </div>
+
+  <h3 style="margin-top:6mm">Three principles</h3>
+  <div class="grid2" style="grid-template-columns:1fr 1fr 1fr">
+    <div class="card green"><div class="label">Open</div><p style="margin:1.5mm 0 0">Every formula lives in the public repo. If you disagree with a weight or a multiple, you can read it and change it.</p></div>
+    <div class="card green"><div class="label">Disclosed</div><p style="margin:1.5mm 0 0">When the tool has to assume a number, such as a CAC figure a press release never gave, it says so and asks you to overwrite it.</p></div>
+    <div class="card green"><div class="label">Checked</div><p style="margin:1.5mm 0 0">Outputs get tested against reality in public: a real IPO, a dated predictions ledger, pre-registered experiments.</p></div>
+  </div>
+
+  <h3 style="margin-top:4mm">Who it's for</h3>
+  <div class="grid2">
+    <div><b>VC-curious students and juniors.</b> Get your daily VC news in one place, and learn the vocabulary and mechanics of venture investing by using them. A built-in glossary covers ARR, LTV, CAC, MOIC, IRR and dilution as you go.</div>
+    <div><b>Analysts and operators.</b> Sanity-check a scorecard, a valuation range or a dilution scenario in seconds with your own inputs, then share the exact analysis as a link.</div>
+  </div>
+  <div class="foot"><span>VC Playbook · User Guide</span><span>2</span></div>
+</section>
+
+<!-- 3. What's inside -->
+<section class="page">
+  <div class="label">02 · What's inside</div>
+  <h2>Two tools in one workspace</h2>
+
+  <div class="card">
+    <div class="label">Tool one</div>
+    <h3>VC Pulse: the news hub</h3>
+    <p style="margin:0">A live wall of venture headlines pulled from TechCrunch, Crunchbase News, Axios and other sources, plus hand-picked deals of the week and curated videos and articles. Every deal card has an <b>Analyze</b> button that sends it straight into the simulator.</p>
+  </div>
+
+  <div class="card">
+    <div class="label">Tool two</div>
+    <h3>The due-diligence simulator</h3>
+    <p style="margin:0 0 2mm">Five steps that mirror how an early-stage investor evaluates a company:</p>
+    <ol class="steps" style="margin-top:3mm">
+      <li><b>Screen.</b> A weighted scorecard across unit economics, growth, market, team and efficiency, with a radar chart. Use the sample dataset, type your own numbers, upload a CSV, or start from a news deal.</li>
+      <li><b>Value.</b> Three standard methods side by side: the VC Method, comparable ARR multiples with an illiquidity discount, and the Bill Payne scorecard method. Sliders move every assumption live.</li>
+      <li><b>Model dilution.</b> A cap table from Seed to Series A to Series B, including ESOP top-ups.</li>
+      <li><b>Project returns.</b> MOIC, IRR and a heatmap of exit valuation against holding period.</li>
+      <li><b>Write the memo.</b> One click drafts a thesis, risk assessment, valuation summary and recommendation, downloadable as a PDF.</li>
+    </ol>
+  </div>
+
+  <div class="grid2">
+    <div class="card green">
+      <div class="label">News → scorecard</div>
+      <p style="margin:1.5mm 0 0">A headline gives three facts (company, sector, round) but a scorecard needs fifteen. The gap is filled from stage benchmarks, and the page lists exactly which fields were assumed.</p>
+    </div>
+    <div class="card green">
+      <div class="label">Share links</div>
+      <p style="margin:1.5mm 0 0">"Create share link" packs every input into the URL. No account and no database. The recipient opens your exact scorecard and can edit and re-share it.</p>
+    </div>
+  </div>
+  <div class="foot"><span>VC Playbook · User Guide</span><span>3</span></div>
+</section>
+
+<!-- 4. How to use -->
+<section class="page">
+  <div class="label">03 · How to use it</div>
+  <h2>Your first ten minutes</h2>
+  <p class="lede">No sign-up. Open <a href="https://vcplaybook.streamlit.app">vcplaybook.streamlit.app</a> and follow this path once; after that you'll know where everything is.</p>
+
+  <ol class="steps" style="margin-top:6mm">
+    <li><b>Start on the home page.</b> Skim this week's picked deals and the "Why trust the output" section. It tells you what the simulator got right, and wrong, in public.</li>
+    <li><b>Open Today's VC News.</b> Find a round that interests you and press <b>Analyze</b>. You'll land on Startup Screening with the profile pre-filled.</li>
+    <li><b>Read the assumptions banner.</b> It lists which numbers came from the headline and which came from stage benchmarks. Overwrite anything you have a better guess for. That comparison is where most of the learning happens.</li>
+    <li><b>Go to Valuation.</b> Compare the three methods. When they disagree, ask why: that disagreement is the conversation an investment committee actually has.</li>
+    <li><b>Try Cap Table &amp; Returns.</b> Add a round and watch founder ownership move, then use the returns heatmap to see which exit values get the fund to 3×.</li>
+    <li><b>Generate the memo.</b> Download the PDF and read it critically. Would you sign off on it? What's missing?</li>
+    <li><b>Share it.</b> Create a share link and send it to a classmate or mentor. They can challenge your numbers directly.</li>
+  </ol>
+
+  <div class="card" style="margin-top:4mm">
+    <div class="label">Tip</div>
+    <p style="margin:1.5mm 0 0">Not sure about a term? The glossary explains every metric in plain language, right next to where it's used. Prefer your own data? Startup Screening also takes manual entry and CSV upload.</p>
+  </div>
+  <div class="foot"><span>VC Playbook · User Guide</span><span>4</span></div>
+</section>
+
+<!-- 5. Trust -->
+<section class="page">
+  <div class="label">04 · Why trust the output</div>
+  <h2>A model is only interesting if someone checks it against reality</h2>
+
+  <div class="card">
+    <div class="label">Case study · real IPO</div>
+    <div class="grid2" style="grid-template-columns:auto 1fr; align-items:center; gap:6mm">
+      <div class="stat">Within 4%</div>
+      <p style="margin:0">When Bending Spoons listed on Nasdaq in July 2026 at $18.4B, its disclosed numbers went through the simulator. The comps module priced it at $19.2B. The seed-stage scorecard said 71/100 "Watch", which is the more useful lesson: every framework encodes a stage, and you learn a lot by watching one strain on a growth-stage company.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">Predictions ledger · public</div>
+    <p style="margin:1.5mm 0 0">Calls are logged with a date, a conviction level and a resolve-by date <i>before</i> the outcome is known, and misses are logged too. As of this guide there are three calls: one resolved (correct) and two still open.</p>
+  </div>
+
+  <div class="card">
+    <div class="label">Experiments · pre-registered</div>
+    <p style="margin:1.5mm 0 0">The site is run like a product. Two experiments are live, each with its metric, hypothesis and decision rule written down before any data arrived: a landing-page A/B test, and a test of which acquisition channel brings visitors who actually complete a valuation. Results get published whatever they say, including "inconclusive, too little traffic to trust".</p>
+  </div>
+
+  <h3 style="margin-top:5mm">What it is not</h3>
+  <ul class="plain">
+    <li><b>Not investment advice.</b> The sample companies are synthetic and the outputs are illustrative.</li>
+    <li><b>Not a deal platform.</b> Tools like Affinity, Harmonic or Tactyc manage real deal flow with real data. VC Playbook teaches the reasoning behind them.</li>
+    <li><b>Not a black box.</b> Pre-filled numbers from a headline are benchmarks, clearly flagged, and meant to be replaced.</li>
+  </ul>
+  <div class="foot"><span>VC Playbook · User Guide</span><span>5</span></div>
+</section>
+
+<!-- 6. Author & links -->
+<section class="page">
+  <div class="label">05 · Behind it</div>
+  <h2>Built by Tanmay Gambhir</h2>
+  <p class="lede">Bocconi × ESSEC double degree, graduating 2028. Chartered Accountant and management consultant, building at the intersection of finance, strategy and AI.</p>
+  <p>VC Playbook started as a question: could the diligence workflow that stays locked inside funds be made open, honest about its assumptions, and useful to someone learning it for the first time? This guide describes the answer so far. It is a living project: the weekly picks change, the predictions ledger resolves, and the experiments will be written up when their windows close.</p>
+
+  <div class="grid2" style="margin-top:8mm">
+    <div class="card">
+      <div class="label">Use it</div>
+      <p style="margin:1.5mm 0 0"><a href="https://vcplaybook.streamlit.app">vcplaybook.streamlit.app</a></p>
+    </div>
+    <div class="card">
+      <div class="label">Read the code</div>
+      <p style="margin:1.5mm 0 0"><a href="https://github.com/tanmaygambhir37-design/VC-Playbook">github.com/tanmaygambhir37-design/VC-Playbook</a></p>
+    </div>
+    <div class="card">
+      <div class="label">Methodology</div>
+      <p style="margin:1.5mm 0 0">Scoring, valuation and returns logic are documented in the whitepaper in the repo's <code>reports/</code> folder.</p>
+    </div>
+    <div class="card">
+      <div class="label">Tech</div>
+      <p style="margin:1.5mm 0 0">Python, Streamlit, Pandas, Plotly, feedparser, ReportLab. Open source, runs locally with one command.</p>
+    </div>
+  </div>
+
+  <div style="margin-top:14mm; padding-top:6mm; border-top:1px solid var(--rule)">
+    <div class="label">Feedback</div>
+    <p style="margin-top:2mm">Found a number you disagree with? Open an issue on GitHub or send a share link with your version. Disagreement with the model is the point.</p>
+  </div>
+  <div class="foot"><span>VC Playbook · User Guide</span><span>6</span></div>
+</section>
+
+</body>
+</html>
