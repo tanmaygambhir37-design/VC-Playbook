@@ -52,16 +52,6 @@ $25B, and the "within 4%" result was measured against the $18.4B.
 
 ---
 
-## Why this case study
-
-The [Bending Spoons case study](case-study-bending-spoons.md) was written
-*after* that IPO had priced, so a good result is easy to doubt: the answer
-was already known. This one is written down while Oura is still on its
-roadshow.
-
-It's also a harder test. Bending Spoons is a software company. Oura mostly
-sells a physical ring: **80% of its revenue is hardware**. The model's
-valuation method doesn't know the difference.
 
 ## The company
 
