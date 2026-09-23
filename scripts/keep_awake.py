@@ -22,7 +22,7 @@ LEGACY_URL = "https://vc-lab-5mg6vkhrt7uucrxjnowfe3.streamlit.app/?keepalive=1"
 WAKE_BUTTON = "Yes, get this app back up!"
 
 
-def wake(browser, url: str) -> None:
+def wake(browser, url: str) -> bool:
     page = browser.new_page()
     page.goto(url, wait_until="domcontentloaded", timeout=60_000)
 
@@ -41,15 +41,22 @@ def wake(browser, url: str) -> None:
     # Hold the session open briefly so it registers as real activity.
     page.wait_for_timeout(15_000)
     print(f"{url}: session established. Page title: {page.title()!r}")
+    # The app renders inside a frame on Streamlit Cloud; an uncaught error
+    # shows Streamlit's exception box (data-testid="stException") there.
+    broken = any(frame.locator('[data-testid="stException"]').count() for frame in page.frames)
     page.close()
+    return not broken
 
 
 def main() -> int:
     with sync_playwright() as p:
         browser = p.chromium.launch()
-        for url in (APP_URL, LEGACY_URL):
-            wake(browser, url)
+        broken = [url for url in (APP_URL, LEGACY_URL) if not wake(browser, url)]
         browser.close()
+    if broken:
+        # Fails the GitHub Action, which emails the repo owner.
+        print(f"APP ERROR on: {', '.join(broken)}")
+        return 1
     return 0
 
 

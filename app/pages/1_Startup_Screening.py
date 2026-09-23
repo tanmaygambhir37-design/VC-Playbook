@@ -10,6 +10,8 @@ APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
+import fresh_modules  # noqa: E402  (must run before our own imports)
+fresh_modules.refresh()
 from components.cards import metric_card, prefill_banner, text_card, workflow_step
 from components.navigation import nav_link, sidebar
 from components.theme import CHART_FONT, CHART_TITLE_FONT, apply_theme, page_header, section_title

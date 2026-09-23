@@ -8,6 +8,8 @@ APP_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
+import fresh_modules  # noqa: E402  (must run before our own imports)
+fresh_modules.refresh()
 from components.footer import email_capture, footer
 from components.theme import (
     CASE_STUDY_PAGE,

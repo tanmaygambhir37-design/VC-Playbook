@@ -123,3 +123,21 @@ def test_old_address_shows_moved_page_and_keeps_share_links(monkeypatch):
     assert "has moved" in page
     assert "https://vcplaybook.streamlit.app/?d=abc&amp;ref=old-link" in page
     assert "Live Call" not in page  # the stale app itself never renders
+
+
+def test_fresh_modules_drops_cached_local_modules_after_a_deploy(monkeypatch):
+    """Streamlit Cloud pulls new code into a running process; without this, a
+    page importing a name newly added to theme.py hit the old cached theme.py."""
+    import fresh_modules
+    import components.theme  # noqa: F401
+
+    saved = dict(sys.modules)
+    try:
+        fresh_modules.refresh()                      # nothing changed: keep cache
+        assert "components.theme" in sys.modules
+        monkeypatch.setattr(fresh_modules, "_newest_mtime", lambda: float("inf"))
+        fresh_modules.refresh()                      # a source file changed
+        assert "components.theme" not in sys.modules
+        assert "streamlit" in sys.modules            # third-party untouched
+    finally:
+        sys.modules.update(saved)

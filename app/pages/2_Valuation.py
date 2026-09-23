@@ -7,6 +7,8 @@ APP_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 PROJECT_ROOT = os.path.dirname(APP_DIR)
 sys.path.append(APP_DIR)
 sys.path.append(PROJECT_ROOT)
+import fresh_modules  # noqa: E402  (must run before our own imports)
+fresh_modules.refresh()
 from components.cards import deal_banner, metric_card, text_card
 from components.footer import footer
 from components.navigation import sidebar
