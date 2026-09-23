@@ -805,14 +805,18 @@ def _forward_legacy_visitors() -> None:
     params.setdefault("ref", "old-link")
     path = urlparse(st.context.url or "").path.lstrip("/")
     target = html.escape(f"{LIVE_URL}/{path}?{urlencode(params)}")
+    # Streamlit Cloud sandboxes the app frame without allow-top-navigation, so
+    # the link must open a new tab (allow-popups is granted). No auto-redirect
+    # is possible from inside that frame.
     st.markdown(
         f"""
+        <style>[data-testid="stSidebar"], [data-testid="stSidebarCollapsedControl"] {{ display: none; }}</style>
         <div class="vcl-card" style="max-width:640px;margin:12vh auto 0;border-left:3px solid var(--vcl-gold);">
             <div class="vcl-card-kicker">VC Playbook has moved</div>
             <div class="vcl-card-title">Same app, new address: vcplaybook.streamlit.app</div>
             <div class="vcl-card-body">This link is the old one. The live version, with this week's deals
             and the Oura IPO call, is one click away.</div>
-            <p style="margin-top:1rem"><a href="{target}" target="_top"
+            <p style="margin-top:1rem"><a href="{target}" target="_blank" rel="noopener"
                style="background:var(--vcl-blue);color:#fff;padding:.6rem 1.1rem;border-radius:6px;text-decoration:none;">
                Open VC Playbook →</a></p>
         </div>
