@@ -235,6 +235,30 @@ the headline, not hit/miss.
 
 ---
 
+## Screenshots
+
+Captured from the app on 2026-09-23, with `oura.csv` loaded.
+
+**1. Intake:** Oura's S-1 numbers in the screening form.
+![Intake](../assets/case-study/oura/1-intake.png)
+
+**2. Scorecard:** 66.7/100, "Watch", on an assumed 4.0x LTV:CAC.
+![Scorecard](../assets/case-study/oura/2-scorecard.png)
+
+**3. Radar:** strong on unit economics and efficiency, weak on growth and market.
+![Radar](../assets/case-study/oura/3-radar.png)
+
+**4. Comps:** $12,954.72M raw. The 20% illiquidity discount is shown at its
+default; for a company about to list, the raw figure is the one that counts.
+![Valuation](../assets/case-study/oura/4-valuation.png)
+
+**5. Memo:** the one-click investment memo draft. Its headline valuation is
+the *discounted* $10.36B because the memo always applies the default 20%
+illiquidity discount; for Oura the raw $12.95B is the figure the call uses.
+![Memo](../assets/case-study/oura/5-memo.png)
+
+---
+
 ## Glossary
 
 | Term | Plain English |
