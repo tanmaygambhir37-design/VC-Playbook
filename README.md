@@ -13,6 +13,8 @@ Built for VC-curious students, analysts, and juniors — get your industry news 
 
 **Real-world test:** when Bending Spoons IPO'd at $18.4B (July 2026), the simulator's comps module priced its disclosed numbers at $19.2B — within 4% — while the seed-stage scorecard honestly said "Watch." Full walkthrough: [Case study](reports/case-study-bending-spoons.md).
 
+**Called in advance:** before Oura's Nasdaq IPO priced (range $40–44, Sep 2026), the same settings put it at $12.95B ($40.36/share). The call, the rule for judging it, and a beginner-friendly IPO explainer are in the [Oura case study](reports/case-study-oura.md); the result gets published whatever it is.
+
 **Where this fits:** VC Playbook is not a replacement for professional tooling like Affinity, Harmonic, or Tactyc — those manage real deal flow with real data. This is a learning tool that shows the *shape* of the work: what a scorecard, a valuation triangulation, a dilution model, and an IC memo actually look like, with every formula open-source and every assumption exposed.
 
 ---

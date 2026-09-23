@@ -12,6 +12,7 @@ SUBSTACK_SUBSCRIBE_URL = "https://tanmaydiary.substack.com/subscribe"
 PORTFOLIO_URL = "https://tanmaygambhir37-design.github.io/#top"
 RESEARCH_URL = "https://tanmaygambhir37-design.github.io/investment-research/"
 CASE_STUDY_URL = f"{GITHUB_URL}/blob/main/reports/case-study-bending-spoons.md"
+OURA_CASE_STUDY_URL = f"{GITHUB_URL}/blob/main/reports/case-study-oura.md"
 ISSUES_URL = f"{GITHUB_URL}/issues/new"
 
 
