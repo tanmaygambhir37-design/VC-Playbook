@@ -87,8 +87,9 @@ Nothing else in the pre-registration above changes.
 landing sessions (A, A, B; logged as `src/direct`) from the deploy check of
 the new `vcplaybook.streamlit.app` domain. Earlier `ref=test` hits are
 excluded by the script already.
-Also mine: 2026-09-23 ~21:35 UTC, one landing session logged as `src/old-link`
-from testing the "we've moved" button on the old address.
+Also mine: 2026-09-23, landing events logged as `src/old-link` between ~21:35
+and ~21:54 UTC (one or two sessions) from testing the "we've moved" button on
+the old address; the test tab re-ran after a deploy at 21:53.
 
 **Landing-page change (2026-09-23, before any real traffic):** a featured
 "Live Call: Oura's IPO" card was added above the fold on the landing page.
