@@ -137,13 +137,14 @@ section_title("Live Call: Oura's IPO", "Written down before the price is set, an
 st.markdown(
     """
     <div class="vcl-card" style="border-left:3px solid var(--vcl-gold);">
-        <div class="vcl-card-kicker">Pre-Registered · Awaiting Pricing</div>
+        <div class="vcl-card-kicker">Pre-Registered · IPO Postponed</div>
         <div class="vcl-metric-value">$12.95B · $40.36 a share</div>
         <div class="vcl-card-title">What VC Playbook says Oura is worth, before its Nasdaq IPO prices. Bankers' range: $40–44.</div>
         <div class="vcl-card-body">
             Oura's filing numbers ($1.62B yearly revenue, +74% growth, profitable) run through the exact
             settings used for Bending Spoons, nothing re-tuned. Scorecard: 66.7/100, "Watch".
-            When Oura prices we publish how far off the model was, hit or miss. New to IPOs? The case study
+            Update, 29 Sep: Oura postponed the IPO, citing market uncertainty. The call stays on record:
+            scored if Oura prices by 31 Oct, otherwise closed as unresolved. New to IPOs? The case study
             explains every step and term in plain English.
         </div>
     </div>

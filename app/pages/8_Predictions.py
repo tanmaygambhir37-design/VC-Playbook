@@ -46,9 +46,11 @@ def prediction_card(p: dict) -> str:
     color, label = _BADGE.get(p.get("status", "open"), _BADGE["open"])
     resolution = ""
     if p.get("resolution"):
+        # An open call can carry a dated update (e.g. an IPO postponed) before it resolves.
+        tag = "Update" if p.get("status", "open") == "open" else f'Resolved {html.escape(p.get("resolved_date",""))}'
         resolution = (
             f'<div style="margin-top:10px; padding-top:10px; border-top:1px solid var(--vcl-border);'
-            f' color:var(--vcl-muted); font-size:var(--fs-sm);"><strong>Resolved {html.escape(p.get("resolved_date",""))}:</strong> '
+            f' color:var(--vcl-muted); font-size:var(--fs-sm);"><strong>{tag}:</strong> '
             f'{html.escape(p["resolution"])}</div>'
         )
     return f"""

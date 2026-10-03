@@ -10,6 +10,34 @@ not investment advice.*
 first. Every term in **bold** is explained in the [glossary](#glossary) at
 the end.
 
+## Update, 29 September 2026: Oura postponed its IPO
+
+Eight days after launching, Oura **postponed its IPO indefinitely**, citing
+"uncertainty in the IPO market." No new date was given. So there is no IPO
+price yet, and nothing to score. The $12.95B call stays on record, unchanged.
+
+**Rule for a postponement (written now, while the outcome is still unknown):**
+- If Oura prices by **31 October 2026** (the ledger's resolve-by date), the
+  call is scored exactly as planned.
+- If it doesn't, the call is closed as **unresolved: IPO postponed**. That
+  counts as neither a hit nor a miss.
+- If Oura relaunches later, a fresh call gets made on its new numbers. This
+  one stays on record as it is.
+
+**What the postponement news added** (reported by TechCrunch, Medium confidence):
+
+| New figure | What it means for this case |
+|---|---|
+| 5.7M paid members (from 5.0M in June) | Oura hit its own target |
+| FY2026 revenue expected to grow ~90% (about $1.72B) | That's **6.5% above** the $1.62B run-rate the model used. The model's revenue input was too *low*, not too high |
+| 89% gross margin on memberships | If accurate, the ring itself earns roughly 46% (my arithmetic). This is the hardware/subscription split the case said wasn't available |
+| Valuation "up to $15B" at the $42 midpoint | Bigger than our $13.48B because it likely counts more shares (fully diluted vs basic). Same price, different share count |
+
+**What that tells us about the model, even without a price:** at the new
+revenue figure, the same 8x multiple gives about **$13.8B**, close to the
+middle of the bankers' range. The model's weak spot here was its revenue
+input (nine months scaled up to a year), not the multiple.
+
 ---
 
 ## The 60-second version
@@ -204,7 +232,7 @@ the headline, not hit/miss.
 
 ---
 
-## Outcome: PENDING (fill after pricing, from the final prospectus)
+## Outcome: PENDING (IPO postponed 29 Sep 2026; unresolved if not priced by 31 Oct 2026)
 
 - Final IPO price and market value: _to be filled_
 - **Model error:** _to be filled_
